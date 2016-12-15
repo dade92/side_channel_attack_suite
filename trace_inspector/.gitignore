@@ -1,0 +1,6 @@
+*.o
+*.out
+*.png
+*.dat
+*.gpl
+config
