@@ -24,7 +24,8 @@ public:
     void writeResults(std::vector<float *>& tStatistics,std::vector<float *>& pStatistics);
 private:
     string filename;
-    int order,samplesPerTrace;
+    int order,samplesPerTrace,startSample,endSample;
+    bool grid;
     string getKeyAsString(int key);
 };
 #endif

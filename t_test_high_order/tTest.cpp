@@ -19,10 +19,12 @@ void ttestImpl(Input& input1,Input& input2,Config& config,
                int tau2,int tau3,int tau4,int tau5);
 void onlineAlgorithmImpl(Input&input,Config&config,
                          float**trace,float*mean,float*variance,int traceNumber);
-void setupTTest(Input&input,Config&config,float**trace,
+void setupTTest(Input&input,Config&config,float**trace,float**temp,
                 float*mean,float*variance,
                 int tau2,int tau3,int tau4,int tau5);
 float computeQuantile(float alpha);
+void prepareTrace(float**ts,float **temp,
+		long tau,long tau3,long tau4,long tau5,long BATCH,long spt,int order);
 
 std::vector<float *> tStatistics;			//to store list of t statistic (in case we compute for different taus)
 std::vector<float *> pStatistics;			//to store list of p statistic (in case we compute for different taus)
@@ -118,6 +120,17 @@ void ttestImpl(Input& input1,Input& input2,Config& config,float* mean1,float* va
     float*t=new float[input1.samplesPerTrace];
     //TODO:compute p values for each t
     float*p=new float[input1.samplesPerTrace];
+    float** temp1;
+    float** temp2;
+    //if the test is of higher order, then allocate space in the heap
+    if(config.order>1) {
+        temp1=new float*[config.batch];
+        temp2=new float*[config.batch];
+        for(int i=0;i<config.batch;i++) {
+            temp1[i]=new float[input1.samplesPerTrace];
+            temp2[i]=new float[input2.samplesPerTrace];
+        }
+    }
     float quantile=computeQuantile(config.alpha);
     //init mean and variance
     for(int i=0;i<input1.samplesPerTrace;i++) {
@@ -128,9 +141,9 @@ void ttestImpl(Input& input1,Input& input2,Config& config,float* mean1,float* va
 	mean2[i]=0;
 	variance2[i]=0;
     }        
-    std::thread first(setupTTest,std::ref(input1),std::ref(config),trace1,
+    std::thread first(setupTTest,std::ref(input1),std::ref(config),trace1,temp1,
                 mean1,variance1,tau2,tau3,tau4,tau5);
-    std::thread second(setupTTest,std::ref(input2),std::ref(config),trace2,
+    std::thread second(setupTTest,std::ref(input2),std::ref(config),trace2,temp2,
                 mean2,variance2,tau2,tau3,tau4,tau5);
     first.join();
     second.join();
@@ -161,7 +174,7 @@ void ttestImpl(Input& input1,Input& input2,Config& config,float* mean1,float* va
     pStatistics.push_back(pValues);
 }
 
-void setupTTest(Input&input,Config&config,float**trace,
+void setupTTest(Input&input,Config&config,float**trace,float**temp,
                 float*mean,float*variance,
                 int tau2,int tau3,int tau4,int tau5) {
 	int i=0;
@@ -170,8 +183,12 @@ void setupTTest(Input&input,Config&config,float**trace,
             plains[j]=new uint8_t[input.plainLength];
 	while(i<input.numTraces) {
             input.readData(trace,plains,config.batch);
-            //prepareTrace(traceSet1,temp1,tau2,tau3,tau4,tau5,BATCH,SamplesPerTrace,order);
-            onlineAlgorithmImpl(input,config,trace,mean,variance,i);
+            //if and only if it is an higher order test, prepare the traces
+            if(config.order>1) {
+                prepareTrace(trace,temp,tau2,tau3,tau4,tau5,config.batch,input.samplesPerTrace,config.order);
+                onlineAlgorithmImpl(input,config,temp,mean,variance,i);
+            } else
+                onlineAlgorithmImpl(input,config,trace,mean,variance,i);
             i+=config.batch;
 	}
 }
@@ -191,6 +208,55 @@ void onlineAlgorithmImpl(Input&input,Config&config,
 			variance[i]+=delta*(x-mean[i]);
 		}
 	}
+}
+
+/*
+ * Prepare the traces putting in temp the new traces
+ */
+void prepareTrace(float**ts,float **temp,
+		long tau,long tau3,long tau4,long tau5,long BATCH,long spt,int order) {
+	//prepares the traces depending on the order
+	switch(order) {
+	case 2:
+		for(int n=0;n<BATCH;n++) {
+			for(int i=0;i<tau;i++) temp[n][i]=ts[n][i];
+			for(int i=tau;i<spt;i++) {
+				temp[n][i]=ts[n][i]-ts[n][i-tau];
+			}
+		}
+		break;
+	case 3:
+		for(int n=0;n<BATCH;n++) {
+			for(int i=0;i<tau3;i++) temp[n][i]=ts[n][i];
+			for(int i=tau3;i<tau;i++) temp[n][i]=ts[n][i]-ts[n][i-tau3];
+			for(int i=tau;i<spt;i++) {
+				temp[n][i] =ts[n][i]-ts[n][i-tau]-ts[n][i-tau3];
+			}
+		}
+		break;
+	case 4:
+		for(int n=0;n<BATCH;n++) {
+			for(int i=0;i<tau4;i++) temp[n][i]=ts[n][i];
+			for(int i=tau4;i<tau3;i++)temp[n][i]=ts[n][i]-ts[n][i-tau4];
+			for(int i=tau3;i<tau;i++) temp[n][i]=ts[n][i]-ts[n][i-tau4]-ts[n][i-tau3];
+			for(int i=tau;i<spt;i++) {
+				temp[n][i]=ts[n][i]-ts[n][i-tau]-ts[n][i-tau3]-ts[n][i-tau4];
+			}
+		}
+		break;
+	/*case 5:
+		for(int n=0;n<BATCH;n++) {
+			for(int i=0;i<tau5;i++) temp[n][i]=ts[n][i];
+			for(int i=0;i<tau4;i++) temp[n][i]=ts[n][i]-(*ts[n]->trace)(i-tau5);;
+			for(int i=tau4;i<tau3;i++)temp[n][i]=ts[n][i]-(*ts[n]->trace)(i-tau4);
+			for(int i=tau3;i<tau;i++) temp[n][i]=ts[n][i]-(*ts[n]->trace)(i-tau4)-(*ts[n]->trace)(i-tau3);
+			for(int i=tau;i<spt;i++) {
+				temp[n][i]=ts[n][i]-(*ts[n]->trace)(i - tau)-(*ts[n]->trace)(i - tau3)-(*ts[n]->trace)(i - tau4);
+			}
+		}
+		break;*/
+	}
+
 }
 
 //TODO:compute the quantile with a given alpha
