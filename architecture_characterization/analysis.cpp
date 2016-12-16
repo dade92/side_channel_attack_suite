@@ -185,7 +185,6 @@ int main(int argc,char* argv[]) {
     //output writes the logs and the gnuplot scripts
     output.writeResults(results,finalPearson);
     //free resources
-    //cout<<"freeing resources"<<endl;
     for(int w=0;w<config.step;w++) {
         delete[] traceMatrix[w];
         delete[] plaintext[w];

@@ -47,22 +47,22 @@ void Output::writeResults(std::vector<float *>& tStatistics,std::vector<float *>
     outputScript << "set term png size 2000,1280;" << endl;
     outputScript << "set output \""<< "tvalue" << "_order"<<order<<".png\";" << endl;
     outputScript << "set autoscale;" << endl;
-    outputScript << "set xtic auto;" << endl;
-    outputScript << "set ytic auto;" << endl;
+    outputScript << "set xtic auto font \",20\";" << endl;
+    outputScript << "set ytic auto font \",20\";" << endl;
     outputScript << "set xrange [" << startSample << ":" << endSample<< "];" << endl;
     outputScript << "unset key;" << endl;
-    outputScript << "set xlabel \"Sample\";" << endl;
-    outputScript << "set ylabel \"t\";" << endl << endl;
+    outputScript << "set xlabel \"Sample\" font \",20\";" << endl;
+    outputScript << "set ylabel \"t\" font \",20\";" << endl << endl;
 
     outputPScript << "set term png size 2000,1280;" << endl;
     outputPScript << "set output \""<< "pvalue" << "_order"<<order<<".png\";" << endl;
     outputPScript << "set autoscale;" << endl;
-    outputPScript << "set xtic auto;" << endl;
-    outputPScript << "set ytic auto;" << endl;
+    outputPScript << "set xtic auto font \",20\";" << endl;
+    outputPScript << "set ytic auto font \",20\";" << endl;
     outputPScript << "set xrange [" << startSample << ":" << endSample << "];" << endl;
     outputPScript << "unset key;" << endl;
-    outputPScript << "set xlabel \"Sample\";" << endl;
-    outputPScript << "set ylabel \"t\";" << endl << endl;
+    outputPScript << "set xlabel \"Sample\" font \",20\";" << endl;
+    outputPScript << "set ylabel \"t\" font \",20\";" << endl << endl;
 
     outputScript <<"plot ";
     outputPScript<<"plot ";

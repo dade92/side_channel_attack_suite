@@ -3,13 +3,13 @@
 ;the step count, the confident interval and a list of
 ;intervals in which perform the analysis
 
-filename /home/davide/Documenti/tesi/data/attack_7500_baremetal_caches.dat
-outputDir output
-step 2500
-alpha 0.1
-samplingFreq 500
-clockFreq 120
-displayGrid true
+filename /home/davide/Documenti/tesi/data/attack_7500_baremetal_caches.dat	;name of the file
+outputDir output			;output directory, where to put all the images and scripts
+step 2500				;number of traces to put in memory
+alpha 0.1				;confidence interval of the test
+samplingFreq 500			;sampling frequency of the oscilloscope
+clockFreq 120				;clock frequency of the processor
+displayGrid true			;do you want a grid in the images?
 
 ;list of intervals: each interval has a name,contains start sample, end sample,
 ;value of the correct key in that interval, model used, bw if 
@@ -30,6 +30,23 @@ intervals {
             intSize 8      ;intermediate length
         }
     }
+    ;known key attack (keysize=0) the positions are:
+    ;ptx,ptx1_2,ptx2_3,ptx3_4,ptx1_3,ptx1_4,addptx1_2,xorptx1_2,andptx1_2,mulptx1_2,addptx3_4
+    ;(ptx1_2--> intermediate1=ptx1, intermediate2=ptx2. addptx1_2--> intermediate=ptx1+ptx2)
+    intknownKey {
+        start 200          ;starting sample
+        end 600           ;ending sample
+        key 2b             ;correct key
+        model hw            ;model
+        bw 1                ;final results in black and white? 0 or 1
+        modelParams {
+            sbox 0         ;which sbox to attack
+            keySize 0       ;KNOWN KEY ATTACK
+            position sub     ;where to attack in a know key analysis: ptx,ar,sub,sr,mc
+            intSize 8      ;intermediate length
+        }
+    }
+
     int1hw {
         start 200          ;starting sample
         end 600           ;ending sample

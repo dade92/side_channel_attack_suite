@@ -1,6 +1,6 @@
-#CFLAGS=-g3 -std=c++11 -lpthread 
+CFLAGS=-g3 -std=c++11 -lpthread 
 
-CFLAGS=-O3 -march=native -std=c++11 -lpthread
+#CFLAGS=-O3 -march=native -std=c++11 -lpthread
 
 COMMONS=../common/input.o
 
