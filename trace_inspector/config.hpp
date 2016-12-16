@@ -12,7 +12,7 @@
 using namespace std;
 using namespace boost::property_tree;
 /**
- * class that parses the config file and
+ * class of trace inspector that parses the config file and
  * stores all the parameters in public
  * variables that will be used by other
  * classes of the tool.
@@ -23,7 +23,6 @@ using namespace boost::property_tree;
 class Config {
     
 public:
-    //Config(char* configFile);
     Config(string configFile);
     void init();
     string filename;

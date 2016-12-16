@@ -12,37 +12,25 @@
 using namespace std;
 using namespace boost::property_tree;
 /**
- * class that parses the config file and
+ * class of t test that parses the config file and
  * stores all the parameters in public
  * variables that will be used by other
  * classes of the tool.
  * IMPORTANT: after the constructor, call
  * init method to setup the obect
  */
-typedef struct {
-        string name;
-        int start;
-        int end;
-        int key;
-        string model; 
-        int sbox;
-        bool bw;
-        int keySize;
-        int intSize;
-        string position;
-} interval;
+
 class Config {
     
 public:
     Config(string configFile);
     void init();
     string filename;
-    string outputDir;
-    int step;
+    string filename2;
+    int batch,maxSample,startSample,order,
+        maxTau2,maxTau3,maxTau4,maxTau5;
     bool grid;
-    float alpha,samplingFreq,clockFreq;
-    vector<interval> intervals;
-    
+    float samplingFreq,clockFreq,alpha;
 private:
     string configFile;
     ifstream config;

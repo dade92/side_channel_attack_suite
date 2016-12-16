@@ -1,0 +1,228 @@
+;his is the configuration file for the analysis tool
+;it takes an input filename, an output directory path,
+;the step count, the confident interval and a list of
+;intervals in which perform the analysis
+
+filename /home/davide/Documenti/tesi/data/attack_7500_baremetal_caches.dat
+outputDir output
+step 2500
+alpha 0.1
+samplingFreq 500
+clockFreq 120
+displayGrid true
+
+;list of intervals: each interval has a name,contains start sample, end sample,
+;value of the correct key in that interval, model used, bw if 
+;you want the final output of this interval to be black and white
+;and the params of the considered model
+
+intervals {
+    int0hw {
+        start 200          ;starting sample
+        end 600           ;ending sample
+        key 2b             ;correct key
+        model hw            ;model
+        bw 1                ;final results in black and white? 0 or 1
+        modelParams {
+            sbox 0         ;which sbox to attack
+            keySize 8       ;number of key bits to attack
+            position sub     ;where to attack: ptx,ar,sub,sr,mc
+            intSize 8      ;intermediate length
+        }
+    }
+    int1hw {
+        start 200          ;starting sample
+        end 600           ;ending sample
+        key 7e             ;correct key
+        model hw            ;model
+        bw 1                ;final results in black and white? 0 or 1
+        modelParams {
+            sbox 1         ;which sbox to attack
+            keySize 8       ;number of key bits to attack
+            position sub     ;where to attack: ptx,ar,sub,sr,mc
+            intSize 8      ;intermediate length
+        }
+    }
+    int2hw {
+        start 200          ;starting sample
+        end 600           ;ending sample
+        key 15             ;correct key
+        model hw            ;model
+        bw 1                ;final results in black and white? 0 or 1
+        modelParams {
+            sbox 2         ;which sbox to attack
+            keySize 8       ;number of key bits to attack
+            position sub     ;where to attack: ptx,ar,sub,sr,mc
+            intSize 8      ;intermediate length
+        }
+    }
+    int3hw {
+        start 200          ;starting sample
+        end 600           ;ending sample
+        key 16             ;correct key
+        model hw            ;model
+        bw 1                ;final results in black and white? 0 or 1
+        modelParams {
+            sbox 3         ;which sbox to attack
+            keySize 8       ;number of key bits to attack
+            position sub     ;where to attack: ptx,ar,sub,sr,mc
+            intSize 8      ;intermediate length
+        }
+    }
+    int4hw {
+        start 200          ;starting sample
+        end 600           ;ending sample
+        key 28             ;correct key
+        model hw            ;model
+        bw 1                ;final results in black and white? 0 or 1
+        modelParams {
+            sbox 4         ;which sbox to attack
+            keySize 8       ;number of key bits to attack
+            position sub     ;where to attack: ptx,ar,sub,sr,mc
+            intSize 8      ;intermediate length
+        }
+    }
+    int5hw {
+        start 200          ;starting sample
+        end 600           ;ending sample
+        key ae             ;correct key
+        model hw            ;model
+        bw 1                ;final results in black and white? 0 or 1
+        modelParams {
+            sbox 5         ;which sbox to attack
+            keySize 8       ;number of key bits to attack
+            position sub     ;where to attack: ptx,ar,sub,sr,mc
+            intSize 8      ;intermediate length
+        }
+    }
+    int6hw {
+        start 200          ;starting sample
+        end 600           ;ending sample
+        key d2             ;correct key
+        model hw            ;model
+        bw 1                ;final results in black and white? 0 or 1
+        modelParams {
+            sbox 6         ;which sbox to attack
+            keySize 8       ;number of key bits to attack
+            position sub     ;where to attack: ptx,ar,sub,sr,mc
+            intSize 8      ;intermediate length
+        }
+    }
+    int7hw {
+        start 200          ;starting sample
+        end 600           ;ending sample
+        key a6             ;correct key
+        model hw            ;model
+        bw 1                ;final results in black and white? 0 or 1
+        modelParams {
+            sbox 7         ;which sbox to attack
+            keySize 8       ;number of key bits to attack
+            position sub     ;where to attack: ptx,ar,sub,sr,mc
+            intSize 8      ;intermediate length
+        }
+    }
+    int8hw {
+        start 200          ;starting sample
+        end 600           ;ending sample
+        key ab             ;correct key
+        model hw            ;model
+        bw 1                ;final results in black and white? 0 or 1
+        modelParams {
+            sbox 8         ;which sbox to attack
+            keySize 8       ;number of key bits to attack
+            position sub     ;where to attack: ptx,ar,sub,sr,mc
+            intSize 8      ;intermediate length
+        }
+    }
+    int9hw {
+        start 200          ;starting sample
+        end 600           ;ending sample
+        key f7             ;correct key
+        model hw            ;model
+        bw 1                ;final results in black and white? 0 or 1
+        modelParams {
+            sbox 9         ;which sbox to attack
+            keySize 8       ;number of key bits to attack
+            position sub     ;where to attack: ptx,ar,sub,sr,mc
+            intSize 8      ;intermediate length
+        }
+    }
+    int10hw {
+        start 200          ;starting sample
+        end 600           ;ending sample
+        key 15             ;correct key
+        model hw            ;model
+        bw 1                ;final results in black and white? 0 or 1
+        modelParams {
+            sbox 10         ;which sbox to attack
+            keySize 8       ;number of key bits to attack
+            position sub     ;where to attack: ptx,ar,sub,sr,mc
+            intSize 8      ;intermediate length
+        }
+    }
+    int11hw {
+        start 300          ;starting sample
+        end 700           ;ending sample
+        key 88             ;correct key
+        model hw            ;model
+        bw 1                ;final results in black and white? 0 or 1
+        modelParams {
+            sbox 11         ;which sbox to attack
+            keySize 8       ;number of key bits to attack
+            position sub     ;where to attack: ptx,ar,sub,sr,mc
+            intSize 8      ;intermediate length
+        }
+    }
+    int12hw {
+        start 300          ;starting sample
+        end 700           ;ending sample
+        key 9             ;correct key
+        model hw            ;model
+        bw 1                ;final results in black and white? 0 or 1
+        modelParams {
+            sbox 12         ;which sbox to attack
+            keySize 8       ;number of key bits to attack
+            position sub     ;where to attack: ptx,ar,sub,sr,mc
+            intSize 8      ;intermediate length
+        }
+    }
+    int13hw {
+        start 300          ;starting sample
+        end 700           ;ending sample
+        key cf             ;correct key
+        model hw            ;model
+        bw 1                ;final results in black and white? 0 or 1
+        modelParams {
+            sbox 13         ;which sbox to attack
+            keySize 8       ;number of key bits to attack
+            position sub     ;where to attack: ptx,ar,sub,sr,mc
+            intSize 8      ;intermediate length
+        }
+    }
+    int14hw {
+        start 300          ;starting sample
+        end 700           ;ending sample
+        key 4f             ;correct key
+        model hw            ;model
+        bw 1                ;final results in black and white? 0 or 1
+        modelParams {
+            sbox 14         ;which sbox to attack
+            keySize 8       ;number of key bits to attack
+            position sub     ;where to attack: ptx,ar,sub,sr,mc
+            intSize 8      ;intermediate length
+        }
+    }
+    int15hw {
+        start 300          ;starting sample
+        end 700           ;ending sample
+        key 3c             ;correct key
+        model hw            ;model
+        bw 1                ;final results in black and white? 0 or 1
+        modelParams {
+            sbox 15         ;which sbox to attack
+            keySize 8       ;number of key bits to attack
+            position sub     ;where to attack: ptx,ar,sub,sr,mc
+            intSize 8      ;intermediate length
+        }
+    }
+}

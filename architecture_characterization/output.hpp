@@ -7,7 +7,7 @@
 #include <sstream>
 #include <iomanip>
 #include <boost/format.hpp>
-#include "input.hpp"
+#include "../common/input.hpp"
 #include "config.hpp"
 
 using namespace std;

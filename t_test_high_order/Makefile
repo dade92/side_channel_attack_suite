@@ -1,14 +1,14 @@
-#CFLAGS=-g3 -std=c++11 -lpthread -lpng
+#CFLAGS=-g3 -std=c++11 -lpthread
 
-CFLAGS=-O3 -march=native -std=c++11 -lpthread -lpng
+CFLAGS=-O3 -march=native -std=c++11 -lpthread
 
-OBJECTS=config.o traceInspector.o
+OBJECTS=config.o output.o tTest.o
 
 COMMONS=../common/input.o
  
-all:traceInspector.out
+all:tTest.out
 
-traceInspector.out:$(COMMONS) $(OBJECTS)
+tTest.out:$(COMMONS) $(OBJECTS)
 	g++ $(CFLAGS) -o $@ $^
 
 %.o:%.cpp

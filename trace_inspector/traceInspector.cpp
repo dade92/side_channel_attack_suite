@@ -9,7 +9,7 @@
 #include <cstdint>
 
 #include "config.hpp"
-#include "input.hpp"
+#include "../common/input.hpp"
 
 #define MAX 256
 using namespace std;

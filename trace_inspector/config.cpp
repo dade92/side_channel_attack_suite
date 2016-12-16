@@ -1,7 +1,5 @@
 #include "config.hpp"
-/*Config::Config(char* fn) {
-    configFile=string(fn);
-}*/
+
 Config::Config(string fn) {
     configFile=fn;
 }

@@ -1,0 +1,8 @@
+filename /home/davide/Documenti/tesi/data/benchmark_load_caches.dat    ;filename
+batch 1000                                                      ;number of traces to analyze at each iteration
+samplingFreq 500                                                ;sampling frequency of the oscilloscope
+clockFreq 120                                                   ;frequency of the processor
+displayGrid false                                               ;true if you want a grid that shows the clock
+numTraceToPrint 4                                               ;number of traces to print for the inspection
+startSample 0                                                   ;starting sample
+endSample 1100                                                  ;ending sample

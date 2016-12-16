@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <cstdint>
 #include "config.hpp"
-#include "input.hpp"
+#include "../common/input.hpp"
 #include "powermodel.hpp"
 #include "output.hpp"
 #include "statisticalAnalysis.hpp"

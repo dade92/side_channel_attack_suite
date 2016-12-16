@@ -1,0 +1,11 @@
+filename /home/davide/Documenti/tesi/data/benchmark_load_caches.dat    ;filename
+filename2 /home/davide/Documenti/tesi/data/benchmark_load_caches.dat    ;filename
+batch 1000                                                      ;number of traces to analyze at each iteration
+alpha 0.1                                                       ;confidence interval of the test
+samplingFreq 500                                                ;sampling frequency of the oscilloscope
+clockFreq 120                                                   ;frequency of the processor
+displayGrid false                                               ;true if you want a grid that shows the clock
+startSample 0                                                   ;starting sample
+endSample 1100                                                  ;ending sample
+order 1                                                         ;order of the test
+maxTau2 50                                                      ;max tau to consider for order 2
