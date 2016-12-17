@@ -142,7 +142,7 @@ float Pearson::getConfidence(float r,int n) {
     float fr=atanh(r);
     float zScore=sqrt(n-3)*fr;
     //obtain Gaussian quantile of transformed z_score
-    float halfWidth=sqrt(2)*boost::math::erf_inv(2*((1+gamma)/2)-1);
+    float halfWidth=sqrt(2)*boost::math::erf_inv(gamma);
     //compute confidence interval in Fisher domain
     float inf=zScore-halfWidth;
     float sup=zScore+halfWidth;

@@ -21,6 +21,10 @@ void Config::init() {
             filename2= pt.get<string>("filename2");
             batch=pt.get<int>("batch");
             alpha=pt.get<float>("alpha");
+            if(alpha<0 || alpha>1) {
+                cout<<"Invalid alpha."<<endl;
+                exit(0);
+            }
             samplingFreq=pt.get<float>("samplingFreq");
             clockFreq=pt.get<float>("clockFreq");
             grid=pt.get<bool>("displayGrid");
@@ -29,13 +33,13 @@ void Config::init() {
                 exit(0);
             }            
             if(batch<0) {
-                cout<<"Invalid batch"<<endl;
+                cout<<"Invalid batch size."<<endl;
                 exit(0);
             }
             startSample=pt.get<int>("startSample");
             maxSample=pt.get<int>("endSample");
             if(startSample<0 || startSample>maxSample) {
-                cout<<"Invalid start/ending sample"<<endl;
+                cout<<"Invalid start/ending sample."<<endl;
                 exit(0);
             }
             order=pt.get<int>("order");
@@ -64,7 +68,7 @@ void Config::init() {
                     maxTau4=pt.get<int>("maxTau4");
                     if(maxTau2<=0 || maxTau3<=0 || maxTau4<=0 || 
                         maxTau2<=maxTau3 || maxTau3<=maxTau4) {
-			cout<<"invalid tau,exiting."<<endl;
+			cout<<"invalid tau."<<endl;
 			exit(1);
                     }
                 } else if(order==5) {
@@ -75,17 +79,17 @@ void Config::init() {
                     if(maxTau2<=0 || maxTau3<=0 || maxTau4<=0 || 
                         maxTau5<=0 || maxTau2<=maxTau3 || 
                         maxTau3<=maxTau4 || maxTau4<=maxTau5) {
-			cout<<"invalid tau,exiting."<<endl;
+			cout<<"invalid tau."<<endl;
 			exit(1);
                     }
                 }
             }
         } catch( ptree_error e) {
-            cerr << "Analysis configuration error. Check the config file" << endl;
+            cerr << "Analysis configuration error. Check the config file." << endl;
             exit (3);
         }
     } catch ( info_parser::info_parser_error e) {
-        cerr << "Cannot parse Analysis configuration" << endl;
+        cerr << "Cannot parse Analysis configuration." << endl;
         exit ( 3 );
     }
     

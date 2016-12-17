@@ -1,10 +1,10 @@
-#CFLAGS=-g3 -std=c++11 -lpthread
+CFLAGS=-g3 -std=c++11 -lpthread
 
-CFLAGS=-O3 -march=native -std=c++11 -lpthread
+#CFLAGS=-O3 -march=native -std=c++11 -lpthread -lm
 
 OBJECTS=config.o output.o tTest.o
 
-COMMONS=../common/input.o
+COMMONS=../common/input.o ../common/math.o
  
 all:tTest.out
 

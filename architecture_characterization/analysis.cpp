@@ -61,7 +61,7 @@ int main(int argc,char* argv[]) {
     }
     //check on the occupied RAM
     if(config.step*input.samplesPerTrace*input.dataDimension/(1024*1024) > MAX_RAM) {
-        cout<<"Too much RAM required"<<endl;
+        cout<<"Too much RAM required."<<endl;
         exit(0);
     }
     
@@ -75,11 +75,18 @@ int main(int argc,char* argv[]) {
     //its size depends on each interval,init after
     float** pearsonMatrix;
     
-    //for each interval (vector size==#intervals), I have a sequence of result values, one for each step
+    /*
+     * for each interval (vector size==#intervals), 
+     * I have a sequence of result values, one for each step
+     */
     vector<result*> results;
-    //for each interval (vector size==#intervals) I need to store temp mean and variance for each instant
+    /*
+     * for each interval (vector size==#intervals) 
+     * I need to store temp mean and variance 
+     * of the power trace and of the power predictions
+     * in order to compute the correlation
+     */
     vector<statistic*> traceStatistics;
-    //for each interval (vector size==#intervals) I need to store temp mean and variance for each key
     vector<statistic*> powerStatistic;
     //temp covariance matrix, one for each interval;
     vector<float**> m12;
@@ -95,8 +102,8 @@ int main(int argc,char* argv[]) {
         for(int x=0;x<keySpace;x++) {
             s[x].mean=s[x].m2=0;
         }
-        statistic* s2=new statistic[config.intervals[i].end-config.intervals[i].start];
-        for(int x=0;x<config.intervals[i].end-config.intervals[i].start;x++) {
+        statistic* s2=new statistic[config.intervals[w].end-config.intervals[w].start];
+        for(int x=0;x<config.intervals[w].end-config.intervals[w].start;x++) {
             s2[x].mean=s2[x].m2=0;
         }
         //init vectors

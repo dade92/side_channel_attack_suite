@@ -3,9 +3,11 @@
 #include<cstdint>
 #include<thread>
 #include<functional>
+#include<math.h>
 #include"config.hpp"
 #include"output.hpp"
 #include"../common/input.hpp"
+#include"../common/math.hpp"
 
 using namespace std;
 void startTest(Config& config);
@@ -23,6 +25,7 @@ void setupTTest(Input&input,Config&config,float**trace,float**temp,
                 float*mean,float*variance,
                 int tau2,int tau3,int tau4,int tau5);
 float computeQuantile(float alpha);
+void computePValue(Input&i,float*t,float*p);
 void prepareTrace(float**ts,float **temp,
 		long tau,long tau3,long tau4,long tau5,long BATCH,long spt,int order);
 
@@ -155,7 +158,7 @@ void ttestImpl(Input& input1,Input& input2,Config& config,float* mean1,float* va
 	t[i]=(mean1[i]-mean2[i]) / sqrt(variance1[i]/input1.numTraces + variance2[i]/input2.numTraces);
 	if(t[i]>quantile || t[i]<-quantile) different=true;
     }
-    //computePValue(t);
+    computePValue(input1,t,p);
     if(different) {
 	cout<<"Null hypothesis refused for taus:"
             <<tau2<<" "<<tau3<<" "<<tau4<<" "<<tau5<<endl;
@@ -259,7 +262,12 @@ void prepareTrace(float**ts,float **temp,
 
 }
 
-//TODO:compute the quantile with a given alpha
+//compute the quantile with a given alpha
 float computeQuantile(float alpha) {
-    return 4;
+    return -phi_inv(alpha/2);
+}
+void computePValue(Input& input,float*t,float*p) {
+    for(int i=0;i<input.samplesPerTrace;i++) {
+        p[i]=2*(1-phi(abs(t[i])));
+    }
 }

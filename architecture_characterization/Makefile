@@ -1,8 +1,8 @@
-CFLAGS=-g3 -std=c++11 -lpthread 
+#CFLAGS=-g3 -std=c++11 -lpthread 
 
-#CFLAGS=-O3 -march=native -std=c++11 -lpthread
+CFLAGS=-O3 -march=native -std=c++11 -lpthread
 
-COMMONS=../common/input.o
+COMMONS=../common/input.o ../common/math.o
 
 OBJECTS=config.o powermodel.o statisticalAnalysis.o output.o analysis.o 
 
