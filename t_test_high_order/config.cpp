@@ -20,6 +20,10 @@ void Config::init() {
             filename = pt.get<string>("filename");
             filename2= pt.get<string>("filename2");
             batch=pt.get<int>("batch");
+            if(batch<0) {
+                cout<<"Invalid batch."<<endl;
+                exit(0);
+            }
             alpha=pt.get<float>("alpha");
             if(alpha<0 || alpha>1) {
                 cout<<"Invalid alpha."<<endl;
@@ -27,11 +31,11 @@ void Config::init() {
             }
             samplingFreq=pt.get<float>("samplingFreq");
             clockFreq=pt.get<float>("clockFreq");
-            grid=pt.get<bool>("displayGrid");
             if(samplingFreq<0 || clockFreq<0) {
                 cout<<"Invalid frequency."<<endl;
                 exit(0);
-            }            
+            }
+            grid=pt.get<bool>("displayGrid");            
             if(batch<0) {
                 cout<<"Invalid batch size."<<endl;
                 exit(0);
@@ -43,7 +47,7 @@ void Config::init() {
                 exit(0);
             }
             order=pt.get<int>("order");
-            if(order<1) {
+            if(order<1 || order>5) {
                 cout<<"Invalid test order."<<endl;
                 exit(0);
             } else {

@@ -3,6 +3,5 @@ batch 1000                                                      ;number of trace
 samplingFreq 500                                                ;sampling frequency of the oscilloscope
 clockFreq 120                                                   ;frequency of the processor
 displayGrid false                                               ;true if you want a grid that shows the clock
-numTraceToPrint 4                                               ;number of traces to print for the inspection
 startSample 0                                                   ;starting sample
 endSample 5000                                                  ;ending sample

@@ -247,17 +247,17 @@ void prepareTrace(float**ts,float **temp,
 			}
 		}
 		break;
-	/*case 5:
+	case 5:
 		for(int n=0;n<BATCH;n++) {
 			for(int i=0;i<tau5;i++) temp[n][i]=ts[n][i];
-			for(int i=0;i<tau4;i++) temp[n][i]=ts[n][i]-(*ts[n]->trace)(i-tau5);;
-			for(int i=tau4;i<tau3;i++)temp[n][i]=ts[n][i]-(*ts[n]->trace)(i-tau4);
-			for(int i=tau3;i<tau;i++) temp[n][i]=ts[n][i]-(*ts[n]->trace)(i-tau4)-(*ts[n]->trace)(i-tau3);
+			for(int i=0;i<tau4;i++) temp[n][i]=ts[n][i]-ts[n][i-tau5];;
+			for(int i=tau4;i<tau3;i++)temp[n][i]=ts[n][i]-ts[n][i-tau4];
+			for(int i=tau3;i<tau;i++) temp[n][i]=ts[n][i]-ts[n][i-tau4]-ts[n][i-tau3];
 			for(int i=tau;i<spt;i++) {
-				temp[n][i]=ts[n][i]-(*ts[n]->trace)(i - tau)-(*ts[n]->trace)(i - tau3)-(*ts[n]->trace)(i - tau4);
+				temp[n][i]=ts[n][i]-ts[n][i-tau]-ts[n][i-tau3]-ts[n][i-tau4];
 			}
 		}
-		break;*/
+		break;
 	}
 
 }

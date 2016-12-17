@@ -19,18 +19,17 @@ void Config::init() {
             //parse the first level
             filename = pt.get<string>("filename");
             batch= pt.get<int>("batch");
-            samplingFreq=pt.get<float>("samplingFreq");
-            clockFreq=pt.get<float>("clockFreq");
-            grid=pt.get<bool>("displayGrid");
-            if(samplingFreq<0 || clockFreq<0) {
-                cout<<"Invalid frequency."<<endl;
-                exit(0);
-            }            
             if(batch<0) {
                 cout<<"Invalid batch"<<endl;
                 exit(0);
             }
-            numTraceToPrint=pt.get<int>("numTraceToPrint");
+            samplingFreq=pt.get<float>("samplingFreq");
+            clockFreq=pt.get<float>("clockFreq");
+            if(samplingFreq<0 || clockFreq<0) {
+                cout<<"Invalid frequency."<<endl;
+                exit(0);
+            }  
+            grid=pt.get<bool>("displayGrid");
             startSample=pt.get<int>("startSample");
             maxSample=pt.get<int>("endSample");
             if(startSample<0 || startSample>maxSample) {
