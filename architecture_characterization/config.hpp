@@ -26,7 +26,6 @@ typedef struct {
         int key;
         string model; 
         int sbox;
-        bool bw;
         int keySize;
         int intSize;
         string position;
@@ -39,7 +38,7 @@ public:
     string filename;
     string outputDir;
     int step;
-    bool grid;
+    bool grid,bw;
     float alpha,samplingFreq,clockFreq;
     vector<interval> intervals;
     

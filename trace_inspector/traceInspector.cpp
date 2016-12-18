@@ -10,7 +10,7 @@
 
 #include "config.hpp"
 #include "../common/input.hpp"
-
+//TODO:substitute MAX with meaningful name
 #define MAX 256
 using namespace std;
 
@@ -24,21 +24,6 @@ typedef struct {
     double s;       // percent
     double v;       // percent
 } hsv;
-
-char* getCmdOption(char ** begin, char ** end, const std::string & option)
-{
-    char ** itr = std::find(begin, end, option);
-    if (itr != end && ++itr != end)
-    {
-        return *itr;
-    }
-    return 0;
-}
-
-bool cmdOptionExists(char** begin, char** end, const std::string& option)
-{
-    return std::find(begin, end, option) != end;
-}
 
 void printUsage() {
     cout<<"./traceInspector.out configFile"<<endl;
@@ -104,14 +89,25 @@ void savePersistence(uint32_t** persistence,int numSamples) {
     free(row);
     fclose(fp);
 }
-
-void computeMeanAndVariance(float** trace,uint8_t** plain,Input& input,Config& config) {
+ 
+void inspectTraces(Config& config,Input& input) {
     int step=config.batch;
+    float** trace=new float*[step];
+    uint8_t** plain=new uint8_t*[step];
     bool grid=config.grid;
     int numTraces=input.numTraces;
     int numSamples=config.maxSample-config.startSample;
     float* mean=new float[numSamples];
     float* var=new float[numSamples];
+    uint16_t index;
+    int16_t integer_sample;
+    int matrix_index;
+    float delta;
+    int count=0;
+    for(int i=0;i<step;i++) {
+        trace[i]=new float[input.samplesPerTrace];
+        plain[i]=new uint8_t[input.plainLength];
+    }
     //persistence matrix
     uint32_t** persistence=new uint32_t*[MAX];
     for(int x=0;x<MAX;x++)
@@ -121,11 +117,6 @@ void computeMeanAndVariance(float** trace,uint8_t** plain,Input& input,Config& c
             persistence[w][x]=0;
         }
     }
-    uint16_t index;
-    int16_t integer_sample;
-    int matrix_index;
-    float delta;
-    int count=0;
     for(int n=0;n<numSamples;n++) {
         mean[n]=0;
 	var[n]=0;
@@ -229,60 +220,6 @@ void computeMeanAndVariance(float** trace,uint8_t** plain,Input& input,Config& c
     }
     cout<<"traces inspected. You can find gnuplot script in \"inspectTrace.gpl\" and in \"meanAndVariance.gpl\" "
     		"data in \"inspectTrace.dat\" and \"meanAndVariance.dat\" "<<endl;
-}
- 
-void inspectTraces(Config& config,Input& input) {
-    int traceToPrint=config.numTraceToPrint;
-    int batch=config.batch;
-    int maxSamples=config.maxSample;
-    bool grid=config.grid;
-    std::ofstream outputTrace,outputTraceDat;
-    float** trace=new float*[batch];
-    uint8_t** plain=new uint8_t*[batch];
-    for(int i=0;i<batch;i++) {
-        trace[i]=new float[input.samplesPerTrace];
-        plain[i]=new uint8_t[input.plainLength];
-    }
-    /*
-    input.readData(trace,plain,batch);
-    
-    outputTrace.open("inspectTrace.gpl");
-    outputTraceDat.open("inspectTrace.dat");
-
-    if(!outputTrace.is_open() || !outputTraceDat.is_open()) {
-        cout<<"Can't open output files."<<endl;
-        exit(0);
-    }
-    
-    outputTrace << "set term png size 2000,1280;" << endl;
-    outputTrace << "set output \""<< "traceToPlot" <<".png\";" << endl;
-    outputTrace << "set autoscale;" << endl;
-    outputTrace << "set xtic 500 font \",20\";" << endl;
-    outputTrace << "set ytic auto font \",20\";" << endl;
-    outputTrace <<"set xrange ["<<0<<":"<<maxSamples<<"];"<<endl;
-    outputTrace << "unset key;" << endl;
-    outputTrace << "set xlabel \"Time\" font \",20\";" << endl;
-    outputTrace << "set ylabel \"Power Trace\" font \",20\";" << endl << endl;
-    //in order to see other values, change them passing in command line proper commands
-    for(int n=0;n<maxSamples;n++) {
-        outputTraceDat<<n;
-        for(int i=0;i<traceToPrint;i++) {
-            outputTraceDat<<"  "<<trace[i][n];
-        }
-        outputTraceDat<<endl;;
-    }
-
-    outputTrace << "plot  ";
-    for(int itrace = 0; itrace < traceToPrint; itrace++) {
-        if(itrace != 0) {
-            outputTrace << ", " ;
-        }
-        outputTrace << "\""<< "inspectTrace.dat" << "\" ";
-        outputTrace << "u 1:" << itrace+2 << " ";
-        outputTrace << "t \"" << itrace+1 << "\" ";
-        outputTrace << "with lines";
-    }*/
-    computeMeanAndVariance(trace,plain,input,config);
 }
 
 int main(int argc,char*argv[]) {

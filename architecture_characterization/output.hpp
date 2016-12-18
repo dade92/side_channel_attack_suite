@@ -29,13 +29,14 @@ typedef struct {
 class Output {
 public:
     Output(Config& config,Input& input);
-    void writeResults(vector<result*>& results,vector<float**>& totalPearson);
+    void writeResults(vector<result*>& results,
+                      vector<float**>& totalPearson);
 private:
     string outputDir,filename;
     int numTraces;
     int numIntervals,numSteps,step;
     float alpha,samplingFreq,clockFreq;
-    bool grid;
+    bool grid,bw;
     string getKeyAsString(int key);
     //vector that contains the intervals
     vector<interval> intervals;

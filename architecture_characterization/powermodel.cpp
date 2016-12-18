@@ -71,14 +71,33 @@ void PowerModel::generate(uint8_t** plaintext,unsigned**powerMatrix) {
             sbox=0;
             p=4;
             opCode=4;
+        } else if(position.compare("addptx1_3")==0) {
+            sbox=0;
+            p=8;
+            opCode=1;
+        } else if(position.compare("addptx1_4")==0) {
+            sbox=0;
+            p=12;
+            opCode=1;
+        } else if(position.compare("addptx2_3")==0) {
+            sbox=4;
+            p=8;
+            opCode=1;
+        } else if(position.compare("addptx2_4")==0) {
+            sbox=4;
+            p=12;
+            opCode=1;
         } else if(position.compare("addptx3_4")==0) {
             sbox=8;
             p=12;
             opCode=1;
-        }
-        else {
+        } else {
             cout<<"Position "<<position<<" not recognized."<<endl
             <<"Maybe you're using an AES position for a known input attack?."<<endl;
+            exit(0);
+        }
+        if(opCode>0 && powerModel.compare("hd")==0) {
+            cout<<"Requested hamming distance of the result of an operation."<<endl;
             exit(0);
         }
     }

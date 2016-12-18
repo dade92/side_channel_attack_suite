@@ -1,15 +1,18 @@
-;his is the configuration file for the analysis tool
+;this is the configuration file for the analysis tool
 ;it takes an input filename, an output directory path,
 ;the step count, the confident interval and a list of
 ;intervals in which perform the analysis
 
+;this is a comment
+
 filename /home/davide/Documenti/tesi/data/attack_7500_baremetal_caches.dat	;name of the file
-outputDir output			;output directory, where to put all the images and scripts
+outputDir output			;output directory, where to put all the images and gnuplot scripts
 step 2500				;number of traces to put in memory
 alpha 0.1				;confidence interval of the test
 samplingFreq 500			;sampling frequency of the oscilloscope
 clockFreq 120				;clock frequency of the processor
 displayGrid true			;do you want a grid in the images?
+bw true                                    ;final results in black and white? 0 or 1
 
 ;list of intervals: each interval has a name,contains start sample, end sample,
 ;value of the correct key in that interval, model used, bw if 
@@ -22,7 +25,6 @@ intervals {
         end 600           ;ending sample
         key 2b             ;correct key
         model hw            ;model
-        bw 1                ;final results in black and white? 0 or 1
         modelParams {
             sbox 0         ;which sbox to attack
             keySize 8       ;number of key bits to attack
@@ -38,11 +40,10 @@ intervals {
         end 600           ;ending sample
         key 2b             ;correct key
         model hw            ;model
-        bw 1                ;final results in black and white? 0 or 1
         modelParams {
             sbox 0         ;which sbox to attack
             keySize 0       ;KNOWN KEY ATTACK
-            position sub     ;where to attack in a know key analysis: ptx,ar,sub,sr,mc
+            position ptx1_2     ;where to attack in a know key analysis: ptx,ar,sub,sr,mc
             intSize 8      ;intermediate length
         }
     }
@@ -52,7 +53,6 @@ intervals {
         end 600           ;ending sample
         key 7e             ;correct key
         model hw            ;model
-        bw 1                ;final results in black and white? 0 or 1
         modelParams {
             sbox 1         ;which sbox to attack
             keySize 8       ;number of key bits to attack
@@ -65,7 +65,6 @@ intervals {
         end 600           ;ending sample
         key 15             ;correct key
         model hw            ;model
-        bw 1                ;final results in black and white? 0 or 1
         modelParams {
             sbox 2         ;which sbox to attack
             keySize 8       ;number of key bits to attack
@@ -78,7 +77,6 @@ intervals {
         end 600           ;ending sample
         key 16             ;correct key
         model hw            ;model
-        bw 1                ;final results in black and white? 0 or 1
         modelParams {
             sbox 3         ;which sbox to attack
             keySize 8       ;number of key bits to attack
@@ -91,7 +89,6 @@ intervals {
         end 600           ;ending sample
         key 28             ;correct key
         model hw            ;model
-        bw 1                ;final results in black and white? 0 or 1
         modelParams {
             sbox 4         ;which sbox to attack
             keySize 8       ;number of key bits to attack
@@ -104,7 +101,6 @@ intervals {
         end 600           ;ending sample
         key ae             ;correct key
         model hw            ;model
-        bw 1                ;final results in black and white? 0 or 1
         modelParams {
             sbox 5         ;which sbox to attack
             keySize 8       ;number of key bits to attack
@@ -117,7 +113,6 @@ intervals {
         end 600           ;ending sample
         key d2             ;correct key
         model hw            ;model
-        bw 1                ;final results in black and white? 0 or 1
         modelParams {
             sbox 6         ;which sbox to attack
             keySize 8       ;number of key bits to attack
@@ -130,7 +125,6 @@ intervals {
         end 600           ;ending sample
         key a6             ;correct key
         model hw            ;model
-        bw 1                ;final results in black and white? 0 or 1
         modelParams {
             sbox 7         ;which sbox to attack
             keySize 8       ;number of key bits to attack
@@ -143,7 +137,6 @@ intervals {
         end 600           ;ending sample
         key ab             ;correct key
         model hw            ;model
-        bw 1                ;final results in black and white? 0 or 1
         modelParams {
             sbox 8         ;which sbox to attack
             keySize 8       ;number of key bits to attack
@@ -156,7 +149,6 @@ intervals {
         end 600           ;ending sample
         key f7             ;correct key
         model hw            ;model
-        bw 1                ;final results in black and white? 0 or 1
         modelParams {
             sbox 9         ;which sbox to attack
             keySize 8       ;number of key bits to attack
@@ -169,7 +161,6 @@ intervals {
         end 600           ;ending sample
         key 15             ;correct key
         model hw            ;model
-        bw 1                ;final results in black and white? 0 or 1
         modelParams {
             sbox 10         ;which sbox to attack
             keySize 8       ;number of key bits to attack
@@ -182,7 +173,6 @@ intervals {
         end 700           ;ending sample
         key 88             ;correct key
         model hw            ;model
-        bw 1                ;final results in black and white? 0 or 1
         modelParams {
             sbox 11         ;which sbox to attack
             keySize 8       ;number of key bits to attack
@@ -195,7 +185,6 @@ intervals {
         end 700           ;ending sample
         key 9             ;correct key
         model hw            ;model
-        bw 1                ;final results in black and white? 0 or 1
         modelParams {
             sbox 12         ;which sbox to attack
             keySize 8       ;number of key bits to attack
@@ -208,7 +197,6 @@ intervals {
         end 700           ;ending sample
         key cf             ;correct key
         model hw            ;model
-        bw 1                ;final results in black and white? 0 or 1
         modelParams {
             sbox 13         ;which sbox to attack
             keySize 8       ;number of key bits to attack
@@ -221,7 +209,6 @@ intervals {
         end 700           ;ending sample
         key 4f             ;correct key
         model hw            ;model
-        bw 1                ;final results in black and white? 0 or 1
         modelParams {
             sbox 14         ;which sbox to attack
             keySize 8       ;number of key bits to attack
@@ -234,7 +221,6 @@ intervals {
         end 700           ;ending sample
         key 3c             ;correct key
         model hw            ;model
-        bw 1                ;final results in black and white? 0 or 1
         modelParams {
             sbox 15         ;which sbox to attack
             keySize 8       ;number of key bits to attack

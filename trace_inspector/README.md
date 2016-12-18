@@ -1,4 +1,11 @@
-trace inspector for dpacalc traces. Standalone application.
-Prints the first 4 traces (just to see if everything is ok) and the mean and the variance of ALL the traces (in different files).
-Usage: 
-./traceInspector.out -f filename -b batch_size [-m maxSample]
+    trace inspector inspect dpacalc traces.
+    
+    Produces gnuplot scripts (.gpl files) to show the mean and 
+    the dev standard of the traces, and a .png file with the
+    persistence graph of the traces.
+    
+    It takes as input a config file with the needed parameters.
+    An example can be found in config_example.
+
+    Usage: 
+    ./traceInspector.out configFile

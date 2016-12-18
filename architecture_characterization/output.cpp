@@ -11,6 +11,7 @@ Output::Output(Config& c,Input& input) {
     samplingFreq=c.samplingFreq;
     clockFreq=c.clockFreq;
     grid=c.grid;
+    bw=c.bw;
 }
 
 void Output::writeResults(vector<result*>& results,vector<float**>& finalPearson) {
@@ -97,7 +98,7 @@ void Output::writeResults(vector<result*>& results,vector<float**>& finalPearson
         scriptStream<<"set title\""<<intervals[i].name<<"\";"<<endl;
         scriptStream<<"set xlabel\"Time\" font \"arial,20\";"<<endl;
         scriptStream<<"set ylabel\"Pearson coefficient\" font \"arial,20\";"<<endl;
-        if(intervals[i].bw) scriptStream<<"unset key"<<endl;
+        if(bw) scriptStream<<"unset key"<<endl;
         else scriptStream << "set key outside right;" << endl;
         scriptStream<<"plot";
         //keyspace lines to plot. If there is only one key, prints it in black color
@@ -108,7 +109,7 @@ void Output::writeResults(vector<result*>& results,vector<float**>& finalPearson
         else {
             for ( int k = 0; k < keySpace; k++ ) {
 		scriptStream  << " \"" << datName << "\" u 1:" << k + 2 << " t \"" << this->getKeyAsString ( k ) << "\" with lines";
-                if(intervals[i].bw) {
+                if(bw) {
                     if(k==intervals[i].key) scriptStream<<" linecolor \"black\"";
                     else scriptStream<<" linecolor \"grey\"";
                 }

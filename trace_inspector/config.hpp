@@ -26,7 +26,6 @@ public:
     Config(string configFile);
     void init();
     string filename;
-    int numTraceToPrint;
     int batch,maxSample,startSample;
     bool grid;
     float samplingFreq,clockFreq;    

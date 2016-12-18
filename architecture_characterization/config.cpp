@@ -26,6 +26,7 @@ void Config::init() {
             samplingFreq=pt.get<float>("samplingFreq");
             clockFreq=pt.get<float>("clockFreq");
             grid=pt.get<bool>("displayGrid");
+            bw=pt.get<bool>("bw");
             if(samplingFreq<0 || clockFreq<0) {
                 cout<<"Invalid frequency."<<endl;
                 exit(0);
@@ -45,8 +46,6 @@ void Config::init() {
                 string k=intIt->second.get<string>("key");
                 i.key=strtol(k.c_str(),NULL,16);  
                 i.model=intIt->second.get<string>("model");
-                int bw=intIt->second.get<int>("bw");
-                i.bw=(bw==1 ? true : false);
                 ptree modelParams (intIt->second.get_child("modelParams"));
                 i.keySize=modelParams.get<int>("keySize");
                 i.sbox=modelParams.get<int>("sbox");
