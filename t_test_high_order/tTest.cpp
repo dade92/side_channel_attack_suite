@@ -52,10 +52,20 @@ void startTest(Config& config) {
         exit(0);
     }
     if(input1.numTraces%config.batch!=0) {
-        cout<<"batch size should be a multiple of the number of traces"<<endl;
+        cout<<"Batch size should be a multiple of the number of traces"<<endl;
         exit(0);
     }
-    //temp mean and temp variance for the two traces
+    if(config.maxSample>input1.samplesPerTrace) {
+        cout<<"Wrong max sample"<<endl;
+        exit(0);
+    }
+    /*
+     * temp mean and temp variance for the two traces.
+     * In case of an analysis on some samples only, 
+     * all the possible space is allocated (some values
+     * will remain 0 in that case).
+     */
+    cout<<endl<<"Starting t-test from sample "<<config.startSample<<" to sample "<<config.maxSample<<endl;
     float*mean1=new float[input1.samplesPerTrace];
     float*mean2=new float[input2.samplesPerTrace];
     float*variance1=new float[input1.samplesPerTrace];
@@ -136,11 +146,11 @@ void ttestImpl(Input& input1,Input& input2,Config& config,float* mean1,float* va
     }
     float quantile=computeQuantile(config.alpha);
     //init mean and variance
-    for(int i=0;i<input1.samplesPerTrace;i++) {
+    for(int i=config.startSample;i<config.maxSample;i++) {
 	mean1[i]=0;
 	variance1[i]=0;
     }
-    for(int i=0;i<input2.samplesPerTrace;i++) {
+    for(int i=config.startSample;i<config.maxSample;i++) {
 	mean2[i]=0;
 	variance2[i]=0;
     }        
@@ -151,7 +161,7 @@ void ttestImpl(Input& input1,Input& input2,Config& config,float* mean1,float* va
     first.join();
     second.join();
     //here I have mean and variance for the taus specified (computed in the previous method setupTTest1,setupTTest2)
-    for(int i=0;i<input1.samplesPerTrace;i++) {
+    for(int i=config.startSample;i<config.maxSample;i++) {
 	variance1[i]/=(input1.numTraces-1);
 	variance2[i]/=(input2.numTraces-1);
         //compute t statistic, for each point of the trace
@@ -188,7 +198,8 @@ void setupTTest(Input&input,Config&config,float**trace,float**temp,
             input.readData(trace,plains,config.batch);
             //if and only if it is an higher order test, prepare the traces
             if(config.order>1) {
-                prepareTrace(trace,temp,tau2,tau3,tau4,tau5,config.batch,input.samplesPerTrace,config.order);
+                prepareTrace(trace,temp,tau2,tau3,tau4,tau5,
+                             config.batch,input.samplesPerTrace,config.order);
                 onlineAlgorithmImpl(input,config,temp,mean,variance,i);
             } else
                 onlineAlgorithmImpl(input,config,trace,mean,variance,i);
@@ -200,8 +211,9 @@ void onlineAlgorithmImpl(Input&input,Config&config,
                          float**trace,float*mean,float*variance,int traceNumber) {
 	float delta;
 	float x;
-        int count=traceNumber;
-	for(int i=0;i<input.samplesPerTrace;i++) {
+        int count;
+        //about mean and variance array: only useful samples are modified
+	for(int i=config.startSample;i<config.maxSample;i++) {
                 count=traceNumber;
 		for(int n=0;n<config.batch;n++) {
 			count++;

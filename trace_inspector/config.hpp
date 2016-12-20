@@ -26,7 +26,7 @@ public:
     Config(string configFile);
     void init();
     string filename;
-    int batch,maxSample,startSample;
+    int batch,maxSample,startSample,xtics;
     bool grid;
     float samplingFreq,clockFreq;    
 private:

@@ -162,17 +162,18 @@ void inspectTraces(Config& config,Input& input) {
     outputStatistics << "set output \""<< "mean" <<".png\";" << endl;
     outputStatistics << "set autoscale;" << endl;
     if(grid) {
-        outputStatistics << "set xtics "<< (int)config.samplingFreq/config.clockFreq<< " format \"\";" << endl;
+        if(config.xtics==0)
+            outputStatistics << "set xtics "<< (int)config.samplingFreq/config.clockFreq<< " format \"\";" << endl;
+        else
+            outputStatistics << "set xtics "<<config.xtics<< " font \",20\";" << endl;
         outputStatistics<<"set grid xtics "<<" lt rgb \"grey\" lw 1;"<<endl;
         outputStatistics<<"set grid ytics "<<" lt rgb \"grey\" lw 1;"<<endl;
     }
     else {
-        if(numSamples<=3000)
-            outputStatistics << "set xtics 100 font \",20\";" << endl;
-        else if(numSamples>7000)
-            outputStatistics << "set xtics 1000 font \",20\";" << endl;
-        else 
-            outputStatistics << "set xtics 500 font \",20\";" << endl;
+        if(config.xtics==0)
+            outputStatistics << "set xtics auto font \",20\";" << endl;
+        else
+            outputStatistics << "set xtics "<<config.xtics<<" font \",20\";" << endl;
     }
     outputStatistics << "set ytic auto font \",20\";" << endl;
     outputStatistics << "set xrange ["<<config.startSample<<":"<<config.maxSample<<"];"<<endl;
@@ -191,17 +192,18 @@ void inspectTraces(Config& config,Input& input) {
     outputStatistics << "set output \""<< "standardDev" <<".png\";" << endl;
     outputStatistics << "set autoscale;" << endl;
     if(grid) {
-        outputStatistics << "set xtics "<<(int)config.samplingFreq/config.clockFreq<< " format \"\";" << endl;
+        if(config.xtics==0)
+            outputStatistics << "set xtics "<< (int)config.samplingFreq/config.clockFreq<< " format \"\";" << endl;
+        else
+            outputStatistics << "set xtics "<<config.xtics<< " font \",20\";" << endl;
         outputStatistics<<"set grid xtics "<<" lt rgb \"grey\" lw 1;"<<endl;
         outputStatistics<<"set grid ytics "<<" lt rgb \"grey\" lw 1;"<<endl;
     }
     else {
-        if(numSamples<=3000)
-            outputStatistics << "set xtics 100 font \",20\";" << endl;
-        else if(numSamples>7000)
-            outputStatistics << "set xtics 1000 font \",20\";" << endl;
-        else 
-            outputStatistics << "set xtics 500 font \",20\";" << endl;
+        if(config.xtics==0)
+            outputStatistics << "set xtics auto font \",20\";" << endl;
+        else
+            outputStatistics << "set xtics "<<config.xtics<<" font \",20\";" << endl;
     }
     outputStatistics << "set ytic auto font \",20\";" << endl;
     outputStatistics << "set xrange ["<<config.startSample<<":"<<config.maxSample<<"];"<<endl;

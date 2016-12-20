@@ -33,7 +33,7 @@ public:
                       vector<float**>& totalPearson);
 private:
     string outputDir,filename;
-    int numTraces;
+    int numTraces,xtics;
     int numIntervals,numSteps,step;
     float alpha,samplingFreq,clockFreq;
     bool grid,bw;

@@ -37,7 +37,7 @@ public:
     void init();
     string filename;
     string outputDir;
-    int step;
+    int step,xtics;
     bool grid,bw;
     float alpha,samplingFreq,clockFreq;
     vector<interval> intervals;

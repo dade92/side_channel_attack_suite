@@ -12,6 +12,7 @@ alpha 0.1				;confidence interval of the test
 samplingFreq 500			;sampling frequency of the oscilloscope
 clockFreq 120				;clock frequency of the processor
 displayGrid true			;do you want a grid in the images?
+xtics 100                               ;tics on x axis. 0 means auto
 bw true                                    ;final results in black and white? 0 or 1
 
 ;list of intervals: each interval has a name,contains start sample, end sample,

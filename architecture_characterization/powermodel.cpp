@@ -55,6 +55,9 @@ void PowerModel::generate(uint8_t** plaintext,unsigned**powerMatrix) {
         else if(position.compare("ptx3_4")==0) {
             sbox=8;
             p=12;
+        } else if(position.compare("ptx4_2")==0) {
+            sbox=12;
+            p=4;
         } else if(position.compare("addptx1_2")==0) {
             sbox=0;
             p=4;
@@ -91,15 +94,19 @@ void PowerModel::generate(uint8_t** plaintext,unsigned**powerMatrix) {
             sbox=8;
             p=12;
             opCode=1;
+        } else if(position.compare("xorload1_2")==0) {
+            sbox=0;
+            p=4;
+            opCode=5;
         } else {
             cout<<"Position "<<position<<" not recognized."<<endl
             <<"Maybe you're using an AES position for a known input attack?."<<endl;
             exit(0);
         }
-        if(opCode>0 && powerModel.compare("hd")==0) {
+        /*if(opCode>0 && powerModel.compare("hd")==0) {
             cout<<"Requested hamming distance of the result of an operation."<<endl;
             exit(0);
-        }
+        }*/
     }
     //if the model is the hamming weight
     if(powerModel.compare("hw")==0) {
@@ -134,7 +141,7 @@ void PowerModel::generate(uint8_t** plaintext,unsigned**powerMatrix) {
             for(k=0;k<keySpace;k++) {
                 ptx=ptx2=0;
                 //in case of an attack, the second plaintext is not used
-                computeUsedPlaintext(ptx,ptx2,plaintext[s]+sbox,plaintext[s]+p);
+                computeUsedPlaintext(ptx,ptx2,plaintext[s]+sbox,plaintext[s]+p,opCode);
                 if(p==0 || p==4 || p==8 || p==12)   //p==0 only for completness,no sense here
                     powerMatrix[s][k]=hammingDistance(ptx,ptx2);
                 else if(p==1)
@@ -184,20 +191,14 @@ void PowerModel::generate(uint8_t** plaintext,unsigned**powerMatrix) {
 //the opCode is passed in case the user requires the hw of sums of values
 void PowerModel::computeUsedPlaintext(uint32_t& intermediate,uint32_t& intermediate2,
                                       uint8_t*plaintext,uint8_t*plaintext2,int opCode) {
-    if(opCode==0) {
-        //fill the integer buffer with the correct numbers
-        for(int w=0;w<intSize/8;w++) {
-            intermediate<<=8;
-            intermediate|=plaintext[w];
-        }
-    } else {
-        //fill the integer buffer with the correct numbers
-        for(int w=0;w<intSize/8;w++) {
-            intermediate<<=8;
-            intermediate2<<=8;
-            intermediate|=plaintext[w];
-            intermediate2|=plaintext2[w];
-        }
+    //fill the integer buffer with the correct numbers
+    for(int w=0;w<intSize/8;w++) {
+        intermediate<<=8;
+        intermediate2<<=8;
+        intermediate|=plaintext[w];
+        intermediate2|=plaintext2[w];
+    }
+    if(opCode!=0) {
         switch(opCode) {
             case 1:
                 intermediate+=intermediate2;
@@ -210,6 +211,9 @@ void PowerModel::computeUsedPlaintext(uint32_t& intermediate,uint32_t& intermedi
                 break;
             case 4:
                 intermediate*=intermediate2;
+                break;
+            case 5:
+                intermediate2=intermediate^intermediate2;
                 break;
             default:
                 cout<<"Operation not recognized."<<endl;

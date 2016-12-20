@@ -28,7 +28,7 @@ public:
     string filename;
     string filename2;
     int batch,maxSample,startSample,order,
-        maxTau2,maxTau3,maxTau4,maxTau5;
+        maxTau2,maxTau3,maxTau4,maxTau5,xtics;
     bool grid;
     float samplingFreq,clockFreq,alpha;
 private:

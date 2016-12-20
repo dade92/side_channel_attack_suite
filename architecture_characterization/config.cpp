@@ -26,6 +26,7 @@ void Config::init() {
             samplingFreq=pt.get<float>("samplingFreq");
             clockFreq=pt.get<float>("clockFreq");
             grid=pt.get<bool>("displayGrid");
+            xtics=pt.get<int>("xtics");
             bw=pt.get<bool>("bw");
             if(samplingFreq<0 || clockFreq<0) {
                 cout<<"Invalid frequency."<<endl;

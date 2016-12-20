@@ -12,10 +12,10 @@ Output::Output(Config& c,Input& input) {
     clockFreq=c.clockFreq;
     grid=c.grid;
     bw=c.bw;
+    xtics=c.xtics;
 }
 
 void Output::writeResults(vector<result*>& results,vector<float**>& finalPearson) {
-    int tics=(int)samplingFreq/clockFreq;
     ofstream logStream(outputDir+"/"+"logFile",ofstream::out);
     //write some useful information about the .dat file
     logStream<<"Log of the file: "<<filename<<":"<<endl;
@@ -24,9 +24,6 @@ void Output::writeResults(vector<result*>& results,vector<float**>& finalPearson
     "interval" % "bestKeyFound!=correct" % "bestPearson!=correct" % "correctKey" % 
     "PearsonCorrect" % "relevant?" % "found?" % "model" % "position";
     logStream<<endl;
-    /*logStream<<"interval"<<setw(28)<<"best key found!=correct"<<setw(25)<<setw(25)<<"best Pearson!=correct"
-        <<setw(19)<<"correct key"<<setw(16)<<"Pearson correct"<<setw(10)<<"relevant?"
-        <<setw(8)<<"found?"<<setw(10)<<"model"<<setw(10)<<"position"<<endl;*/
     //for each interval
     for(int i=0;i<numIntervals;i++) {
         int keySpace=pow(2,intervals[i].keySize);
@@ -88,12 +85,19 @@ void Output::writeResults(vector<result*>& results,vector<float**>& finalPearson
         scriptStream<<"set output \""<<intervals[i].name<<".png\";"<<endl;
         scriptStream<<"set autoscale;"<<endl;
         if(grid) {
-            scriptStream << "set xtics "<<(int)samplingFreq/clockFreq<<" font \",20\" " <<endl;
+            if(xtics==0)
+                scriptStream << "set xtics "<<(int)samplingFreq/clockFreq<<" font \",20\" " <<endl;
+            else
+                scriptStream << "set xtics "<<xtics<<" font \",20\" " <<endl;
             scriptStream<<"set grid xtics "<<" lt 0 lc  rgb \"grey\" lw 1;"<<endl;
             scriptStream<<"set grid ytics "<<" lt 0 lc  rgb \"grey\" lw 1;"<<endl;
         }
-        else
-            scriptStream << "set xtics font \"arial,20\" " <<endl;
+        else {
+            if(xtics==0)
+                scriptStream << "set xtics auto font \"arial,20\" " <<endl;
+            else
+                scriptStream << "set xtics "<<xtics<<" font \"arial,20\" " <<endl;
+        }
         scriptStream << "set ytics font \"arial,20\" " <<endl;
         scriptStream<<"set title\""<<intervals[i].name<<"\";"<<endl;
         scriptStream<<"set xlabel\"Time\" font \"arial,20\";"<<endl;

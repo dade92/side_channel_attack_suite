@@ -28,10 +28,11 @@ void Config::init() {
             if(samplingFreq<0 || clockFreq<0) {
                 cout<<"Invalid frequency."<<endl;
                 exit(0);
-            }  
-            grid=pt.get<bool>("displayGrid");
+            }
             startSample=pt.get<int>("startSample");
             maxSample=pt.get<int>("endSample");
+            grid=pt.get<bool>("displayGrid");
+            xtics=pt.get<int>("xtics");
             if(startSample<0 || startSample>maxSample) {
                 cout<<"Invalid start/ending sample"<<endl;
                 exit(0);

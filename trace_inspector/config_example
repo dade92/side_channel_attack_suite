@@ -1,7 +1,8 @@
-filename /home/davide/Documenti/tesi/data/benchmark_mov_caches.dat    ;filename
-batch 500                                                      ;number of traces to analyze at each iteration
+filename /home/davide/Documenti/tesi/data/benchmark_alu_nocaches.dat    ;filename
+batch 1000                                                      ;number of traces to analyze at each iteration
 samplingFreq 500                                                ;sampling frequency of the oscilloscope
 clockFreq 120                                                   ;frequency of the processor
-displayGrid false                                               ;true if you want a grid that shows the clock
 startSample 0                                                   ;starting sample
-endSample 5000                                                  ;ending sample
+endSample 14000                                                  ;ending sample
+displayGrid true                                               ;true if you want a grid that shows the clock
+xtics   500                                                    ;distance in time between x labels. 0 means auto

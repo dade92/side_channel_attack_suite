@@ -15,7 +15,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>    
 
-    Dependencies: boost c++ libraries, libpng, gnuplot.
+    Dependencies: boost c++ libraries, libpng.
 
     1) Architectural analysis tool performs side channel attacks on a set of traces in dpacalc format. 
     It can also perform known input analysis, useful for architectural characterization.

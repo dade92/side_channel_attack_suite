@@ -35,11 +35,8 @@ void Config::init() {
                 cout<<"Invalid frequency."<<endl;
                 exit(0);
             }
-            grid=pt.get<bool>("displayGrid");            
-            if(batch<0) {
-                cout<<"Invalid batch size."<<endl;
-                exit(0);
-            }
+            grid=pt.get<bool>("displayGrid");
+            xtics=pt.get<int>("xtics");
             startSample=pt.get<int>("startSample");
             maxSample=pt.get<int>("endSample");
             if(startSample<0 || startSample>maxSample) {

@@ -5,12 +5,12 @@ Output::Output(Config& c,Input& input1,Input& input2) {
     startSample=c.startSample;
     endSample=c.maxSample;
     grid=c.grid;
+    xtics=c.xtics;
 }
 
 void Output::writeResults(std::vector<float *>& tStatistics,std::vector<float *>& pStatistics) {
     string datName="tvalue";
     string scriptName="tvalue";
-
     std::ofstream outputScript,outputDat,outputPScript,outputPDat;
     
     outputScript.open(scriptName+".gpl");
@@ -23,7 +23,6 @@ void Output::writeResults(std::vector<float *>& tStatistics,std::vector<float *>
         cerr << "Please provide a correct output dat filename" << endl;
         exit(0);
     }
-    //for p value data, I give standard names
     outputPDat.open("pvalue.dat");
     if(outputScript.fail()) {
         cerr << "Please provide a correct output script filename" << endl;
@@ -47,7 +46,10 @@ void Output::writeResults(std::vector<float *>& tStatistics,std::vector<float *>
     outputScript << "set term png size 2000,1280;" << endl;
     outputScript << "set output \""<< "tvalue" << "_order"<<order<<".png\";" << endl;
     outputScript << "set autoscale;" << endl;
-    outputScript << "set xtic auto font \",20\";" << endl;
+    if(xtics==0)
+        outputScript << "set xtic auto font \",20\";" << endl;
+    else
+        outputScript << "set xtic "<<xtics<<" font \",20\";" << endl;
     outputScript << "set ytic auto font \",20\";" << endl;
     outputScript << "set xrange [" << startSample << ":" << endSample<< "];" << endl;
     outputScript << "unset key;" << endl;
@@ -57,7 +59,10 @@ void Output::writeResults(std::vector<float *>& tStatistics,std::vector<float *>
     outputPScript << "set term png size 2000,1280;" << endl;
     outputPScript << "set output \""<< "pvalue" << "_order"<<order<<".png\";" << endl;
     outputPScript << "set autoscale;" << endl;
-    outputPScript << "set xtic auto font \",20\";" << endl;
+    if(xtics==0)
+        outputScript << "set xtic auto font \",20\";" << endl;
+    else
+        outputScript << "set xtic "<<xtics<<" font \",20\";" << endl;
     outputPScript << "set ytic auto font \",20\";" << endl;
     outputPScript << "set xrange [" << startSample << ":" << endSample << "];" << endl;
     outputPScript << "unset key;" << endl;
