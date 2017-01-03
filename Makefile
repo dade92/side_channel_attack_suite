@@ -9,5 +9,8 @@ $(SUBDIRS):
 clean:
 	for dir in $(SUBDIRS); do \
 		$(MAKE) -C $$dir clean; \
+	done
+clean_images:
+	for dir in $(SUBDIRS); do \
 		$(MAKE) -C $$dir clean_images; \
 	done
