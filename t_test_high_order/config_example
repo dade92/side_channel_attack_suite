@@ -5,8 +5,8 @@ alpha 0.05                                                       ;confidence int
 samplingFreq 500                                                ;sampling frequency of the oscilloscope
 clockFreq 120                                                   ;frequency of the processor
 displayGrid false                                               ;true if you want a grid that shows the clock
-xtics 100                                                        ;tics on x axis
+xtics 0                                                        ;tics on x axis
 startSample 0                                                  ;starting sample
-endSample 5000                                                  ;ending sample
+endSample 500                                                  ;ending sample. 0 means to the end
 order 1                                                         ;order of the test
 maxTau2 50                                                      ;max tau to consider for order 2

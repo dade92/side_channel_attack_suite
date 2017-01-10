@@ -47,6 +47,7 @@ void startTest(Config& config) {
     Input input2(config.filename2);
     input1.readHeader();
     input2.readHeader();
+    int maxSample=(config.maxSample!=0 ? config.maxSample : input1.samplesPerTrace);
     if(input1.samplesPerTrace!=input2.samplesPerTrace) {
         cout<<"The traces should have the same sample number"<<endl;
         exit(0);
@@ -55,7 +56,7 @@ void startTest(Config& config) {
         cout<<"Batch size should be a multiple of the number of traces"<<endl;
         exit(0);
     }
-    if(config.maxSample>input1.samplesPerTrace) {
+    if(maxSample>input1.samplesPerTrace) {
         cout<<"Wrong max sample"<<endl;
         exit(0);
     }
@@ -65,7 +66,7 @@ void startTest(Config& config) {
      * all the possible space is allocated (some values
      * will remain 0 in that case).
      */
-    cout<<endl<<"Starting t-test from sample "<<config.startSample<<" to sample "<<config.maxSample<<endl;
+    cout<<endl<<"Starting t-test from sample "<<config.startSample<<" to sample "<<maxSample<<endl;
     float*mean1=new float[input1.samplesPerTrace];
     float*mean2=new float[input2.samplesPerTrace];
     float*variance1=new float[input1.samplesPerTrace];
@@ -135,6 +136,7 @@ void ttestImpl(Input& input1,Input& input2,Config& config,float* mean1,float* va
     float*p=new float[input1.samplesPerTrace];
     float** temp1;
     float** temp2;
+    int maxSample=(config.maxSample!=0 ? config.maxSample : input1.samplesPerTrace);
     //if the test is of higher order, then allocate space in the heap
     if(config.order>1) {
         temp1=new float*[config.batch];
@@ -146,14 +148,12 @@ void ttestImpl(Input& input1,Input& input2,Config& config,float* mean1,float* va
     }
     float quantile=computeQuantile(config.alpha);
     //init mean and variance
-    for(int i=config.startSample;i<config.maxSample;i++) {
+    for(int i=config.startSample;i<maxSample;i++) {
 	mean1[i]=0;
 	variance1[i]=0;
-    }
-    for(int i=config.startSample;i<config.maxSample;i++) {
-	mean2[i]=0;
+        mean2[i]=0;
 	variance2[i]=0;
-    }        
+    }
     std::thread first(setupTTest,std::ref(input1),std::ref(config),trace1,temp1,
                 mean1,variance1,tau2,tau3,tau4,tau5);
     std::thread second(setupTTest,std::ref(input2),std::ref(config),trace2,temp2,
@@ -161,7 +161,7 @@ void ttestImpl(Input& input1,Input& input2,Config& config,float* mean1,float* va
     first.join();
     second.join();
     //here I have mean and variance for the taus specified (computed in the previous method setupTTest1,setupTTest2)
-    for(int i=config.startSample;i<config.maxSample;i++) {
+    for(int i=config.startSample;i<maxSample;i++) {
 	variance1[i]/=(input1.numTraces-1);
 	variance2[i]/=(input2.numTraces-1);
         //compute t statistic, for each point of the trace
@@ -174,7 +174,7 @@ void ttestImpl(Input& input1,Input& input2,Config& config,float* mean1,float* va
             <<tau2<<" "<<tau3<<" "<<tau4<<" "<<tau5<<endl;
     } else {
 	//confident to accept=(1-min p value)??
-	cout<<"Null hypothesis can be accepted with a confident of "<<endl;
+	cout<<"Null hypothesis can be accepted with a confident of "<<config.alpha<<endl;
     }
     //stores the t-values corresponding to the tau specified (there can be a lot of statistics, one for each tau)
     float *tValues=new float[input1.samplesPerTrace];
@@ -212,8 +212,9 @@ void onlineAlgorithmImpl(Input&input,Config&config,
 	float delta;
 	float x;
         int count;
+        int maxSample=(config.maxSample!=0 ? config.maxSample : input.samplesPerTrace);
         //about mean and variance array: only useful samples are modified
-	for(int i=config.startSample;i<config.maxSample;i++) {
+	for(int i=config.startSample;i<maxSample;i++) {
                 count=traceNumber;
 		for(int n=0;n<config.batch;n++) {
 			count++;

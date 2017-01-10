@@ -33,7 +33,7 @@ void Config::init() {
             maxSample=pt.get<int>("endSample");
             grid=pt.get<bool>("displayGrid");
             xtics=pt.get<int>("xtics");
-            if(startSample<0 || startSample>maxSample) {
+            if(startSample<0 || startSample>maxSample && maxSample!=0) {
                 cout<<"Invalid start/ending sample"<<endl;
                 exit(0);
             }

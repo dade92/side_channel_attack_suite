@@ -3,6 +3,6 @@ batch 500                                                      ;number of traces
 samplingFreq 500                                                ;sampling frequency of the oscilloscope
 clockFreq 120                                                   ;frequency of the processor
 startSample 0                                                   ;starting sample
-endSample 1000                                                   ;ending sample
+endSample 2000                                                   ;ending sample. 0 means to the end
 displayGrid false                                               ;true if you want a grid that shows the clock
-xtics   100                                                    ;distance in time between x labels. 0 means auto
+xtics   0                                                    ;distance in time between x labels. 0 means auto

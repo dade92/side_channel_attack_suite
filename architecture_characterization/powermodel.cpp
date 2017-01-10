@@ -55,7 +55,12 @@ void PowerModel::generate(uint8_t** plaintext,unsigned**powerMatrix) {
         else if(position.compare("ptx3_4")==0) {
             sbox=8;
             p=12;
-        } else if(position.compare("ptx4_2")==0) {
+        }
+        else if(position.compare("ptx4_1")==0) {
+            sbox=12;
+            p=0;
+        }
+        else if(position.compare("ptx4_2")==0) {
             sbox=12;
             p=4;
         } else if(position.compare("addptx1_2")==0) {
@@ -98,7 +103,21 @@ void PowerModel::generate(uint8_t** plaintext,unsigned**powerMatrix) {
             sbox=0;
             p=4;
             opCode=5;
-        } else {
+        } else if(position.compare("addall")==0) {
+            uint32_t ptx3,ptx4;
+            for(s=0;s<step;s++) {
+            //for each key hypothesis
+            for(k=0;k<keySpace;k++) {
+                ptx=ptx2=0;
+                //in case of an attack, the second input is not used
+                computeUsedPlaintext(ptx,ptx2,plaintext[s]+0,plaintext[s]+4,1);
+                computeUsedPlaintext(ptx3,ptx4,plaintext[s]+8,plaintext[s]+12,1);
+                //if the intermediate size is 8bit, use the single bytes
+                //model with known key
+                powerMatrix[s][k]=hammingDistance(ptx,ptx3);               
+            }
+        }
+        }else {
             cout<<"Position "<<position<<" not recognized."<<endl
             <<"Maybe you're using an AES position for a known input attack?."<<endl;
             exit(0);
@@ -188,7 +207,7 @@ void PowerModel::generate(uint8_t** plaintext,unsigned**powerMatrix) {
         exit(0);
     }
 }
-//the opCode is passed in case the user requires the hw of sums of values
+//the opCode is passed in case the user requires the hw of some results
 void PowerModel::computeUsedPlaintext(uint32_t& intermediate,uint32_t& intermediate2,
                                       uint8_t*plaintext,uint8_t*plaintext2,int opCode) {
     //fill the integer buffer with the correct numbers

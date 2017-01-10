@@ -96,7 +96,8 @@ void inspectTraces(Config& config,Input& input) {
     uint8_t** plain=new uint8_t*[step];
     bool grid=config.grid;
     int numTraces=input.numTraces;
-    int numSamples=config.maxSample-config.startSample;
+    int maxSample=(config.maxSample!=0 ? config.maxSample : input.samplesPerTrace);
+    int numSamples=maxSample-config.startSample;
     float* mean=new float[numSamples];
     float* var=new float[numSamples];
     uint16_t index;
@@ -122,7 +123,7 @@ void inspectTraces(Config& config,Input& input) {
 	var[n]=0;
     }
     float x;
-    cout<<"computing mean from sample "<<config.startSample<<" to sample "<<config.maxSample<<endl;
+    cout<<"computing mean from sample "<<config.startSample<<" to sample "<<maxSample<<endl;
     //I know the total number of samples for each instant in time: it is numTraces
     int n=0;
     while(n<=numTraces) {
@@ -176,7 +177,7 @@ void inspectTraces(Config& config,Input& input) {
             outputStatistics << "set xtics "<<config.xtics<<" font \",20\";" << endl;
     }
     outputStatistics << "set ytic auto font \",20\";" << endl;
-    outputStatistics << "set xrange ["<<config.startSample<<":"<<config.maxSample<<"];"<<endl;
+    outputStatistics << "set xrange ["<<config.startSample<<":"<<maxSample<<"];"<<endl;
     outputStatistics << "unset key;" << endl;
     outputStatistics << "set xlabel \"Time\" font \",20\";" << endl;
     outputStatistics << "set ylabel \"Mean\" font \",20\";" << endl;
@@ -206,7 +207,7 @@ void inspectTraces(Config& config,Input& input) {
             outputStatistics << "set xtics "<<config.xtics<<" font \",20\";" << endl;
     }
     outputStatistics << "set ytic auto font \",20\";" << endl;
-    outputStatistics << "set xrange ["<<config.startSample<<":"<<config.maxSample<<"];"<<endl;
+    outputStatistics << "set xrange ["<<config.startSample<<":"<<maxSample<<"];"<<endl;
     outputStatistics << "unset key;" << endl;
     outputStatistics << "set xlabel \"Time\" font \",20\";" << endl;
     outputStatistics << "set ylabel \"standard deviation\" font \",20\";" << endl;

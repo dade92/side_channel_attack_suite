@@ -39,7 +39,7 @@ void Config::init() {
             xtics=pt.get<int>("xtics");
             startSample=pt.get<int>("startSample");
             maxSample=pt.get<int>("endSample");
-            if(startSample<0 || startSample>maxSample) {
+            if(startSample<0 || startSample>maxSample && maxSample!=0) {
                 cout<<"Invalid start/ending sample."<<endl;
                 exit(0);
             }

@@ -3,7 +3,7 @@ Output::Output(Config& c,Input& input1,Input& input2) {
     order=c.order;
     samplesPerTrace=input1.samplesPerTrace;
     startSample=c.startSample;
-    endSample=c.maxSample;
+    endSample=(c.maxSample!=0 ? c.maxSample : input1.samplesPerTrace);
     grid=c.grid;
     xtics=c.xtics;
 }
