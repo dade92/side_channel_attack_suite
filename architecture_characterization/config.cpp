@@ -31,6 +31,7 @@ void Config::init() {
             unitString=pt.get<string>("unit");
             figureWidth=pt.get<int>("figureWidth");
             figureHeight=pt.get<int>("figureHeight");
+            scale=pt.get<float>("scale");
             if(figureWidth<=0 || figureHeight<=0) {
                 cout<<"Invalid output size"<<endl;
                 exit(0);

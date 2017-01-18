@@ -12,7 +12,7 @@ PowerModel::PowerModel(interval& it,Config& c) {
 
 void PowerModel::generate(uint8_t** plaintext,unsigned**powerMatrix) {
     uint32_t ptx,ptx2;
-    int opCode=0;
+    Operation opCode=none;
     //p is an helper variable that behaves as an offset for
     //the second plaintext (if present)
     int p,s;
@@ -66,47 +66,51 @@ void PowerModel::generate(uint8_t** plaintext,unsigned**powerMatrix) {
         } else if(position.compare("addptx1_2")==0) {
             sbox=0;
             p=4;
-            opCode=1;
+            opCode=add;
         } else if(position.compare("xorptx1_2")==0) {
             sbox=0;
             p=4;
-            opCode=2;
+            opCode=bitwise_xor;
         } else if(position.compare("andptx1_2")==0) {
             sbox=0;
             p=4;
-            opCode=3;
+            opCode=bitwise_and;
         } else if(position.compare("mulptx1_2")==0) {
             sbox=0;
             p=4;
-            opCode=4;
+            opCode=mul;
         } else if(position.compare("shiftptx1_2")==0) {
             sbox=0;
             p=4;
-            opCode=6;
-        }else if(position.compare("addptx1_3")==0) {
+            opCode=shift;
+        } else if(position.compare("shiftptx2_3")==0) {
+            sbox=4;
+            p=8;
+            opCode=shift;
+        } else if(position.compare("addptx1_3")==0) {
             sbox=0;
             p=8;
-            opCode=1;
+            opCode=add;
         } else if(position.compare("addptx1_4")==0) {
             sbox=0;
             p=12;
-            opCode=1;
+            opCode=add;
         } else if(position.compare("addptx2_3")==0) {
             sbox=4;
             p=8;
-            opCode=1;
+            opCode=add;
         } else if(position.compare("addptx2_4")==0) {
             sbox=4;
             p=12;
-            opCode=1;
+            opCode=add;
         } else if(position.compare("addptx3_4")==0) {
             sbox=8;
             p=12;
-            opCode=1;
+            opCode=add;
         } else if(position.compare("xorload1_2")==0) {
             sbox=0;
             p=4;
-            opCode=5;
+            opCode=value_and_xor;
         } else if(position.compare("addall")==0) {
             uint32_t ptx3,ptx4;
             for(s=0;s<step;s++) {
@@ -114,8 +118,8 @@ void PowerModel::generate(uint8_t** plaintext,unsigned**powerMatrix) {
                 for(k=0;k<keySpace;k++) {
                     ptx=ptx2=0;
                     //in case of an attack, the second input is not used
-                    computeUsedPlaintext(ptx,ptx2,plaintext[s]+0,plaintext[s]+4,1);
-                    computeUsedPlaintext(ptx3,ptx4,plaintext[s]+8,plaintext[s]+12,1);
+                    computeUsedPlaintext(ptx,ptx2,plaintext[s]+0,plaintext[s]+4,add);
+                    computeUsedPlaintext(ptx3,ptx4,plaintext[s]+8,plaintext[s]+12,add);
                     //if the intermediate size is 8bit, use the single bytes
                     //model with known key
                     powerMatrix[s][k]=hammingDistance(ptx,ptx3);               
@@ -186,14 +190,14 @@ void PowerModel::generate(uint8_t** plaintext,unsigned**powerMatrix) {
                 ptx=ptx2=ptx3=ptx4=ptx5=ptx6=0;
                 //if ptx1_3
                 if(p==8) {
-                    computeUsedPlaintext(ptx,ptx2,plaintext[s],plaintext[s]+4);
-                    computeUsedPlaintext(ptx3,ptx4,plaintext[s]+4,plaintext[s]+8);
+                    computeUsedPlaintext(ptx,ptx2,plaintext[s],plaintext[s]+4,none);
+                    computeUsedPlaintext(ptx3,ptx4,plaintext[s]+4,plaintext[s]+8,none);
                 } 
                 //else if ptx1_4
                 else if(p==12) {
-                    computeUsedPlaintext(ptx,ptx2,plaintext[s],plaintext[s]+4);
-                    computeUsedPlaintext(ptx3,ptx4,plaintext[s]+4,plaintext[s]+8);
-                    computeUsedPlaintext(ptx5,ptx6,plaintext[s]+8,plaintext[s]+12);
+                    computeUsedPlaintext(ptx,ptx2,plaintext[s],plaintext[s]+4,none);
+                    computeUsedPlaintext(ptx3,ptx4,plaintext[s]+4,plaintext[s]+8,none);
+                    computeUsedPlaintext(ptx5,ptx6,plaintext[s]+8,plaintext[s]+12,none);
                 }
                 else {
                     cout<<"Using an hamming distance sum model: as a position use ptx1_3"
@@ -214,7 +218,7 @@ void PowerModel::generate(uint8_t** plaintext,unsigned**powerMatrix) {
 }
 //the opCode is passed in case the user requires the hw of some results
 void PowerModel::computeUsedPlaintext(uint32_t& intermediate,uint32_t& intermediate2,
-                                      uint8_t*plaintext,uint8_t*plaintext2,int opCode) {
+                                      uint8_t*plaintext,uint8_t*plaintext2,Operation opCode) {
     //fill the integer buffer with the correct numbers
     for(int w=0;w<intSize/8;w++) {
         intermediate<<=8;
@@ -224,22 +228,22 @@ void PowerModel::computeUsedPlaintext(uint32_t& intermediate,uint32_t& intermedi
     }
     if(opCode!=0) {
         switch(opCode) {
-            case 1:
+            case add:
                 intermediate+=intermediate2;
                 break;
-            case 2:
+            case bitwise_xor:
                 intermediate^=intermediate2;
                 break;
-            case 3:
+            case bitwise_and:
                 intermediate&=intermediate2;
                 break;
-            case 4:
+            case mul:
                 intermediate*=intermediate2;
                 break;
-            case 5:
+            case value_and_xor:
                 intermediate2=intermediate^intermediate2;
                 break;
-            case 6:
+            case shift:
                 intermediate<<=3;
                 intermediate2<<=3;
                 break;
@@ -247,16 +251,6 @@ void PowerModel::computeUsedPlaintext(uint32_t& intermediate,uint32_t& intermedi
                 cout<<"Operation not recognized."<<endl;
                 exit(0);
         }
-    }
-}
-void PowerModel::computeUsedPlaintext(uint32_t&intermediate,uint32_t&intermediate2,
-                                      uint8_t*plaintext1,uint8_t* plaintext2) {
-    //fill the integer buffer with the correct numbers
-    for(int w=0;w<intSize/8;w++) {
-        intermediate<<=8;
-        intermediate2<<=8;
-        intermediate|=plaintext1[w];
-        intermediate2|=plaintext2[w];
     }
 }
 

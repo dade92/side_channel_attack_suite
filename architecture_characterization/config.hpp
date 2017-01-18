@@ -34,8 +34,8 @@ enum Unit {
     samples,
     seconds
 };
+
 class Config {
-    
 public:
     Config(string configFile);
     void init();
@@ -44,7 +44,7 @@ public:
     Unit unit;
     int step,xtics,figureWidth,figureHeight;
     bool grid,bw;
-    float alpha,samplingFreq,clockFreq;
+    float alpha,samplingFreq,clockFreq,scale;
     vector<interval> intervals;
     
 private:

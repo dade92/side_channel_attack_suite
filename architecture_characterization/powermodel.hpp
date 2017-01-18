@@ -42,6 +42,16 @@ const uint8_t SBOX[256] = {
     0x8c, 0xa1, 0x89, 0x0d, 0xbf, 0xe6, 0x42, 0x68,
     0x41, 0x99, 0x2d, 0x0f, 0xb0, 0x54, 0xbb, 0x16 };
     
+enum Operation {
+    none,
+    add,
+    bitwise_xor,
+    bitwise_and,
+    mul,
+    value_and_xor,
+    shift
+};
+    
 /**
  * class that generate the power
  * predictions taking as input the
@@ -57,7 +67,6 @@ private:
     int sbox,step,keySize,keySpace,intSize,key;
     unsigned hammingWeight(uint32_t intermediate);
     unsigned hammingDistance(uint32_t intermediate1,uint32_t intermediate2);
-    void computeUsedPlaintext(uint32_t&,uint32_t&,uint8_t*,uint8_t*);
-    void computeUsedPlaintext(uint32_t&,uint32_t&,uint8_t*,uint8_t*,int);
+    void computeUsedPlaintext(uint32_t&,uint32_t&,uint8_t*,uint8_t*,Operation);
 };
 #endif

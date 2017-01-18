@@ -34,6 +34,6 @@
     There is a Makefile that will compile everything in this directory. Just type Make in the terminal.
     
     Git will ignore all .out,.o,.dat,files, all the directories called "output" or "configuration" 
-    and all the images and gnuplot scripts. So it is suggested to generate binary executable with the 
+    and all the images (.png and .svg) and gnuplot scripts (.gpl files). So it is suggested to generate binary executable with the 
     extension .out, and to create directories with the aforementioned name if you don't want to track
     something.

@@ -16,6 +16,7 @@ Output::Output(Config& c,Input& input) {
     unit=c.unit;
     figureWidth=c.figureWidth;
     figureHeight=c.figureHeight;
+    scale=c.scale;
 }
 
 void Output::writeResults(vector<result*>& results,vector<float**>& finalPearson) {
@@ -23,9 +24,9 @@ void Output::writeResults(vector<result*>& results,vector<float**>& finalPearson
     //write some useful information about the .dat file
     logStream<<"Log of the file: "<<filename<<":"<<endl;
     logStream<<"numTraces: "<<numTraces<<endl<<endl;
-    logStream<<boost::format("%-32s %-25s %-25s %-12s %-15s %-10s %-7s %-8s %-10s\n") % 
+    logStream<<boost::format("%-32s %-25s %-25s %-12s %-15s %-10s %-7s %-8s %-10s %-10s\n") % 
     "interval" % "bestKeyFound!=correct" % "bestPearson!=correct" % "correctKey" % 
-    "PearsonCorrect" % "relevant?" % "found?" % "model" % "position";
+    "PearsonCorrect" % "relevant?" % "found?" % "model" % "position" % "ic width";
     logStream<<endl;
     //for each interval
     for(int i=0;i<numIntervals;i++) {
@@ -86,7 +87,10 @@ void Output::writeResults(vector<result*>& results,vector<float**>& finalPearson
         //write the gnuplot script file
         scriptStream<<endl<<"set term png size "<<figureWidth<<", "<<figureHeight<<endl;
         scriptStream<<"set output \""<<intervals[i].name<<".png\";"<<endl;
-        scriptStream<<"set autoscale;"<<endl;
+        if(scale==0)
+            scriptStream<<"set autoscale;"<<endl;
+        else
+            scriptStream<<"set yrange [0: "<<scale<<"];"<<endl;
         scriptStream<<"set lmargin 10;set rmargin 10;"<<endl;
         if(grid) {
             if(xtics==0) {
@@ -175,12 +179,12 @@ void Output::writeResults(vector<result*>& results,vector<float**>& finalPearson
         //write the log line for this interval
         // interval name,best key found,pearson of the best,correct key,Pearson correct,statistically relevant
         string name=intervals[i].name+"["+to_string(intervals[i].start)+":"+to_string(intervals[i].end)+"]:";
-        logStream<<boost::format("%-35s %-25s %-25.5f %-10s %-15.5f %-10s %-8s %-8s %-10s\n") % name %
+        logStream<<boost::format("%-35s %-25s %-25.5f %-10s %-15.5f %-10s %-8s %-8s %-10s %-10s\n") % name %
         getKeyAsString(results[i][numSteps-1].bestKey) % results[i][numSteps-1].pearson %
         getKeyAsString(intervals[i].key) % results[i][numSteps-1].pearsonCorrect %
         (cond1 || cond2 ? "YES" : "NO") % 
         (results[i][numSteps-1].pearsonCorrect>results[i][numSteps-1].pearson ? "YES" : "NO") %
-        intervals[i].model % intervals[i].position;
+        intervals[i].model % intervals[i].position % results[i][numSteps-1].ic;
         //verbose..
         cout<<"You can find in the directory \""<<outputDir<<"\" the gnuplot scripts respectively with names:\n"
             <<"\""<<confidenceScriptName<<"\" and \""<<scriptName<<"\".\nEvery script produces a .png file with the"
