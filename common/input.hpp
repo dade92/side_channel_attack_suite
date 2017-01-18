@@ -32,7 +32,7 @@ public:
     char plainLength;
 private:
     FILE* file;
-    long fileSize;
+    long long fileSize;
     int getTraceOffset(int traceIndex);
     int getPlainOffset(int plainIndex);
 };

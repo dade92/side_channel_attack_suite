@@ -30,14 +30,19 @@ typedef struct {
         int intSize;
         string position;
 } interval;
+enum Unit {
+    samples,
+    seconds
+};
 class Config {
     
 public:
     Config(string configFile);
     void init();
     string filename;
-    string outputDir;
-    int step,xtics;
+    string outputDir,unitString;
+    Unit unit;
+    int step,xtics,figureWidth,figureHeight;
     bool grid,bw;
     float alpha,samplingFreq,clockFreq;
     vector<interval> intervals;

@@ -13,6 +13,9 @@ Output::Output(Config& c,Input& input) {
     grid=c.grid;
     bw=c.bw;
     xtics=c.xtics;
+    unit=c.unit;
+    figureWidth=c.figureWidth;
+    figureHeight=c.figureHeight;
 }
 
 void Output::writeResults(vector<result*>& results,vector<float**>& finalPearson) {
@@ -55,7 +58,7 @@ void Output::writeResults(vector<result*>& results,vector<float**>& finalPearson
             count++;
         }    
         //write the gnuplot confidence script, for each interval
-        confidenceScriptStream<<"set term png size 2000,1280;"<<endl;
+        confidenceScriptStream<<"set term png size "<<figureWidth<<", "<<figureHeight<<endl;
         confidenceScriptStream<<"set output \"confidence"<<intervals[i].name<<".png\";"<<endl;
         confidenceScriptStream<<"set autoscale;"<<endl;
         confidenceScriptStream<<"unset key"<<endl;
@@ -81,26 +84,43 @@ void Output::writeResults(vector<result*>& results,vector<float**>& finalPearson
         
         
         //write the gnuplot script file
-        scriptStream<<"set term png size 2000,1280;"<<endl;
+        scriptStream<<endl<<"set term png size "<<figureWidth<<", "<<figureHeight<<endl;
         scriptStream<<"set output \""<<intervals[i].name<<".png\";"<<endl;
         scriptStream<<"set autoscale;"<<endl;
+        scriptStream<<"set lmargin 10;set rmargin 10;"<<endl;
         if(grid) {
-            if(xtics==0)
-                scriptStream << "set xtics "<<(int)samplingFreq/clockFreq<<" font \",20\" " <<endl;
+            if(xtics==0) {
+                switch(unit) {
+                    case samples:
+                        scriptStream << "set xtics "<<samplingFreq/clockFreq<<" font \",25\" " <<endl;
+                        break;
+                    case seconds:
+                        scriptStream << "set xtics "<<1/clockFreq<<" font \",25\" " <<endl;
+                        break;
+                }
+                
+            }
             else
-                scriptStream << "set xtics "<<xtics<<" font \",20\" " <<endl;
+                scriptStream << "set xtics "<<xtics<<" font \",25\" " <<endl;
             scriptStream<<"set grid xtics "<<" lt 0 lc  rgb \"grey\" lw 1;"<<endl;
             scriptStream<<"set grid ytics "<<" lt 0 lc  rgb \"grey\" lw 1;"<<endl;
         }
         else {
             if(xtics==0)
-                scriptStream << "set xtics auto font \"arial,20\" " <<endl;
+                scriptStream << "set xtics auto font \"arial,25\" " <<endl;
             else
-                scriptStream << "set xtics "<<xtics<<" font \"arial,20\" " <<endl;
+                scriptStream << "set xtics "<<xtics<<" font \"arial,25\" " <<endl;
         }
-        scriptStream << "set ytics font \"arial,20\" " <<endl;
+        scriptStream << "set ytics font \"arial,25\" " <<endl;
         scriptStream<<"set title\""<<intervals[i].name<<"\";"<<endl;
-        scriptStream<<"set xlabel\"Time\" font \"arial,20\";"<<endl;
+        switch(unit) {
+            case samples:
+                scriptStream<<"set xlabel\"Time\" font \"arial,20\";"<<endl;
+                break;
+            case seconds:
+                scriptStream<<"set xlabel\"Time[us]\" font \"arial,20\";"<<endl;
+                break;
+        }
         scriptStream<<"set ylabel\"Pearson coefficient\" font \"arial,20\";"<<endl;
         if(bw) scriptStream<<"unset key"<<endl;
         else scriptStream << "set key outside right;" << endl;
@@ -125,7 +145,14 @@ void Output::writeResults(vector<result*>& results,vector<float**>& finalPearson
         //writes the .dat file
         //for each column
         for(int t=0;t<intervals[i].end-intervals[i].start;t++) {
-            datStream<<t+intervals[i].start<<" ";
+            switch(unit) {
+                case samples:
+                    datStream<<t<<" ";
+                    break;
+                case seconds:
+                    datStream<<(t)/samplingFreq<<" ";
+                    break;
+            }
             //for each row
             for(int k=0;k<keySpace;k++) {
                 /*writes 

@@ -79,7 +79,11 @@ void PowerModel::generate(uint8_t** plaintext,unsigned**powerMatrix) {
             sbox=0;
             p=4;
             opCode=4;
-        } else if(position.compare("addptx1_3")==0) {
+        } else if(position.compare("shiftptx1_2")==0) {
+            sbox=0;
+            p=4;
+            opCode=6;
+        }else if(position.compare("addptx1_3")==0) {
             sbox=0;
             p=8;
             opCode=1;
@@ -107,16 +111,17 @@ void PowerModel::generate(uint8_t** plaintext,unsigned**powerMatrix) {
             uint32_t ptx3,ptx4;
             for(s=0;s<step;s++) {
             //for each key hypothesis
-            for(k=0;k<keySpace;k++) {
-                ptx=ptx2=0;
-                //in case of an attack, the second input is not used
-                computeUsedPlaintext(ptx,ptx2,plaintext[s]+0,plaintext[s]+4,1);
-                computeUsedPlaintext(ptx3,ptx4,plaintext[s]+8,plaintext[s]+12,1);
-                //if the intermediate size is 8bit, use the single bytes
-                //model with known key
-                powerMatrix[s][k]=hammingDistance(ptx,ptx3);               
+                for(k=0;k<keySpace;k++) {
+                    ptx=ptx2=0;
+                    //in case of an attack, the second input is not used
+                    computeUsedPlaintext(ptx,ptx2,plaintext[s]+0,plaintext[s]+4,1);
+                    computeUsedPlaintext(ptx3,ptx4,plaintext[s]+8,plaintext[s]+12,1);
+                    //if the intermediate size is 8bit, use the single bytes
+                    //model with known key
+                    powerMatrix[s][k]=hammingDistance(ptx,ptx3);               
+                }
             }
-        }
+            return;
         }else {
             cout<<"Position "<<position<<" not recognized."<<endl
             <<"Maybe you're using an AES position for a known input attack?."<<endl;
@@ -233,6 +238,10 @@ void PowerModel::computeUsedPlaintext(uint32_t& intermediate,uint32_t& intermedi
                 break;
             case 5:
                 intermediate2=intermediate^intermediate2;
+                break;
+            case 6:
+                intermediate<<=3;
+                intermediate2<<=3;
                 break;
             default:
                 cout<<"Operation not recognized."<<endl;

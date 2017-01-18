@@ -35,7 +35,9 @@ void Input::readHeader() {
             cout<<"Invalid format type."<<endl;
             exit(0);
     }
-    if(10+plainLength*numTraces+numTraces*samplesPerTrace*dataDimension!=fileSize) {
+    long long plainSize=plainLength*numTraces;
+    long long traceSize=(long long)numTraces*samplesPerTrace*dataDimension;
+    if(10+plainSize+traceSize!=fileSize) {
         cout<<"Incorrect file size."<<endl;
         exit(0);
     }

@@ -123,7 +123,16 @@ void inspectTraces(Config& config,Input& input) {
 	var[n]=0;
     }
     float x;
-    cout<<"computing mean from sample "<<config.startSample<<" to sample "<<maxSample<<endl;
+    switch(config.unit) {
+        case samples:
+            cout<<"computing mean from sample "<<config.startSample<<" to sample "<<maxSample<<endl;
+            break;
+        case seconds:
+            cout<<"computing mean from second "
+            <<config.startSample/config.samplingFreq
+            <<" to sample "<<maxSample/config.samplingFreq<<endl;
+            break;
+    }
     //I know the total number of samples for each instant in time: it is numTraces
     int n=0;
     while(n<=numTraces) {
@@ -159,12 +168,21 @@ void inspectTraces(Config& config,Input& input) {
         exit(0);
     }
     //plot the mean .png
-    outputStatistics << "set term png size 2000,1280;" << endl;
+    outputStatistics << "set term png size "<<config.figureWidth<<" ,"<<config.figureHeight<<";"<<endl;
     outputStatistics << "set output \""<< "mean" <<".png\";" << endl;
     outputStatistics << "set autoscale;" << endl;
     if(grid) {
-        if(config.xtics==0)
-            outputStatistics << "set xtics "<< (int)config.samplingFreq/config.clockFreq<< " format \"\";" << endl;
+        if(config.xtics==0) {
+            switch(config.unit) {
+                case samples:
+                    outputStatistics << "set xtics "<<config.samplingFreq/config.clockFreq<< " format \"\";" << endl;
+                    break;
+                case seconds:
+                    outputStatistics << "set xtics "<<1/config.clockFreq<< " format \"\";" << endl;
+                    break;
+            }
+            
+        }
         else
             outputStatistics << "set xtics "<<config.xtics<< " font \",20\";" << endl;
         outputStatistics<<"set grid xtics "<<" lt rgb \"grey\" lw 1;"<<endl;
@@ -177,9 +195,20 @@ void inspectTraces(Config& config,Input& input) {
             outputStatistics << "set xtics "<<config.xtics<<" font \",20\";" << endl;
     }
     outputStatistics << "set ytic auto font \",20\";" << endl;
-    outputStatistics << "set xrange ["<<config.startSample<<":"<<maxSample<<"];"<<endl;
+    switch(config.unit) {
+        case samples:
+            outputStatistics << "set xrange ["<<config.startSample<<":"<<maxSample<<"];"<<endl;
+            outputStatistics << "set xlabel \"Time\" font \",20\";" << endl;
+            break;
+        case seconds:
+            outputStatistics << "set xrange ["
+            <<config.startSample/config.samplingFreq<<":"
+            <<maxSample/config.samplingFreq<<"];"<<endl;
+            outputStatistics << "set xlabel \"Time[us]\" font \",20\";" << endl;
+            break;
+        
+    }
     outputStatistics << "unset key;" << endl;
-    outputStatistics << "set xlabel \"Time\" font \",20\";" << endl;
     outputStatistics << "set ylabel \"Mean\" font \",20\";" << endl;
     outputStatistics<<"plot ";
     outputStatistics << "\""<< "meanAndVariance.dat" << "\" ";
@@ -189,12 +218,20 @@ void inspectTraces(Config& config,Input& input) {
     
     
     //plot the standard deviation .png
-    outputStatistics << "set term png size 2000,1280;" << endl;
+    outputStatistics << "set term png size "<<config.figureWidth<<" ,"<<config.figureHeight<<";"<<endl;
     outputStatistics << "set output \""<< "standardDev" <<".png\";" << endl;
     outputStatistics << "set autoscale;" << endl;
     if(grid) {
-        if(config.xtics==0)
-            outputStatistics << "set xtics "<< (int)config.samplingFreq/config.clockFreq<< " format \"\";" << endl;
+        if(config.xtics==0) {
+            switch(config.unit) {
+                case samples:
+                    outputStatistics << "set xtics "<<config.samplingFreq/config.clockFreq<< " format \"\";" << endl;
+                    break;
+                case seconds:
+                    outputStatistics << "set xtics "<<1/config.clockFreq<< " format \"\";" << endl;
+                    break;
+            }
+        }
         else
             outputStatistics << "set xtics "<<config.xtics<< " font \",20\";" << endl;
         outputStatistics<<"set grid xtics "<<" lt rgb \"grey\" lw 1;"<<endl;
@@ -207,9 +244,20 @@ void inspectTraces(Config& config,Input& input) {
             outputStatistics << "set xtics "<<config.xtics<<" font \",20\";" << endl;
     }
     outputStatistics << "set ytic auto font \",20\";" << endl;
-    outputStatistics << "set xrange ["<<config.startSample<<":"<<maxSample<<"];"<<endl;
+    switch(config.unit) {
+        case samples:
+            outputStatistics << "set xrange ["<<config.startSample<<":"<<maxSample<<"];"<<endl;
+            outputStatistics << "set xlabel \"Time\" font \",20\";" << endl;
+            break;
+        case seconds:
+            outputStatistics << "set xrange ["
+            <<config.startSample/config.samplingFreq<<":"
+            <<maxSample/config.samplingFreq<<"];"<<endl;
+            outputStatistics << "set xlabel \"Time[us]\" font \",20\";" << endl;
+            break;
+        
+    }
     outputStatistics << "unset key;" << endl;
-    outputStatistics << "set xlabel \"Time\" font \",20\";" << endl;
     outputStatistics << "set ylabel \"standard deviation\" font \",20\";" << endl;
     outputStatistics<<"plot ";
     outputStatistics << "\""<< "meanAndVariance.dat" << "\" ";
@@ -218,7 +266,14 @@ void inspectTraces(Config& config,Input& input) {
     outputStatistics << "with lines linecolor \"black\";"<<endl<<endl;
     //write data file
     for(int i=0;i<numSamples;i++) {
-	outputStatisticsData<<i+config.startSample<<" ";
+        switch(config.unit) {
+            case samples:
+                outputStatisticsData<<i+config.startSample<<" ";
+                break;
+            case seconds:
+                outputStatisticsData<<(i+config.startSample)/config.samplingFreq<<" ";
+                break;
+        }
 	outputStatisticsData<<mean[i]<<" "<<var[i]<<endl;
     }
     cout<<"traces inspected. You can find gnuplot script in \"inspectTrace.gpl\" and in \"meanAndVariance.gpl\" "

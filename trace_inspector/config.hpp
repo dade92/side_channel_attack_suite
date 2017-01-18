@@ -19,14 +19,19 @@ using namespace boost::property_tree;
  * IMPORTANT: after the constructor, call
  * init method to setup the obect
  */
+enum Unit {
+    samples,
+    seconds
+};
 
 class Config {
     
 public:
     Config(string configFile);
     void init();
-    string filename;
-    int batch,maxSample,startSample,xtics;
+    string filename,unitString;
+    Unit unit;
+    int batch,maxSample,startSample,xtics,figureWidth,figureHeight;
     bool grid;
     float samplingFreq,clockFreq;    
 private:

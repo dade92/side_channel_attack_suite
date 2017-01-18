@@ -33,6 +33,21 @@ void Config::init() {
             maxSample=pt.get<int>("endSample");
             grid=pt.get<bool>("displayGrid");
             xtics=pt.get<int>("xtics");
+            unitString=pt.get<string>("unit");
+            if(unitString.compare("samples")==0)
+                unit=samples;
+            else if(unitString.compare("seconds")==0)
+                unit=seconds;
+            else {
+                cout<<"Invalid unit."<<endl;
+                exit(0);
+            }
+            figureWidth=pt.get<int>("figureWidth");
+            figureHeight=pt.get<int>("figureHeight");
+            if(figureWidth<=0 || figureHeight<=0) {
+                cout<<"Invalid output size"<<endl;
+                exit(0);
+            }
             if(startSample<0 || startSample>maxSample && maxSample!=0) {
                 cout<<"Invalid start/ending sample"<<endl;
                 exit(0);
