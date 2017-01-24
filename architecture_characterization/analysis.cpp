@@ -53,10 +53,6 @@ int main(int argc,char* argv[]) {
             //AES model setup can't be used if keySize is 0 (=known input attack)
             cout<<iterator->name<<":Known key attack using an AES position."<<endl;
             exit(0);
-        } else if(iterator->model.compare("hd")==0 && iterator->position.compare("ptx")==0) {
-            //if the power model is hd, you must specify two different inputs, not only one
-            cout<<iterator->name<<":Cannot compute hamming distance of a single plaintext."<<endl;
-            exit(0);
         }
     }
     //check on the occupied RAM

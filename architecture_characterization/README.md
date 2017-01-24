@@ -6,7 +6,9 @@
 
     As output the tool gives gnuplot scripts (.gpl files) 
     with respective .dat files and a log file that 
-    contains the statistics of the considered intervals.
+    contains the statistics of the considered intervals. It puts the output 
+    script and .dat files in a directory because it could produce
+    a lot of files.
 
     Regarding the power models, there are three of them:
     hamming weight, hamming distance and hamming distance sum (the sum of the hamming distances)
@@ -31,5 +33,7 @@
             andptxY_Z take the Y and Z input and compute the and among them.
             
             mulptxY_Z take the Y and Z input and compute the mul among them.
+            
+            other operations of the same form: <op>ptxX_Y.
     Usage:
     ./analysis.out config_file

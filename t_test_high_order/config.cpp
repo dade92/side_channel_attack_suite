@@ -35,10 +35,11 @@ void Config::init() {
                 cout<<"Invalid frequency."<<endl;
                 exit(0);
             }
-            grid=pt.get<bool>("displayGrid");
-            xtics=pt.get<int>("xtics");
             startSample=pt.get<int>("startSample");
             maxSample=pt.get<int>("endSample");
+            ptree imageParams(pt.get_child("imageParams"));
+            grid=imageParams.get<bool>("displayGrid");
+            xtics=imageParams.get<int>("xtics");
             if(startSample<0 || startSample>maxSample && maxSample!=0) {
                 cout<<"Invalid start/ending sample."<<endl;
                 exit(0);

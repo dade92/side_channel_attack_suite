@@ -6,19 +6,21 @@
 ;the step count, the confident interval and a list of
 ;intervals in which perform the analysis
 
-filename /home/davide/Documenti/tesi/data/attack_7500_baremetal_caches.dat	;name of the file
+filename /home/davide/Documenti/tesi/data/aes_7500.dat	;name of the file
 outputDir output			;output directory, where to put all the images and gnuplot scripts
 step 2500				;number of traces to put in memory
 alpha 0.1				;confidence interval of the test
 samplingFreq 500			;sampling frequency of the oscilloscope
 clockFreq 120				;clock frequency of the processor
-displayGrid true			;do you want a grid in the images?
-xtics 100                               ;tics on x axis. 0 means auto
-bw true                                 ;final results in black and white? 0 or 1
-unit samples                            ;unit on the x axis: samples or seconds
-figureWidth 2000                        ;width of the output figure
-figureHeight 1280                       ;height of the output figure
-scale 0					;scale of the output figure. 0 stands for auto
+imageParams {
+    displayGrid true			;do you want a grid in the images?
+    xtics 100                               ;tics on x axis. 0 means auto
+    bw true                                 ;final results in black and white? 0 or 1
+    unit seconds                            ;unit on the x axis: samples or seconds
+    figureWidth 2000                        ;width of the output figure
+    figureHeight 1280                       ;height of the output figure
+    scale 0					;scale of the output figure. 0 stands for auto
+}
 ;list of intervals: each interval has a name,contains start sample, end sample,
 ;value of the correct key in that interval, model used, bw if 
 ;you want the final output of this interval to be black and white

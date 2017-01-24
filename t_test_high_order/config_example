@@ -4,9 +4,11 @@ batch 1000                                                      ;number of trace
 alpha 0.05                                                       ;confidence interval of the test
 samplingFreq 500                                                ;sampling frequency of the oscilloscope
 clockFreq 120                                                   ;frequency of the processor
-displayGrid false                                               ;true if you want a grid that shows the clock
-xtics 0                                                        ;tics on x axis
 startSample 0                                                  ;starting sample
 endSample 500                                                  ;ending sample. 0 means to the end
+imageParams {
+    displayGrid false                                               ;true if you want a grid that shows the clock
+    xtics 0                                                        ;tics on x axis
+}
 order 1                                                         ;order of the test
 maxTau2 50                                                      ;max tau to consider for order 2

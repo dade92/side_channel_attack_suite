@@ -25,13 +25,14 @@ void Config::init() {
             alpha= pt.get<float>("alpha");
             samplingFreq=pt.get<float>("samplingFreq");
             clockFreq=pt.get<float>("clockFreq");
-            grid=pt.get<bool>("displayGrid");
-            xtics=pt.get<int>("xtics");
-            bw=pt.get<bool>("bw");
-            unitString=pt.get<string>("unit");
-            figureWidth=pt.get<int>("figureWidth");
-            figureHeight=pt.get<int>("figureHeight");
-            scale=pt.get<float>("scale");
+            ptree imageParams(pt.get_child("imageParams"));
+            grid=imageParams.get<bool>("displayGrid");
+            xtics=imageParams.get<int>("xtics");
+            bw=imageParams.get<bool>("bw");
+            unitString=imageParams.get<string>("unit");
+            figureWidth=imageParams.get<int>("figureWidth");
+            figureHeight=imageParams.get<int>("figureHeight");
+            scale=imageParams.get<float>("scale");
             if(figureWidth<=0 || figureHeight<=0) {
                 cout<<"Invalid output size"<<endl;
                 exit(0);

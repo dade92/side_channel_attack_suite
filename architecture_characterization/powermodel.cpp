@@ -19,8 +19,6 @@ void PowerModel::generate(uint8_t** plaintext,unsigned**powerMatrix) {
     unsigned k;
     if(keySpace>1) {
         if(position.compare("ptx")==0)
-            p=0;
-        else if(position.compare("ar")==0)
             p=1;
         else if(position.compare("sub")==0)
             p=2;
@@ -157,7 +155,7 @@ void PowerModel::generate(uint8_t** plaintext,unsigned**powerMatrix) {
                 else if(p==2) {
                     //take the plaintext, xor with the key and substitution. Best attack so far
                     powerMatrix[s][k]=hammingWeight(SBOX[ptx^k]);
-                }                
+                }
             }
         }
     }
@@ -173,8 +171,7 @@ void PowerModel::generate(uint8_t** plaintext,unsigned**powerMatrix) {
                 if(p==0 || p==4 || p==8 || p==12)   //p==0 only for completness,no sense here
                     powerMatrix[s][k]=hammingDistance(ptx,ptx2);
                 else if(p==1)
-                    powerMatrix[s][k]=hammingDistance(ptx,
-                                                      ptx^k);
+                    powerMatrix[s][k]=hammingDistance(ptx,k);
                 else if(p==2)
                     powerMatrix[s][k]=hammingDistance(ptx^k,
                                                      SBOX[ptx^k]);

@@ -63,8 +63,9 @@ void Output::writeResults(vector<result*>& results,vector<float**>& finalPearson
         confidenceScriptStream<<"set output \"confidence"<<intervals[i].name<<".png\";"<<endl;
         confidenceScriptStream<<"set autoscale;"<<endl;
         confidenceScriptStream<<"unset key"<<endl;
-        confidenceScriptStream << "set xtics font \"arial,20\" " <<endl;
-        confidenceScriptStream << "set ytics font \"arial,20\" " <<endl;
+//         confidenceScriptStream<<"set lmargin 8;set rmargin 7;set tmargin 2;set bmargin 3;"<<endl;
+        confidenceScriptStream << "set xtics font \"arial,25\" " <<endl;
+        confidenceScriptStream << "set ytics font \"arial,25\" " <<endl;
         confidenceScriptStream<<"set title\""<<intervals[i].name<<" confidence\";"<<endl;
         confidenceScriptStream<<"set xlabel\"number of traces\" font \"arial,20\";"<<endl;
         confidenceScriptStream<<"set ylabel\"max Pearson coefficienct with alpha="<<alpha
@@ -85,13 +86,13 @@ void Output::writeResults(vector<result*>& results,vector<float**>& finalPearson
         
         
         //write the gnuplot script file
-        scriptStream<<endl<<"set term png size "<<figureWidth<<", "<<figureHeight<<endl;
+        scriptStream<<"set term png size "<<figureWidth<<", "<<figureHeight<<endl;
         scriptStream<<"set output \""<<intervals[i].name<<".png\";"<<endl;
         if(scale==0)
             scriptStream<<"set autoscale;"<<endl;
         else
             scriptStream<<"set yrange [0: "<<scale<<"];"<<endl;
-        scriptStream<<"set lmargin 10;set rmargin 10;"<<endl;
+        scriptStream<<"set title \"\""<<endl;
         if(grid) {
             if(xtics==0) {
                 switch(unit) {
@@ -116,17 +117,18 @@ void Output::writeResults(vector<result*>& results,vector<float**>& finalPearson
                 scriptStream << "set xtics "<<xtics<<" font \"arial,25\" " <<endl;
         }
         scriptStream << "set ytics font \"arial,25\" " <<endl;
-        scriptStream<<"set title\""<<intervals[i].name<<"\";"<<endl;
         switch(unit) {
             case samples:
-                scriptStream<<"set xlabel\"Time\" font \"arial,20\";"<<endl;
+                scriptStream<<"set xlabel\"Time\" font \"arial,25\";"<<endl;
                 break;
             case seconds:
-                scriptStream<<"set xlabel\"Time[us]\" font \"arial,20\";"<<endl;
+                scriptStream<<"set xlabel\"Time[us]\" font \"arial,25\";"<<endl;
                 break;
         }
-        scriptStream<<"set ylabel\"Pearson coefficient\" font \"arial,20\";"<<endl;
-        if(bw) scriptStream<<"unset key"<<endl;
+        if(bw) {
+            scriptStream<<"unset key"<<endl;
+            scriptStream<<"set lmargin 8;set rmargin 7;set tmargin 2;set bmargin 3;"<<endl;
+        }
         else scriptStream << "set key outside right;" << endl;
         scriptStream<<"plot";
         //keyspace lines to plot. If there is only one key, prints it in black color

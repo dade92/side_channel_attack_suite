@@ -29,7 +29,7 @@
     All of these tools accept as argument a config file. 
     Each directory has a config file example with detailed information about all the parameters.
 
-    All of these tools produce gnuplot scripts that should be passed to gnuplot in order to generate the -png images.
+    All of these tools produce gnuplot scripts that should be passed to gnuplot in order to generate the .png images.
     
     There is a Makefile that will compile everything in this directory. Just type Make in the terminal.
     
