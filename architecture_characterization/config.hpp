@@ -35,16 +35,22 @@ enum Unit {
     seconds
 };
 
+enum Timescale {
+    absolute,
+    relative
+};
+
 class Config {
 public:
     Config(string configFile);
     void init();
     string filename;
-    string outputDir,unitString;
+    string outputDir,unitString,timescaleString;
     Unit unit;
     int step,xtics,figureWidth,figureHeight;
-    bool grid,bw;
+    bool grid,bw,abs_value;
     float alpha,samplingFreq,clockFreq,scale;
+    Timescale timescale;
     vector<interval> intervals;
     
 private:

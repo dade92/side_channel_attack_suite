@@ -9,6 +9,8 @@ endSample 500                                                  ;ending sample. 0
 imageParams {
     displayGrid false                                               ;true if you want a grid that shows the clock
     xtics 0                                                        ;tics on x axis
+    imageWidth 2000                                             ;width of the output image
+    imageHeight 850                                             ;height of the output image
 }
 order 1                                                         ;order of the test
 maxTau2 50                                                      ;max tau to consider for order 2

@@ -33,6 +33,10 @@ void Config::init() {
             figureWidth=imageParams.get<int>("figureWidth");
             figureHeight=imageParams.get<int>("figureHeight");
             scale=imageParams.get<float>("scale");
+            if(scale<0) {
+                cout<<"Invalid scale."<<endl;
+                exit(0);
+            }
             if(figureWidth<=0 || figureHeight<=0) {
                 cout<<"Invalid output size"<<endl;
                 exit(0);
@@ -49,6 +53,16 @@ void Config::init() {
                 cout<<"Invalid frequency."<<endl;
                 exit(0);
             }
+            timescaleString=imageParams.get<string>("timescale");
+            if(timescaleString.compare("absolute")==0)
+                timescale=absolute;
+            else if(timescaleString.compare("relative")==0)
+                timescale=relative;
+            else {
+                cout<<"Invalid timescale."<<endl;
+                exit(0);
+            }
+            abs_value=imageParams.get<bool>("abs");
             //parse the intervals and put all inside the vector
             ptree windows (pt.get_child("intervals"));
             ptree::const_iterator intIt;

@@ -22,6 +22,10 @@ void PowerModel::generate(uint8_t** plaintext,unsigned**powerMatrix) {
             p=1;
         else if(position.compare("sub")==0)
             p=2;
+        else if(position.compare("sub0_5")==0) {
+            sbox=0;
+            p=5;
+        }
         else {
             cout<<"Position "<<position<<" not recognized."<<endl
             <<"Maybe you're using a known input position for a key guess attack?"<<endl;
@@ -145,7 +149,7 @@ void PowerModel::generate(uint8_t** plaintext,unsigned**powerMatrix) {
                 computeUsedPlaintext(ptx,ptx2,plaintext[s]+sbox,plaintext[s]+p,opCode);
                 //if the intermediate size is 8bit, use the single bytes
                 //model with known key
-                if(p==0  || p==4 || p==8 || p==12) {
+                if(keySpace==1) {
                     powerMatrix[s][k]=hammingWeight(ptx);
                 }
                 //otherwise use AES primitives
@@ -168,13 +172,19 @@ void PowerModel::generate(uint8_t** plaintext,unsigned**powerMatrix) {
                 ptx=ptx2=0;
                 //in case of an attack, the second plaintext is not used
                 computeUsedPlaintext(ptx,ptx2,plaintext[s]+sbox,plaintext[s]+p,opCode);
-                if(p==0 || p==4 || p==8 || p==12)   //p==0 only for completness,no sense here
+                if(keySpace==1)   //p==0 only for completness,no sense here
                     powerMatrix[s][k]=hammingDistance(ptx,ptx2);
                 else if(p==1)
                     powerMatrix[s][k]=hammingDistance(ptx,k);
                 else if(p==2)
                     powerMatrix[s][k]=hammingDistance(ptx^k,
                                                      SBOX[ptx^k]);
+                else if(p==5)
+                    powerMatrix[s][k]=hammingDistance(SBOX[ptx^0x2b],
+                                                     SBOX[ptx2^k]);
+                else if(p==6)
+                    powerMatrix[s][k]=hammingDistance(SBOX[ptx^0x7e],
+                                                     SBOX[ptx2^k]);
             }
         }        
     }

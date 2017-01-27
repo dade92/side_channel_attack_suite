@@ -17,6 +17,8 @@ Output::Output(Config& c,Input& input) {
     figureWidth=c.figureWidth;
     figureHeight=c.figureHeight;
     scale=c.scale;
+    timescale=c.timescale;
+    abs_value=c.abs_value;
 }
 
 void Output::writeResults(vector<result*>& results,vector<float**>& finalPearson) {
@@ -68,8 +70,8 @@ void Output::writeResults(vector<result*>& results,vector<float**>& finalPearson
         confidenceScriptStream << "set ytics font \"arial,25\" " <<endl;
         confidenceScriptStream<<"set title\""<<intervals[i].name<<" confidence\";"<<endl;
         confidenceScriptStream<<"set xlabel\"number of traces\" font \"arial,20\";"<<endl;
-        confidenceScriptStream<<"set ylabel\"max Pearson coefficienct with alpha="<<alpha
-            <<"\" font \"arial,20\";"<<endl<<endl<<endl;
+//         confidenceScriptStream<<"set ylabel\"max Pearson coefficienct with alpha="<<alpha
+//             <<"\" font \"arial,20\";"<<endl<<endl<<endl;
         confidenceScriptStream<<"plot";
         //six lines to plot
         for(int k=0;k<6;k++) {
@@ -125,9 +127,10 @@ void Output::writeResults(vector<result*>& results,vector<float**>& finalPearson
                 scriptStream<<"set xlabel\"Time[us]\" font \"arial,25\";"<<endl;
                 break;
         }
+        scriptStream<<"set ylabel \"Pearson coefficient\" font \"arial,25\" offset -2,2;"<<endl;
         if(bw) {
             scriptStream<<"unset key"<<endl;
-            scriptStream<<"set lmargin 8;set rmargin 7;set tmargin 2;set bmargin 3;"<<endl;
+            scriptStream<<"set lmargin 13;set rmargin 7;set tmargin 2;set bmargin 3;"<<endl;
         }
         else scriptStream << "set key outside right;" << endl;
         scriptStream<<"plot";
@@ -153,10 +156,16 @@ void Output::writeResults(vector<result*>& results,vector<float**>& finalPearson
         for(int t=0;t<intervals[i].end-intervals[i].start;t++) {
             switch(unit) {
                 case samples:
-                    datStream<<t<<" ";
+                    if(timescale==absolute)
+                        datStream<<intervals[i].start+t<<" ";
+                    else
+                        datStream<<t<<" ";
                     break;
                 case seconds:
-                    datStream<<(t)/samplingFreq<<" ";
+                    if(timescale==absolute)
+                        datStream<<(intervals[i].start+t)/samplingFreq<<" ";
+                    else
+                        datStream<<(t)/samplingFreq<<" ";
                     break;
             }
             //for each row
@@ -166,7 +175,10 @@ void Output::writeResults(vector<result*>& results,vector<float**>& finalPearson
                  * 1 k1 k2 ..... kn
                  * ...
                  */
-                datStream<<finalPearson[i][k][t]<<" ";
+                if(abs_value)
+                    datStream<<abs(finalPearson[i][k][t])<<" ";
+                else
+                    datStream<<finalPearson[i][k][t]<<" ";
             }
             datStream<<endl;
         }    

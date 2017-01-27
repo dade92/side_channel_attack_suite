@@ -14,12 +14,14 @@ samplingFreq 500			;sampling frequency of the oscilloscope
 clockFreq 120				;clock frequency of the processor
 imageParams {
     displayGrid true			;do you want a grid in the images?
-    xtics 100                               ;tics on x axis. 0 means auto
-    bw true                                 ;final results in black and white? 0 or 1
-    unit seconds                            ;unit on the x axis: samples or seconds
-    figureWidth 2000                        ;width of the output figure
-    figureHeight 1280                       ;height of the output figure
-    scale 0					;scale of the output figure. 0 stands for auto
+    xtics 100                           ;tics on x axis. 0 means auto
+    bw true                             ;final results in black and white? 0 or 1
+    unit seconds                        ;unit on the x axis: samples or seconds
+    figureWidth 2000                    ;width of the output figure
+    figureHeight 1280                   ;height of the output figure
+    scale 0				;scale of the output figure. 0 stands for auto
+    timescale absolute                  ;absolute:x axis starts from the sample of the interval. Relative:starts from 0
+    abs true                            ;Draw absolute Pearson (true) or not (false)
 }
 ;list of intervals: each interval has a name,contains start sample, end sample,
 ;value of the correct key in that interval, model used, bw if 

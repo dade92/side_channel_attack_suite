@@ -25,6 +25,7 @@ public:
 private:
     string filename;
     int order,samplesPerTrace,startSample,endSample,xtics;
+    int imageWidth,imageHeight;
     bool grid;
     string getKeyAsString(int key);
 };

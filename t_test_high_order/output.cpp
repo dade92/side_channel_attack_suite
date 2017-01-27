@@ -4,6 +4,8 @@ Output::Output(Config& c,Input& input1,Input& input2) {
     samplesPerTrace=input1.samplesPerTrace;
     startSample=c.startSample;
     endSample=(c.maxSample!=0 ? c.maxSample : input1.samplesPerTrace);
+    imageWidth=c.imageWidth;
+    imageHeight=c.imageHeight;
     grid=c.grid;
     xtics=c.xtics;
 }
@@ -43,7 +45,7 @@ void Output::writeResults(std::vector<float *>& tStatistics,std::vector<float *>
 	outputDat<<endl;
 	outputPDat<<endl;
     }
-    outputScript << "set term png size 2000,1280;" << endl;
+    outputScript << "set term png size "<<imageWidth<<","<<imageHeight<<endl;
     outputScript << "set output \""<< "tvalue" << "_order"<<order<<".png\";" << endl;
     outputScript << "set autoscale;" << endl;
     if(xtics==0)

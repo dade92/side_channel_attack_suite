@@ -73,7 +73,7 @@ void Pearson::correlate(int incrementalNumTraces,float** dataMatrix,unsigned**po
             }
             variancePower=powerStatistics[i].m2/(count);
             varianceTrace=traceStatistics[n].m2/(count);
-            pearsonCoefficient[i][n]=abs( m12[i][n]/(sqrt(variancePower)*sqrt(varianceTrace)) );
+            pearsonCoefficient[i][n]=m12[i][n]/(sqrt(variancePower)*sqrt(varianceTrace));
         }
     }
 }

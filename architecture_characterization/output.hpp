@@ -6,6 +6,7 @@
 #include <fstream>
 #include <sstream>
 #include <iomanip>
+#include <math.h>
 #include <boost/format.hpp>
 #include "../common/input.hpp"
 #include "config.hpp"
@@ -36,7 +37,8 @@ private:
     int numTraces,xtics,figureWidth,figureHeight;
     int numIntervals,numSteps,step;
     float alpha,samplingFreq,clockFreq,scale;
-    bool grid,bw;
+    Timescale timescale;
+    bool grid,bw,abs_value;
     Unit unit;
     string getKeyAsString(int key);
     //vector that contains the intervals
