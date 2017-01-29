@@ -69,7 +69,8 @@ void Pearson::correlate(int incrementalNumTraces,float** dataMatrix,unsigned**po
             count=incrementalNumTraces-step;
             for(int s=0;s<step;s++) {
                 count++;
-                m12[i][n]+=((count-1)*(deltaPower[s][i]/count)*(deltaTrace[s][n]/count) - m12[i][n]/count);
+                m12[i][n]+=((count-1)*(deltaPower[s][i]/count)*(deltaTrace[s][n]/count) 
+                    - m12[i][n]/count);
             }
             variancePower=powerStatistics[i].m2/(count);
             varianceTrace=traceStatistics[n].m2/(count);
@@ -101,7 +102,7 @@ void Pearson::generateDataMatrix(float** dataMatrix) {
  */
 void Pearson::findMax(float** matrix,result& r,int k,int row,int col) {
     //find the max pearson
-    r.pearson=matrix[0][0];
+    r.pearson=abs(matrix[0][0]);
     r.bestKey=0;
     r.pearson=0;
     if(keySpace>1) {
@@ -111,7 +112,7 @@ void Pearson::findMax(float** matrix,result& r,int k,int row,int col) {
             for(int n=0;n<col;n++) {
                 if(matrix[i][n]>r.pearson) {
                     r.bestKey=i;
-                    r.pearson=matrix[i][n];
+                    r.pearson=abs(matrix[i][n]);
                 }
             }
         }
@@ -119,10 +120,10 @@ void Pearson::findMax(float** matrix,result& r,int k,int row,int col) {
     //if it is a known key attack instead, the correct key is initialized to 0
     if(keySpace==1) k=0;
     //find the max pearson for the correct key
-    r.pearsonCorrect=matrix[k][0];
+    r.pearsonCorrect=abs(matrix[k][0]);
     for(int i=0;i<col;i++) {
-        if(matrix[k][i]>r.pearsonCorrect) 
-            r.pearsonCorrect=matrix[k][i];
+        if(abs(matrix[k][i])>r.pearsonCorrect) 
+            r.pearsonCorrect=abs(matrix[k][i]);
     }
 }
 /* 

@@ -183,7 +183,7 @@ void Output::writeResults(vector<result*>& results,vector<float**>& finalPearson
             datStream<<endl;
         }    
         //conditions for statistical relevance:
-        //if i'm wrong for sure, if i'm right for sure, if the best keys are the same
+        //if i'm wrong for sure, if i'm right for sure
         bool cond1=results[i][numSteps-1].pearson-results[i][numSteps-1].ic/2 >
             results[i][numSteps-1].pearsonCorrect+results[i][numSteps-1].icCorrect/2;
             
