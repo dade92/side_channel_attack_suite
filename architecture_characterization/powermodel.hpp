@@ -67,6 +67,7 @@ private:
     int sbox,step,keySize,keySpace,intSize,key;
     unsigned hammingWeight(uint32_t intermediate);
     unsigned hammingDistance(uint32_t intermediate1,uint32_t intermediate2);
+    void computeKey(uint16_t k,uint8_t& k1,uint8_t& k2);
     void computeUsedPlaintext(uint32_t&,uint32_t&,uint8_t*,uint8_t*,Operation);
 };
 #endif

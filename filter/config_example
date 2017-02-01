@@ -1,0 +1,14 @@
+filename            /home/davide/Documenti/tesi/data/aes_50k_200mv.dat
+outputFilename      aes_filtered.dat
+step                1000
+samplingFreq        500
+padding             zero
+windows {   
+    first {
+        filterType bandPass
+        windowType rect
+        lowFrequency 100
+        highFrequency 500
+    }
+}
+

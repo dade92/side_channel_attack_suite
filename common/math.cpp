@@ -23,3 +23,9 @@ double phi_inv(double p) {
         return RationalApproximation( sqrt(-2.0*log(1-p)) );
     }
 }
+int next_two_power(int n) {
+    int p=1;
+    while(p<n)
+        p<<=1;
+    return p;
+}

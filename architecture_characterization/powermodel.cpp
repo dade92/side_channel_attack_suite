@@ -38,6 +38,26 @@ void PowerModel::generate(uint8_t** plaintext,unsigned**powerMatrix) {
             sbox=2;
             p=3;
         }
+        else if(position.compare("sub3_4")==0) {
+            sbox=3;
+            p=4;
+        }
+        else if(position.compare("sub4_5")==0) {
+            sbox=4;
+            p=5;
+        }
+        else if(position.compare("sub5_6")==0) {
+            sbox=5;
+            p=6;
+        }
+        else if(position.compare("sub6_7")==0) {
+            sbox=6;
+            p=7;
+        }
+        else if(position.compare("sub7_8")==0) {
+            sbox=7;
+            p=8;
+        }
         else if(position.compare("sub5_9")==0) {
             sbox=5;
             p=9;
@@ -186,6 +206,7 @@ void PowerModel::generate(uint8_t** plaintext,unsigned**powerMatrix) {
             exit(0);
         }*/
     }
+    uint8_t k1,k2;
     //if the model is the hamming weight
     if(powerModel.compare("hw")==0) {
         //for each plaintext
@@ -195,6 +216,7 @@ void PowerModel::generate(uint8_t** plaintext,unsigned**powerMatrix) {
                 ptx=ptx2=0;
                 //in case of an attack, the second input is not used
                 computeUsedPlaintext(ptx,ptx2,plaintext[s]+sbox,plaintext[s]+p,opCode);
+//                 computeKey(k,k1,k2);
                 //if the intermediate size is 8bit, use the single bytes
                 //model with known key
                 if(keySpace==1) {
@@ -220,6 +242,7 @@ void PowerModel::generate(uint8_t** plaintext,unsigned**powerMatrix) {
                 ptx=ptx2=0;
                 //in case of an attack, the second plaintext is not used
                 computeUsedPlaintext(ptx,ptx2,plaintext[s]+sbox,plaintext[s]+p,opCode);
+//                 computeKey(k,k1,k2);
                 if(keySpace==1)   //p==0 only for completness,no sense here
                     powerMatrix[s][k]=hammingDistance(ptx,ptx2);
                 else if(p==0)
@@ -228,12 +251,27 @@ void PowerModel::generate(uint8_t** plaintext,unsigned**powerMatrix) {
                     //attack subbytes
                     if(sbox==0 && p==1)
                         powerMatrix[s][k]=hammingDistance(SBOX[ptx^0x2b],
-                                                     SBOX[ptx2^k]);
+                                                      SBOX[ptx2^k]);
                     else if(sbox==1 && p==2)
                         powerMatrix[s][k]=hammingDistance(SBOX[ptx^0x7e],
                                                      SBOX[ptx2^k]);
                     else if(sbox==2 && p==3)
                         powerMatrix[s][k]=hammingDistance(SBOX[ptx^0x15],
+                                                     SBOX[ptx2^k]);
+                    else if(sbox==3 && p==4)
+                        powerMatrix[s][k]=hammingDistance(SBOX[ptx^0x16],
+                                                     SBOX[ptx2^k]);
+                    else if(sbox==4 && p==5)
+                        powerMatrix[s][k]=hammingDistance(SBOX[ptx^0x28],
+                                                     SBOX[ptx2^k]);
+                    else if(sbox==5 && p==6)
+                        powerMatrix[s][k]=hammingDistance(SBOX[ptx^0xae],
+                                                     SBOX[ptx2^k]);
+                    else if(sbox==6 && p==7)
+                        powerMatrix[s][k]=hammingDistance(SBOX[ptx^0xd2],
+                                                     SBOX[ptx2^k]);
+                    else if(sbox==7 && p==8)
+                        powerMatrix[s][k]=hammingDistance(SBOX[ptx^0xa6],
                                                      SBOX[ptx2^k]);
                     //attack shift rows
                     else if(sbox==5 && p==9)
@@ -301,6 +339,12 @@ void PowerModel::generate(uint8_t** plaintext,unsigned**powerMatrix) {
         cout<<"Interval model not recognized."<<endl;
         exit(0);
     }
+}
+
+void PowerModel::computeKey(uint16_t k,uint8_t& k1,uint8_t& k2) {
+    k2=k&0x00ff;
+    k>>=8;
+    k1=k&0x00ff;
 }
 //the opCode is passed in case the user requires the hw of some results
 void PowerModel::computeUsedPlaintext(uint32_t& intermediate,uint32_t& intermediate2,

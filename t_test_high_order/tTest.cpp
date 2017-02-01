@@ -34,7 +34,7 @@ std::vector<float *> pStatistics;			//to store list of p statistic (in case we c
 
 int main(int argc,char* argv[]) {
     if(argc<2) {
-        cout<<"Usage:\n./tTest configFile"<<endl;
+        cout<<"Usage:\n./tTest.out configFile"<<endl;
         exit(0);
     }
     Config config(argv[1]);
