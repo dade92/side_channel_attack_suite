@@ -25,6 +25,30 @@ typedef struct {
     double v;       // percent
 } hsv;
 
+void printUsage();
+void savePersistence(uint32_t** persistence,int numSamples,Config&);
+void showTraces(Config& config,Input& input,float** trace);
+void inspectTraces(Config& config,Input& input);
+
+int main(int argc,char*argv[]) {
+    if(argc<2) {
+        printUsage();
+        exit(0);
+    }
+    Config config(argv[1]);
+    config.init();
+    Input input(config.filename);
+    input.readHeader();
+    if(input.numTraces%config.batch!=0) {
+        cout<<"batch size should be a divisor of the number of traces"<<endl;
+        exit(0);
+    } else if(input.samplesPerTrace<config.maxSample) {
+        cout<<"Wrong max sample."<<endl;
+        exit(0);
+    }
+    inspectTraces(config,input);
+}
+
 void printUsage() {
     cout<<"./traceInspector.out configFile"<<endl;
 }
@@ -35,7 +59,7 @@ inline void setRGB(png_byte *ptr, uint32_t val) {
         ptr[2]=val%256;
 }
 
-void savePersistence(uint32_t** persistence,int numSamples) {
+void savePersistence(uint32_t** persistence,int numSamples,Config& config) {
     cout<<"Computing persistence"<<endl;
     png_structp png_ptr;
     png_infop info_ptr;
@@ -43,7 +67,8 @@ void savePersistence(uint32_t** persistence,int numSamples) {
     png_byte* row = NULL;
     int width=numSamples;
     int height=MAX;
-    FILE* fp=fopen("persistence.png","wb");
+    string output=config.outputDir+"/persistence.png";
+    FILE* fp=fopen(output.c_str(),"wb");
     if(!fp) {
         cout<<"Can't open persistence file"<<endl;
         exit(0);
@@ -89,7 +114,72 @@ void savePersistence(uint32_t** persistence,int numSamples) {
     free(row);
     fclose(fp);
 }
- 
+
+/**
+ * plots some traces to have a first sight
+ * of them
+ */
+void showTraces(Config& config,Input& input,float** trace) {
+    std::ofstream outputStatistics,outputStatisticsData;
+    outputStatistics.open(config.outputDir+"/traces.gpl");
+    outputStatisticsData.open(config.outputDir+"/traces.dat");
+    if(!outputStatistics.is_open() || !outputStatisticsData.is_open()) {
+        cout<<"Can't open output files."<<endl;
+        exit(0);
+    }
+    outputStatistics << "set term png size "<<config.figureWidth<<" ,"<<config.figureHeight<<";"<<endl;
+    outputStatistics << "set output \""<< "traces" <<".png\";" << endl;
+    outputStatistics << "set autoscale;" << endl;
+    outputStatistics << "set xtics auto font \",20\";" << endl;
+    outputStatistics << "set ylabel \"\""<<endl;
+    if(config.grid) {
+        if(config.xtics==0) {
+            switch(config.unit) {
+                case samples:
+                    outputStatistics << "set xtics "<<config.samplingFreq/config.clockFreq<< " format \"\";" << endl;
+                    break;
+                case seconds:
+                    outputStatistics << "set xtics "<<1/config.clockFreq<< " format \"\";" << endl;
+                    break;
+            }
+            
+        }
+        else
+            outputStatistics << "set xtics "<<config.xtics<< " font \",20\";" << endl;
+        outputStatistics<<"set grid xtics "<<" lt rgb \"grey\" lw 1;"<<endl;
+        outputStatistics<<"set grid ytics "<<" lt rgb \"grey\" lw 1;"<<endl;
+    }
+    else {
+        if(config.xtics==0)
+            outputStatistics << "set xtics auto font \",20\";" << endl;
+        else
+            outputStatistics << "set xtics "<<config.xtics<<" font \",20\";" << endl;
+    }
+    outputStatistics << "plot ";
+    for(int i=0;i<config.tracesToPrint;i++) {
+        outputStatistics << "\"traces.dat\" u 1:"<<i+2<<" with lines,";
+    }
+    //write the .dat file
+    for(int i=0;i<config.maxSample-config.startSample;i++) {
+        switch(config.unit) {
+            case samples:
+                outputStatisticsData<<i+config.startSample<<" ";
+                break;
+            case seconds:
+                outputStatisticsData<<(i+config.startSample)/config.samplingFreq<<" ";
+                break;
+        }
+        for(int n=0;n<config.tracesToPrint;n++) {
+            outputStatisticsData<<trace[n][i]<<" ";
+        }
+        outputStatisticsData<<endl;
+    }
+    
+}
+/**
+ * plots mean and dev standard of the
+ * traces
+ */
 void inspectTraces(Config& config,Input& input) {
     int step=config.batch;
     float** trace=new float*[step];
@@ -137,6 +227,8 @@ void inspectTraces(Config& config,Input& input) {
     int n=0;
     while(n<=numTraces) {
         input.readData(trace,plain,step);
+        if(!n)
+            showTraces(config,input,trace);
         n+=step;
         //for every sample
         for(int i=0;i<numSamples;i++) {
@@ -153,15 +245,15 @@ void inspectTraces(Config& config,Input& input) {
             }
         }
     }
-    savePersistence(persistence,numSamples);
+    savePersistence(persistence,numSamples,config);
     //compute the dev standard
     for(int i=0;i<numSamples;i++) {
 	var[i]/=(numTraces-1);
 	var[i]=sqrt(var[i]);
     }
     std::ofstream outputStatistics,outputStatisticsData;
-    outputStatistics.open("meanAndVariance.gpl");
-    outputStatisticsData.open("meanAndVariance.dat");
+    outputStatistics.open(config.outputDir+"/meanAndVariance.gpl");
+    outputStatisticsData.open(config.outputDir+"/meanAndVariance.dat");
     
     if(!outputStatistics.is_open() || !outputStatisticsData.is_open()) {
         cout<<"Can't open output files."<<endl;
@@ -278,23 +370,4 @@ void inspectTraces(Config& config,Input& input) {
     }
     cout<<"traces inspected. You can find gnuplot script in \"inspectTrace.gpl\" and in \"meanAndVariance.gpl\" "
     		"data in \"inspectTrace.dat\" and \"meanAndVariance.dat\" "<<endl;
-}
-
-int main(int argc,char*argv[]) {
-    if(argc<2) {
-        printUsage();
-        exit(0);
-    }
-    Config config(argv[1]);
-    config.init();
-    Input input(config.filename);
-    input.readHeader();
-    if(input.numTraces%config.batch!=0) {
-        cout<<"batch size should be a divisor of the number of traces"<<endl;
-        exit(0);
-    } else if(input.samplesPerTrace<config.maxSample) {
-        cout<<"Wrong max sample."<<endl;
-        exit(0);
-    }
-    inspectTraces(config,input);
 }

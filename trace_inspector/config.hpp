@@ -29,9 +29,10 @@ class Config {
 public:
     Config(string configFile);
     void init();
-    string filename,unitString;
+    string filename,unitString,outputDir;
     Unit unit;
-    int batch,maxSample,startSample,xtics,figureWidth,figureHeight;
+    int batch,maxSample,startSample,
+        xtics,figureWidth,figureHeight,tracesToPrint;
     bool grid;
     float samplingFreq,clockFreq;    
 private:

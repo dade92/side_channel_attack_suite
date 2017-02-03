@@ -10,17 +10,29 @@
 
 using namespace std;
 using namespace boost::property_tree;
+/**
+ * Config class for the filter tool,
+ * parses the config file and put 
+ * the parameters in public attributes
+ */
 
+//here add the filter type, then modify configuration parsing
 enum windowType {
-    rect
+    rect,hann,nuttall
 };
+
 enum filterType {
     lowPass,bandPass,highPass
 };
+
+enum filterCombination {
+    doNothing,normalize,clamp
+};
+//here adds padding type, then modify configuration parsing
 enum padding {
     hold,mean,zero
 };
-
+//window struct
 typedef struct   {
     string name;
     filterType type;
@@ -34,10 +46,11 @@ class Config {
 public:
     Config(string configFile);
     void init();
-    string filename,outputFilename;
+    string filename,outputFilename,filterFile;
     float samplingFreq;
     int step;
     padding pad;
+    filterCombination filterComb;
     vector<window> windows;
     
 private:

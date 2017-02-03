@@ -86,11 +86,12 @@ void Config::init() {
                 intervals.push_back(i);
             }            
         } catch( ptree_error e) {
-            cerr << "Analysis configuration error. Check the config file" << endl;
+            cerr << "Analysis configuration error. Maybe some parameter is missing."<<endl
+            <<"Check the config file." << endl;
             exit (3);
         }
     } catch ( info_parser::info_parser_error e) {
-        cerr << "Cannot parse Analysis configuration" << endl;
+        cerr << "Can't parse correctly, check the config file." << endl;
         exit ( 3 );
     }
     

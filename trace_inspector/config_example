@@ -1,8 +1,10 @@
-filename /home/davide/Documenti/tesi/data/aes_50k_200mv.dat    ;filename
-;filename ../filter/aes_filtered.dat
-batch 5000                                                      ;number of traces to analyze at each iteration
+;filename /home/davide/Documenti/tesi/data/sin.dat   ;filename
+filename ../filter/aes_50k_os_optimized1_filtered.dat
+outputDir output                                                ;dir where put all scripts and .png
+batch 1000                                                      ;number of traces to analyze at each iteration
 samplingFreq 500                                                ;sampling frequency of the oscilloscope
 clockFreq 120                                                   ;frequency of the processor
+numTraces  2                                                    ;num of traces to print
 startSample 0                                                   ;starting sample
 endSample 0                                                   ;ending sample. 0 means to the end
 imageParams {

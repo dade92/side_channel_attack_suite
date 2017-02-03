@@ -18,6 +18,7 @@ void Config::init() {
         {
             //parse the first level
             filename = pt.get<string>("filename");
+            outputDir= pt.get<string>("outputDir");
             batch= pt.get<int>("batch");
             if(batch<0) {
                 cout<<"Invalid batch"<<endl;
@@ -25,6 +26,11 @@ void Config::init() {
             }
             samplingFreq=pt.get<float>("samplingFreq");
             clockFreq=pt.get<float>("clockFreq");
+            tracesToPrint=pt.get<int>("numTraces");
+            if(tracesToPrint<0) {
+                cout<<"Invalid trace to print"<<endl;
+                exit(0);
+            }
             if(samplingFreq<0 || clockFreq<0) {
                 cout<<"Invalid frequency."<<endl;
                 exit(0);

@@ -65,13 +65,12 @@ void Output::writeResults(vector<result*>& results,vector<float**>& finalPearson
         confidenceScriptStream<<"set output \"confidence"<<intervals[i].name<<".png\";"<<endl;
         confidenceScriptStream<<"set autoscale;"<<endl;
         confidenceScriptStream<<"unset key"<<endl;
-//         confidenceScriptStream<<"set lmargin 8;set rmargin 7;set tmargin 2;set bmargin 3;"<<endl;
+        confidenceScriptStream<<"set lmargin 13;set rmargin 7;set tmargin 2;set bmargin 3;"<<endl;
         confidenceScriptStream << "set xtics font \"arial,25\" " <<endl;
         confidenceScriptStream << "set ytics font \"arial,25\" " <<endl;
-        confidenceScriptStream<<"set title\""<<intervals[i].name<<" confidence\";"<<endl;
         confidenceScriptStream<<"set xlabel\"number of traces\" font \"arial,20\";"<<endl;
-//         confidenceScriptStream<<"set ylabel\"max Pearson coefficienct with alpha="<<alpha
-//             <<"\" font \"arial,20\";"<<endl<<endl<<endl;
+            confidenceScriptStream<<"set ylabel \"Best and second best Pearson coefficient\""
+             <<" font \"arial,25\" offset -2,2;"<<endl<<endl<<endl;
         confidenceScriptStream<<"plot";
         //six lines to plot
         for(int k=0;k<6;k++) {

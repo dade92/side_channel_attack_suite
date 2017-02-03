@@ -15,7 +15,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>    
 
-    Dependencies: boost c++ libraries, libpng.
+    Dependencies: boost c++ libraries, libpng, fftw3
 
     1) Architectural analysis tool performs side channel attacks on a set of traces in dpacalc format. 
     It can also perform known input analysis, useful for architectural characterization.
@@ -25,15 +25,18 @@
 
     3) T-test tool performs t-test analysis on a pair of traces, of order 1 and higher (up to order 5,
         actually is useless implement attacks of order higher than that).
+    
+    4) Filter tool, used to filter raw traces.
 
     All of these tools accept as argument a config file. 
     Each directory has a config file example with detailed information about all the parameters.
 
-    All of these tools produce gnuplot scripts that should be passed to gnuplot in order to generate the .png images.
+    All of these tools produce gnuplot scripts that should be passed to gnuplot in order to 
+    generate the .png images or a .dat file of filtered traces.
     
     There is a Makefile that will compile everything in this directory. Just type Make in the terminal.
     
     Git will ignore all .out,.o,.dat,files, all the directories called "output" or "configuration" 
-    and all the images (.png and .svg) and gnuplot scripts (.gpl files). So it is suggested to generate binary executable with the 
-    extension .out, and to create directories with the aforementioned name if you don't want to track
-    something.
+    and all the images (.png and .svg) and gnuplot scripts (.gpl files). So it is suggested to generate
+    binary executable with the  extension .out, and to create directories with the aforementioned 
+    name if you don't want to track something.

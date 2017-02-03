@@ -29,3 +29,18 @@ int next_two_power(int n) {
         p<<=1;
     return p;
 }
+
+float computeMean(float* samples,int dim) {
+    float mean=0;
+    for(int i=0;i<dim;i++)
+        mean+=samples[i];
+    return mean/dim;
+}
+
+float findMax(float* samples,int dim) {
+    float max=samples[0];
+    for(int i=1;i<dim;i++) {
+        if(samples[i]>max)
+            max=samples[i];
+    }
+}

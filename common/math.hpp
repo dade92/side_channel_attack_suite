@@ -5,5 +5,7 @@
 double phi(double z);
 double phi_inv(double z);
 int next_two_power(int n);
+float computeMean(float* samples,int dim);
+float findMax(float* samples,int dim);
 
 #endif

@@ -17,6 +17,6 @@ clean:
 	rm *.o
 	rm *.out
 clean_images:
-	rm *.gpl
-	rm *.dat
-	rm *.png
+	find . -name "*.gpl" -type f|xargs rm -f
+	find . -name "*.dat" -type f|xargs rm -f
+	find . -name "*.png" -type f|xargs rm -f

@@ -6,6 +6,12 @@
 #include<string>
 #include"config.hpp"
 #include"../common/input.hpp"
+
+/**
+ * Output class of the filter tool, save a .dat file
+ * containing the filtered traces
+ */
+
 class Output {
 public:
     Output(Config& config,Input& input,float** data,uint8_t** plains);
