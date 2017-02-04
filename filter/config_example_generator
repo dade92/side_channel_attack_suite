@@ -1,0 +1,4 @@
+filename  /home/davide/Documenti/tesi/data/aes_50k_200mv.dat                 ;input file
+outputFilename aes_adaptive_filter.dat              ;output file, where to put the filter
+step 1000               ;number of trace to put in memory
+padding zero            ;padding type

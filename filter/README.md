@@ -5,14 +5,21 @@
     traces. The implemented filters are:
     
     -rect, a rectangular filter
+    -Hann
+    -Nuttall 
+    
+    Adaptive filter generator instead is a tool that generates
+    an adaptive filter taking as input a set of dpacalc traces.
+    
     
     IMPORTANT: the fftw3 library that computes the DFT and IDFT
-    was compiled passing --enable-float to the configure script.
-    In this way the library supports computation with floating
-    numbers. If you don't configure in that way, the compiler
-    will NOT resolve the function calls correctly. If you want
-    to use the double estension, then find in the code the 
-    string fftwf and replace with fftw.
+    was compiled passing --enable-float parameter to the 
+    configure script. In this way the library supports 
+    computation with floating numbers. If you don't configure 
+    in that way, the compiler will NOT resolve the function 
+    calls correctly. If you want to use the double estension,
+    then find in the code the string fftwf and replace with fftw.
     
     Usage:
     ./filter.out config_file
+    ./adaptive_filter_generator.out config_file

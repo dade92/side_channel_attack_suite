@@ -44,10 +44,12 @@ int main(int argc,char*argv[]) {
     //for every batch of traces, apply the filter and save on HD
     output.writeHeader();
     //generate the filter window, storing in RAM
-    if(config.filterFile.empty())
+    if(config.filterFile.empty()) {
+        cout<<"No adaptive filter, computing the windows."<<endl;
         transform.computeFilter();
+    }
     else {
-        cout<<"Filter data passed, compute filter using .dat file."<<endl;
+        cout<<"adaptive filter passed, computing using .dat file."<<endl;
         transform.computeFilter(config.filterFile);
     }
     while(i<input.numTraces) {

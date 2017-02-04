@@ -1,16 +1,17 @@
-filename            /home/davide/Documenti/tesi/data/aes_50k_os_optimized1.dat  ;name of the file in input
-outputFilename      aes_50k_os_optimized1_filtered.dat                                    ;name of the file in output
-step                1000                    ;number of traces to put in memory
+filename            /home/davide/Documenti/tesi/data/sin.dat  ;name of the file in input
+outputFilename      sin_filtered.dat                                    ;name of the file in output
+step                2                    ;number of traces to put in memory
 samplingFreq        1000                     ;sampling frequency
 padding             zero                    ;padding type
 filterCombination doNothing                 ;what to do when more windows are combined: doNothing,clamp,normalize
-filterFile /home/davide/Documenti/tesi/data/aes_50k_200mv.dat
+;filterFile aes_adaptive_filter.dat          ;the file of the adaptive filter
 ;list of filter windows
 windows {   
     first {
-        filterType lowPass     ;type of filter:low pass, band pass or high pass
+        filterType bandPass     ;type of filter:low pass, band pass or high pass
         windowType rect         ;type of window: rect,
-        highFrequency 15       ;high frequency
+        lowFrequency 0		;high frequency
+	highFrequency 30
     }
 }
 

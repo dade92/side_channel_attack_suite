@@ -157,10 +157,15 @@ void showTraces(Config& config,Input& input,float** trace) {
     }
     outputStatistics << "plot ";
     for(int i=0;i<config.tracesToPrint;i++) {
-        outputStatistics << "\"traces.dat\" u 1:"<<i+2<<" with lines,";
+        outputStatistics << "\"traces.dat\" u 1:"<<i+2<<" with lines";
+        if(i==config.tracesToPrint-1)
+            outputStatistics<<";";
+        else
+            outputStatistics<<",";
     }
     //write the .dat file
-    for(int i=0;i<config.maxSample-config.startSample;i++) {
+    int maxSample=(config.maxSample!=0 ? config.maxSample : input.samplesPerTrace);
+    for(int i=0;i<maxSample-config.startSample;i++) {
         switch(config.unit) {
             case samples:
                 outputStatisticsData<<i+config.startSample<<" ";
