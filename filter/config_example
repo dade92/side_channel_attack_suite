@@ -1,6 +1,6 @@
-filename            /home/davide/Documenti/tesi/data/sin.dat  ;name of the file in input
-outputFilename      sin_filtered.dat                                    ;name of the file in output
-step                2                    ;number of traces to put in memory
+filename            /home/davide/Documenti/tesi/data/cos_5_350_480_1000.dat  ;name of the file in input
+outputFilename      cos_filtered.dat                                    ;name of the file in output
+step                3                    ;number of traces to put in memory
 samplingFreq        1000                     ;sampling frequency
 padding             zero                    ;padding type
 filterCombination doNothing                 ;what to do when more windows are combined: doNothing,clamp,normalize
@@ -9,9 +9,9 @@ filterCombination doNothing                 ;what to do when more windows are co
 windows {   
     first {
         filterType bandPass     ;type of filter:low pass, band pass or high pass
-        windowType rect         ;type of window: rect,
-        lowFrequency 0		;high frequency
-	highFrequency 30
+        windowType hann         ;type of window: rect,hann,nuttall
+	lowFrequency 30	;low frequency of the window
+	highFrequency 100		;high frequency of the window
     }
 }
 

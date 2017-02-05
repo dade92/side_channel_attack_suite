@@ -44,3 +44,14 @@ float findMax(float* samples,int dim) {
             max=samples[i];
     }
 }
+
+float hanning(int n,int N) {
+    return 0.5*(1-cos((2*M_PI*n)/(N-1)));
+}
+
+float blackman_nuttall(float a0,float a1,float a2,float a3,int n,int N) {
+    return a0
+        -a1*cos(2*M_PI*n/(N-1))
+        +a2*cos(4*M_PI*n/(N-1))
+        -a3*cos(6*M_PI*n/(N-1));
+}

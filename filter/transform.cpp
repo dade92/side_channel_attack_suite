@@ -44,7 +44,7 @@ void Transform::padTraces() {
 }
 
 void Transform::computeFilter() {
-    int i,k,N;
+    int i,k,N,n;
     vector<window>::iterator it;
     int freqIndexLow,freqIndexHigh;
     //for each window, compute the filter specified by the user
@@ -52,6 +52,7 @@ void Transform::computeFilter() {
         //init the windows index (k:N=f:F)
         freqIndexLow=it->lowFrequency*traceSize/samplingFreq;;
         freqIndexHigh=it->highFrequency*traceSize/samplingFreq;
+        N=freqIndexHigh-freqIndexLow;
         //TODO:manage even or odd window
         switch(it->windowFunction) {
             case rect:
@@ -79,37 +80,35 @@ void Transform::computeFilter() {
                 }
                 break;
             case hann:
-                N=freqIndexHigh-freqIndexLow;
-                int n;
                 switch(it->type) {
                     case lowPass:
                         for(k=0;k<freqIndexHigh;k++) {
                             n=k+N/2;
-                            filterFunction[k][0]+=0.5*(1-cos((2*M_PI*n)/(N-1)));
+                            filterFunction[k][0]+=hanning(n,N);
                         }
-                        for(;k<traceSize;k++) {
-                            n=k-traceSize-freqIndexHigh;
-                            filterFunction[k][0]+=0.5*(1-cos((2*M_PI*n)/(N-1)));
+                        for(k=traceSize-freqIndexHigh;k<traceSize;k++) {
+                            n=k-(traceSize-freqIndexHigh);
+                            filterFunction[k][0]+=hanning(n,N);
                         }
                         break;
                     case bandPass:
                         for(k=0;k<traceSize/2;k++) {
                             if(k>=freqIndexLow && k<=freqIndexHigh) {
                                 n=k-freqIndexLow;
-                                filterFunction[k][0]+=0.5*(1-cos((2*M_PI*n)/(N-1)));
+                                filterFunction[k][0]+=hanning(n,N);
                             }
                         }
                         for(;k<traceSize;k++) {
                             if(k>=traceSize-freqIndexHigh && k<=traceSize-freqIndexLow) {
-                                n=k-traceSize-freqIndexHigh;
-                                filterFunction[k][0]+=0.5*(1-cos((2*M_PI*n)/(N-1)));
+                                n=k-(traceSize-freqIndexHigh);
+                                filterFunction[k][0]+=hanning(n,N);
                             }
                         }
                         break;
                     case highPass:
-                        for(;k<traceSize/2+freqIndexLow;k++) {
+                        for(k=freqIndexLow;k<traceSize/2+freqIndexLow;k++) {
                             n=k-freqIndexLow;
-                            filterFunction[k][0]+=0.5*(1-cos((2*M_PI*n)/(N-1)));
+                            filterFunction[k][0]+=hanning(n,N);
                         }
                         break;
                 }
@@ -121,13 +120,34 @@ void Transform::computeFilter() {
                 float a3=0.012604;
                 switch(it->type) {
                     case lowPass:
-                        
+                        for(k=0;k<freqIndexHigh;k++) {
+                            n=k+N/2;
+                            filterFunction[k][0]+=blackman_nuttall(a0,a1,a2,a3,n,N);
+                        }
+                        for(k=traceSize-freqIndexHigh;k<traceSize;k++) {
+                            n=k-(traceSize-freqIndexHigh);
+                            filterFunction[k][0]+=blackman_nuttall(a0,a1,a2,a3,n,N);
+                        }
                         break;
                     case bandPass:
-                        
+                        for(k=0;k<traceSize/2;k++) {
+                            if(k>=freqIndexLow && k<=freqIndexHigh) {
+                                n=k-freqIndexLow;
+                                    filterFunction[k][0]+=blackman_nuttall(a0,a1,a2,a3,n,N);
+                            }
+                        }
+                        for(k=traceSize/2;k<traceSize;k++) {
+                            if(k>=traceSize-freqIndexHigh && k<=traceSize-freqIndexLow) {
+                                n=k-(traceSize-freqIndexHigh);
+                                filterFunction[k][0]+=blackman_nuttall(a0,a1,a2,a3,n,N);
+                            }
+                        }
                         break;
                     case highPass:
-                        
+                    for(k=freqIndexLow;k<traceSize/2+freqIndexLow;k++) {
+                            n=k-freqIndexLow;
+                            filterFunction[k][0]+=blackman_nuttall(a0,a1,a2,a3,n,N);
+                        }                        
                         break;
                 }
                 break;
