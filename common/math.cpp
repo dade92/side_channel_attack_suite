@@ -45,11 +45,11 @@ float findMax(float* samples,int dim) {
     }
 }
 
-float hanning(int n,int N) {
-    return 0.5*(1-cos((2*M_PI*n)/(N-1)));
+float generalized_hamming_window(float alpha,float beta,int n,int N) {
+    return alpha-beta*cos((2*M_PI*n)/(N-1));
 }
 
-float blackman_nuttall(float a0,float a1,float a2,float a3,int n,int N) {
+float generalized_cosine_window(float a0,float a1,float a2,float a3,int n,int N) {
     return a0
         -a1*cos(2*M_PI*n/(N-1))
         +a2*cos(4*M_PI*n/(N-1))

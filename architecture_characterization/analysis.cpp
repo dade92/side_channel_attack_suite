@@ -133,7 +133,7 @@ int main(int argc,char* argv[]) {
         cout     << "**************************"<<endl<<endl;
         //reads incrementally, the file is passed once, reading step traces every time
         read=input.readData(traceMatrix,plaintext,config.step);
-        cout<<"-Read "<<read<<" bytes"<<endl;
+        cout<<"-Read "<<read<<" elements"<<endl;
         vector<interval>::iterator it;
         int keySpace;
         for(it=config.intervals.begin();it!=config.intervals.end();++it) {

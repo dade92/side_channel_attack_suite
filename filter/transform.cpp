@@ -55,6 +55,7 @@ void Transform::computeFilter() {
         N=freqIndexHigh-freqIndexLow;
         //TODO:manage even or odd window
         switch(it->windowFunction) {
+            //here is a list of window functions
             case rect:
                 switch(it->type) {
                     case lowPass:
@@ -84,31 +85,31 @@ void Transform::computeFilter() {
                     case lowPass:
                         for(k=0;k<freqIndexHigh;k++) {
                             n=k+N/2;
-                            filterFunction[k][0]+=hanning(n,N);
+                            filterFunction[k][0]+=generalized_hamming_window(0.5,0.5,n,N);
                         }
                         for(k=traceSize-freqIndexHigh;k<traceSize;k++) {
                             n=k-(traceSize-freqIndexHigh);
-                            filterFunction[k][0]+=hanning(n,N);
+                            filterFunction[k][0]+=generalized_hamming_window(0.5,0.5,n,N);
                         }
                         break;
                     case bandPass:
                         for(k=0;k<traceSize/2;k++) {
                             if(k>=freqIndexLow && k<=freqIndexHigh) {
                                 n=k-freqIndexLow;
-                                filterFunction[k][0]+=hanning(n,N);
+                                filterFunction[k][0]+=generalized_hamming_window(0.5,0.5,n,N);
                             }
                         }
                         for(;k<traceSize;k++) {
                             if(k>=traceSize-freqIndexHigh && k<=traceSize-freqIndexLow) {
                                 n=k-(traceSize-freqIndexHigh);
-                                filterFunction[k][0]+=hanning(n,N);
+                                filterFunction[k][0]+=generalized_hamming_window(0.5,0.5,n,N);
                             }
                         }
                         break;
                     case highPass:
                         for(k=freqIndexLow;k<traceSize/2+freqIndexLow;k++) {
                             n=k-freqIndexLow;
-                            filterFunction[k][0]+=hanning(n,N);
+                            filterFunction[k][0]+=generalized_hamming_window(0.5,0.5,n,N);
                         }
                         break;
                 }
@@ -122,36 +123,36 @@ void Transform::computeFilter() {
                     case lowPass:
                         for(k=0;k<freqIndexHigh;k++) {
                             n=k+N/2;
-                            filterFunction[k][0]+=blackman_nuttall(a0,a1,a2,a3,n,N);
+                            filterFunction[k][0]+=generalized_cosine_window(a0,a1,a2,a3,n,N);
                         }
                         for(k=traceSize-freqIndexHigh;k<traceSize;k++) {
                             n=k-(traceSize-freqIndexHigh);
-                            filterFunction[k][0]+=blackman_nuttall(a0,a1,a2,a3,n,N);
+                            filterFunction[k][0]+=generalized_cosine_window(a0,a1,a2,a3,n,N);
                         }
                         break;
                     case bandPass:
                         for(k=0;k<traceSize/2;k++) {
                             if(k>=freqIndexLow && k<=freqIndexHigh) {
                                 n=k-freqIndexLow;
-                                    filterFunction[k][0]+=blackman_nuttall(a0,a1,a2,a3,n,N);
+                                    filterFunction[k][0]+=generalized_cosine_window(a0,a1,a2,a3,n,N);
                             }
                         }
                         for(k=traceSize/2;k<traceSize;k++) {
                             if(k>=traceSize-freqIndexHigh && k<=traceSize-freqIndexLow) {
                                 n=k-(traceSize-freqIndexHigh);
-                                filterFunction[k][0]+=blackman_nuttall(a0,a1,a2,a3,n,N);
+                                filterFunction[k][0]+=generalized_cosine_window(a0,a1,a2,a3,n,N);
                             }
                         }
                         break;
                     case highPass:
                     for(k=freqIndexLow;k<traceSize/2+freqIndexLow;k++) {
                             n=k-freqIndexLow;
-                            filterFunction[k][0]+=blackman_nuttall(a0,a1,a2,a3,n,N);
+                            filterFunction[k][0]+=generalized_cosine_window(a0,a1,a2,a3,n,N);
                         }                        
                         break;
                 }
                 break;
-                //TODO:add here other windows
+                //add here other window types
         }
     }
     //apply the filter combining policy
@@ -164,11 +165,14 @@ void Transform::computeFilter() {
                     filterFunction[k][0]=1;
             }
             break;
-        /*case normalize:
-            float max=findMax(filterFunction,traceSize);
-            for(k=0;k<traceSize;k++)
-                filterFunction[k][0]/=max;
-            break;*/
+        case normalize:
+            float modulus;
+            for(k=0;k<traceSize;k++) {
+                modulus=sqrt(pow(filterFunction[k][0],2)+pow(filterFunction[k][1],2));
+                filterFunction[k][0]/=modulus;
+                filterFunction[k][1]/=modulus;
+            }
+            break;
     }
 }
 

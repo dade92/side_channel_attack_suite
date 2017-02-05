@@ -54,7 +54,7 @@ int main(int argc,char*argv[]) {
     }
     while(i<input.numTraces) {
         int read=input.readData(traceMatrix,plaintext,config.step);
-        cout<<"Read "<<read<<" bytes."<<endl;
+        cout<<"Read "<<read<<" elements."<<endl;
         transform.padTraces();
         cout<<"Traces padded. Applying filter.."<<endl;
         transform.filterTraces();

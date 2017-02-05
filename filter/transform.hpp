@@ -29,12 +29,12 @@ public:
     
 private:
     fftwf_complex* filterFunction;
+    fftwf_complex* transformation;
     float** dataMatrix;
     float samplingFreq;
     padding pad;
     filterCombination fc;
     vector<window> windows;
-    fftwf_complex* transformation;
     int traceSize,samplesPerTrace,step;
 };
 #endif
