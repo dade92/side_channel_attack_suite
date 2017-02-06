@@ -55,3 +55,10 @@ float generalized_cosine_window(float a0,float a1,float a2,float a3,int n,int N)
         +a2*cos(4*M_PI*n/(N-1))
         -a3*cos(6*M_PI*n/(N-1));
 }
+
+float crossCorrelate(float*t1,float*t2,int start,int end) {
+    float sum=0;
+    for(int n=start;n<end;n++)
+        sum+=t1[n]*t2[n];
+    return sum;
+}

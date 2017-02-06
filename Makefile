@@ -1,4 +1,4 @@
-SUBDIRS=common architecture_characterization trace_inspector t_test_high_order filter
+SUBDIRS=common architecture_characterization trace_inspector t_test_high_order filter trace_aligner
 
 .PHONY: subdirs $(SUBDIRS)
 

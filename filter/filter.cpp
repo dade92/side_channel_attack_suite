@@ -2,7 +2,7 @@
 #include<cstdint>
 #include<vector>
 #include"config.hpp"
-#include"output.hpp"
+#include"../common/output.hpp"
 #include"transform.hpp"
 #include"../common/input.hpp"
 #include"../common/math.hpp"
@@ -40,7 +40,7 @@ int main(int argc,char*argv[]) {
         traceMatrix[w]=new float[traceSize];
         plaintext[w]=new uint8_t[input.plainLength];
     }
-    Output output(config,input,traceMatrix,plaintext);
+    Output output(config.outputFilename,config.step,input,traceMatrix,plaintext);
     //for every batch of traces, apply the filter and save on HD
     output.writeHeader();
     //generate the filter window, storing in RAM

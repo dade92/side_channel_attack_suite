@@ -53,6 +53,8 @@ void Transform::computeFilter() {
         freqIndexLow=it->lowFrequency*traceSize/samplingFreq;;
         freqIndexHigh=it->highFrequency*traceSize/samplingFreq;
         N=freqIndexHigh-freqIndexLow;
+        if(N%2==0)
+            N+=1;
         //TODO:manage even or odd window
         switch(it->windowFunction) {
             //here is a list of window functions

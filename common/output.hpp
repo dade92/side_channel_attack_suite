@@ -4,8 +4,7 @@
 #include<cstdint>
 #include<iostream>
 #include<string>
-#include"config.hpp"
-#include"../common/input.hpp"
+#include"input.hpp"
 
 /**
  * Output class of the filter tool, save a .dat file
@@ -14,7 +13,7 @@
 
 class Output {
 public:
-    Output(Config& config,Input& input,float** data,uint8_t** plains);
+    Output(string outputFile,int s,Input& input,float** data,uint8_t**plains);
     void writeHeader();
     void writeTraces();
 private:

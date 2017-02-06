@@ -1,0 +1,7 @@
+filename /home/davide/Documenti/tesi/data/aes_50k_200mv.dat  ;input file
+outputFilename traces_aligned.dat                       ;output file
+step 1000                                               ;number of traces to put in memory
+maxTau 100                                              ;max tau to compute the alignment
+alignmentFunction crossCorr                             ;type of alignment function
+startSample 0                                           ;start sample
+endSample 0                                             ;end sample. 0 stands for final sample

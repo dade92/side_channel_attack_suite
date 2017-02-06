@@ -11,6 +11,7 @@
 double phi(double z);
 double phi_inv(double z);
 int next_two_power(int n);
+float crossCorrelate(float*,float*,int start,int end);
 float computeMean(float* samples,int dim);
 float findMax(float* samples,int dim);
 float generalized_hamming_window(float alpha,float beta,int n,int N);

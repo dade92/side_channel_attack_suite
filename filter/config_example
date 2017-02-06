@@ -1,7 +1,7 @@
 filename            /home/davide/Documenti/tesi/data/cos_5_350_480_1000.dat  ;name of the file in input
 outputFilename      cos_filtered.dat	;name of the file in output
-step                3                   ;number of traces to put in memory
-samplingFreq        1000                ;sampling frequency
+step                1000                   ;number of traces to put in memory
+samplingFreq        500                ;sampling frequency
 padding             zero                ;padding type: zero,hold,mean
 filterCombination doNothing             ;what to do when more windows are combined: doNothing,clamp,normalize
 ;filterFile aes_adaptive_filter.dat     ;the file of the adaptive filter:if present, take the file,otherwise use the windows to generate the filter

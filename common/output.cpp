@@ -1,17 +1,17 @@
 #include"output.hpp"
 
-Output::Output(Config& config,Input& input,float** data,uint8_t**plains) {
+Output::Output(string outputFile,int s,Input& input,float** data,uint8_t**plains) {
     dataMatrix=data;
     plaintext=plains;
-    filename=config.outputFilename.c_str();
+    filename=outputFile.c_str();
     samplesPerTrace=input.samplesPerTrace;
     numTraces=input.numTraces;
-    step=config.step;
+    step=s;
     format=input.format;
     plainLength=input.plainLength;
     fp=fopen(filename,"wb");
     if(fp==NULL) {
-        cout<<"Error during file opening."<<endl;
+        cout<<"Can't open the file."<<endl;
         exit(0);
     }
 }

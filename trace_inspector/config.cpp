@@ -19,7 +19,7 @@ void Config::init() {
             //parse the first level
             filename = pt.get<string>("filename");
             outputDir= pt.get<string>("outputDir");
-            batch= pt.get<int>("batch");
+            batch= pt.get<int>("step");
             if(batch<0) {
                 cout<<"Invalid batch"<<endl;
                 exit(0);

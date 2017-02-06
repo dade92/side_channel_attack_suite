@@ -2,12 +2,12 @@
 
 CFLAGS=-O3 -march=native -std=c++11 -lpthread -lpng
 CC=g++
-OBJECTS=config.o traceInspector.o
+OBJECTS=config.o trace_inspector.o
 COMMONS=../common/input.o
  
-all:traceInspector.out
+all:trace_inspector.out
 
-traceInspector.out:$(COMMONS) $(OBJECTS)
+trace_inspector.out:$(COMMONS) $(OBJECTS)
 	$(CC) $(CFLAGS) -o $@ $^
 
 %.o:%.cpp

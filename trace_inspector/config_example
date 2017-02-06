@@ -1,7 +1,6 @@
-;filename /home/davide/Documenti/tesi/data/cos_5_350_480_1000.dat  ;filename
-filename ../filter/cos_filtered.dat
+filename /home/davide/Documenti/tesi/data/aes_50k_200mv.dat  ;filename
 outputDir output                                                ;dir where put all scripts and .png
-batch 3                                                      ;number of traces to analyze at each iteration
+step 1000                                                      ;number of traces to analyze at each iteration
 samplingFreq 500                                                ;sampling frequency of the oscilloscope
 clockFreq 120                                                   ;frequency of the processor
 numTraces 3                                                    ;num of traces to print
