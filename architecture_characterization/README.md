@@ -17,7 +17,6 @@
     --  if it is an AES attack, that is, if the size of the key is greater than 0, then 
         the positions are:
             ptx     take the simple plaintext.
-            ar      addround,take ptx^key.
             sub     subbyte, take SBOX[ptx^key].
             
     --  if it is a known input attack, that is, if the key size is 0, then the positions
@@ -34,5 +33,6 @@
             mulptxY_Z take the Y and Z input and compute the mul among them.
             
             other operations of the same form: <op>ptxX_Y.
+            
     Usage:
-    ./analysis.out config_file
+    ./analysis.out configFile

@@ -2,15 +2,16 @@
 #include<cstdint>
 #include<vector>
 #include"config.hpp"
-#include"../common/output.hpp"
 #include"transform.hpp"
+#include"../common/output.hpp"
 #include"../common/input.hpp"
 #include"../common/math.hpp"
 
 using namespace std;
 
 /**
- * filter main function
+ * Filter tool: try to
+ * remove noise from traces
  */
 
 int main(int argc,char*argv[]) {

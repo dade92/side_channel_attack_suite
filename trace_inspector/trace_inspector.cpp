@@ -10,8 +10,8 @@
 
 #include "config.hpp"
 #include "../common/input.hpp"
-//TODO:substitute MAX with meaningful name
 #define MAX 256
+
 using namespace std;
 
 typedef struct {
@@ -29,7 +29,14 @@ void printUsage();
 void savePersistence(uint32_t** persistence,int numSamples,Config&);
 void showTraces(Config& config,Input& input,float** trace);
 void inspectTraces(Config& config,Input& input);
+inline void setRGB(png_byte *ptr, uint32_t val);
 
+/**
+ * Trace inspector tool: plot
+ * a graph with the mean, a graph
+ * with the dev standard and one
+ * with some traces
+ */
 int main(int argc,char*argv[]) {
     if(argc<2) {
         printUsage();
@@ -47,16 +54,6 @@ int main(int argc,char*argv[]) {
         exit(0);
     }
     inspectTraces(config,input);
-}
-
-void printUsage() {
-    cout<<"./traceInspector.out configFile"<<endl;
-}
-
-inline void setRGB(png_byte *ptr, uint32_t val) {
-        ptr[0]=val/pow(256,2);
-        ptr[1]=val/256 % (uint32_t)pow(256,2);
-        ptr[2]=val%256;
 }
 
 void savePersistence(uint32_t** persistence,int numSamples,Config& config) {
@@ -375,4 +372,14 @@ void inspectTraces(Config& config,Input& input) {
     }
     cout<<"traces inspected. You can find gnuplot script in \"inspectTrace.gpl\" and in \"meanAndVariance.gpl\" "
     		"data in \"inspectTrace.dat\" and \"meanAndVariance.dat\" "<<endl;
+}
+
+void printUsage() {
+    cout<<"./traceInspector.out configFile"<<endl;
+}
+
+inline void setRGB(png_byte *ptr, uint32_t val) {
+        ptr[0]=val/pow(256,2);
+        ptr[1]=val/256 % (uint32_t)pow(256,2);
+        ptr[2]=val%256;
 }

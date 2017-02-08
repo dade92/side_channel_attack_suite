@@ -27,7 +27,6 @@ int main(int argc,char*argv[]) {
     float* average=new float[traceSize];
     //where to put the filter
     fftwf_complex* filterFunction=fftwf_alloc_complex(traceSize);
-    plan=fftwf_plan_dft_r2c_1d(traceSize,average,filterFunction,FFTW_MEASURE);
     for(int w=0;w<input.numTraces;w++) {
         trace[w]=new float[input.samplesPerTrace];
         plain[w]=new uint8_t[input.plainLength];
@@ -72,6 +71,7 @@ int main(int argc,char*argv[]) {
             break;
     }
     cout<<"Mean computed, transforming to frequency domain.."<<endl;
+    plan=fftwf_plan_dft_r2c_1d(traceSize,average,filterFunction,FFTW_ESTIMATE);
     //transformation
     fftwf_execute(plan);
     //normalize the filter

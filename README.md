@@ -1,4 +1,4 @@
-    Side channel analysis tools:
+    Side channel analysis suite:
     
     Copyright (C) 2016  Davide Botti
 
@@ -16,6 +16,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>    
 
     Dependencies: boost c++ libraries, libpng, fftw3
+    
+    About fftw3: they were compiled enabling float API. So go to the fftw3 directory and run
+                ./configure --enable-float
+                make
+                make install
+                
+    About boost and libpng: you have only to install by apt-get
 
     1) Architectural analysis tool performs side channel attacks on a set of traces in dpacalc format. 
     It can also perform known input analysis, useful for architectural characterization.
@@ -24,17 +31,29 @@
     It draws also the persistence graph of the traces.
 
     3) T-test tool performs t-test analysis on a pair of traces, of order 1 and higher (up to order 5,
-        actually is useless implement attacks of order higher than that).
+    actually is useless implement attacks of order higher than that).
     
-    4) Filter tool, used to filter raw traces.
+    4) Filter tool, used to filter raw traces and to generate an adaptive filter from a set of 
+    dpacalc traces.
+    
+    5) Trace aligner, used to align traces that could be not well aligned when acquired.
 
-    All of these tools accept as argument a config file. 
-    Each directory has a config file example with detailed information about all the parameters.
+    All of these tools accept as argument a config file, usage:
+    ./tool_name.out configFile
+    Each directory has a config file example with detailed information about all the parameters and
+    a README.md file that explain how the tool works.
 
     All of these tools produce gnuplot scripts that should be passed to gnuplot in order to 
-    generate the .png images or a .dat file of filtered traces.
+    generate the .png images or a .dat file of filtered/aligned traces.
     
-    There is a Makefile that will compile everything in this directory. Just type Make in the terminal.
+    There is a Makefile that will compile everything in this directory.
+    Just type Make in the terminal. If you want to add a macro-module to the suite,
+    create a new sub-directory, create a Makefile for that sub-module (copy and paste
+    from the other sub-modules the Makefile and change the parameters), then change
+    the root Makefile (the one in this directory) adding the new sub-directory to the 
+    param SUBDIRS.
+    Common directory does not contain any executable, but a series of classes and functions
+    widely used in the suite.
     
     Git will ignore all .out,.o,.dat,files, all the directories called "output" or "configuration" 
     and all the images (.png and .svg) and gnuplot scripts (.gpl files). So it is suggested to generate

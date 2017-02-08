@@ -7,6 +7,10 @@
 
 using namespace std;
 
+/**
+ * Tool that alignes traces
+ */
+
 int main(int argc,char*argv[]) {
     if(argc<2) {
         cout<<"Usage trace_aligner.out configFile."<<endl;
@@ -27,22 +31,27 @@ int main(int argc,char*argv[]) {
         plain[w]=new uint8_t[input.samplesPerTrace];
     }
     int i=0;
-    //data matrix is modified by the Realigner
-    Output output(config.outputFilename,config.step,input,data,plain);
-    output.writeHeader();
-    //first batch is outside to initialize the reference trace
-    input.readData(data,plain,config.step);
-    Realigner realigner(config,input,data[0]);
-    cout<<"Aligning batch number "<<0<<endl;
-    realigner.alignTraces(data);
-    output.writeTraces();
-    i+=config.step;
-    while(i<input.numTraces) {
+    if(config.m==multiple) {
+        //data matrix is modified by the Realigner
+        Output output(config.outputFilename,config.step,input,data,plain);
+        output.writeHeader();
+        //first batch is outside to initialize the reference trace
         input.readData(data,plain,config.step);
-        cout<<"Aligning batch number "<<i/config.step<<endl;
+        Realigner realigner(config,input,data[0]);
+        cout<<"Aligning batch number "<<0<<endl;
         realigner.alignTraces(data);
         output.writeTraces();
         i+=config.step;
+        while(i<input.numTraces) {
+            input.readData(data,plain,config.step);
+            cout<<"Aligning batch number "<<i/config.step<<endl;
+            realigner.alignTraces(data);
+            output.writeTraces();
+            i+=config.step;
+        }
+    } else if(config.m==single) {
+        //TODO:find peaks of cross correlation and split the single trace
+        
     }
     return 0;
 }

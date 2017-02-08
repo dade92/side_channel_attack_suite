@@ -3,7 +3,7 @@ outputDir output                                                ;dir where put a
 step 1000                                                      ;number of traces to analyze at each iteration
 samplingFreq 500                                                ;sampling frequency of the oscilloscope
 clockFreq 120                                                   ;frequency of the processor
-numTraces 3                                                    ;num of traces to print
+numTraces 10                                                    ;num of traces to print
 startSample 0                                                   ;starting sample
 endSample 0                                                   ;ending sample. 0 means to the end
 imageParams {

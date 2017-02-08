@@ -38,6 +38,15 @@ void Config::init() {
                 cout<<"Wrong start/end sample."<<endl;
                 exit(0);
             }
+            string modeString=pt.get<string>("mode");
+            if(modeString.compare("single")==0)
+                m=single;
+            else if(modeString.compare("multiple")==0)
+                m=multiple;
+            else {
+                cout<<"Mode not recognized."<<endl;
+                exit(0);
+            }
         } catch( ptree_error e) {
             cerr << "Analysis configuration error. Check the config file" << endl;
             exit (3);

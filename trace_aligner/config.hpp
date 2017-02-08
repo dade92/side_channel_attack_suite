@@ -20,6 +20,10 @@ enum alignmentFunction {
     crossCorr
 };
 
+enum mode {
+    single,multiple
+};
+
 class Config {
 public:
     Config(string configFile);
@@ -28,6 +32,7 @@ public:
     float samplingFreq;
     int step,maxTau,startSample,endSample;
     alignmentFunction function;
+    mode m;
     
 private:
     string configFile;

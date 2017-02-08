@@ -17,6 +17,12 @@ void PowerModel::generate(uint8_t** plaintext,unsigned**powerMatrix) {
     //the second plaintext (if present)
     int p,s;
     unsigned k;
+    /* AES side channel attack mode:
+     * position indicates what intermediate values
+     * are taken for the power model generation.
+     * subX_Y means take the byte X and Y, using
+     * the values after subByte stage
+     */
     if(keySpace>1) {
         if(position.compare("ptx")==0)
             p=0;
@@ -100,6 +106,10 @@ void PowerModel::generate(uint8_t** plaintext,unsigned**powerMatrix) {
             exit(0);
         }
     }
+    /* characterization mode: the considered value
+     * is the plain, during characterization the AES
+     * algorithm is generally not used 
+     */
     else if(keySpace==1) {
         //in case of ptxX_Y, sbox param is not necessary, so reset it
         if(position.compare("ptx1_2")==0) {
@@ -248,7 +258,7 @@ void PowerModel::generate(uint8_t** plaintext,unsigned**powerMatrix) {
                 else if(p==0)
                     powerMatrix[s][k]=hammingDistance(ptx,k);
                 else {
-                    //attack subbytes
+                    //attack subbytes, 8 bit attack, one part of the key is fixed (it's a cheat)
                     if(sbox==0 && p==1)
                         powerMatrix[s][k]=hammingDistance(SBOX[ptx^0x2b],
                                                       SBOX[ptx2^k]);
