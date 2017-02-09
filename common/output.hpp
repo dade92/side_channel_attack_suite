@@ -13,7 +13,12 @@
 
 class Output {
 public:
-    Output(string outputFile,int s,Input& input,float** data,uint8_t**plains);
+    Output(string outputFile,int step,
+           Input& input,float** data,uint8_t**plains);
+    //in some cases I need to store objects without having a compatible .dat input file
+    Output(string outputFile,int step,
+           int numTraces,int samplesPerTrace,int plaintLength,float**data,uint8_t**plains);
+    ~Output();
     void writeHeader();
     void writeTraces();
 private:

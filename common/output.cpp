@@ -11,7 +11,26 @@ Output::Output(string outputFile,int s,Input& input,float** data,uint8_t**plains
     plainLength=input.plainLength;
     fp=fopen(filename,"wb");
     if(fp==NULL) {
-        cout<<"Can't open the file."<<endl;
+        cout<<"Can't open output file."<<endl;
+        exit(0);
+    }
+}
+
+Output::~Output() {
+    fclose(fp);
+}
+
+Output::Output(string outputFile,int step,
+           int numTraces,int samplesPerTrace,int plainLength,float**data,uint8_t**plains) {
+    dataMatrix=data;
+    plaintext=plains;
+    filename=outputFile.c_str();
+    this->samplesPerTrace=samplesPerTrace;
+    this->numTraces=numTraces;
+    this->step=step;
+    this->plainLength=plainLength;
+    if(fp==NULL) {
+        cout<<"Can't open output file."<<endl;
         exit(0);
     }
 }

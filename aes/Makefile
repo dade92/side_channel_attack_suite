@@ -2,7 +2,7 @@
 
 CFLAGS=-O3 -march=native -std=c++11 -lpthread -lm
 CC=g++
-OBJECTS=aes_ttable.o aes_test.o
+OBJECTS=aes_ttable.o aes_test.o aes.o
 
 all:aes_test.out
 

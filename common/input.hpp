@@ -18,7 +18,7 @@ using namespace std;
  */
 class Input {
 public:
-    Input(std::string filename);
+    Input(string filename);
     ~Input();
     void readHeader();
     void readPlaintext(int index,char*plains,int step);
