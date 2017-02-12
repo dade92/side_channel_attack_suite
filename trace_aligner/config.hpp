@@ -28,11 +28,12 @@ class Config {
 public:
     Config(string configFile);
     void init();
-    string filename,outputFilename;
-    float samplingFreq;
+    string filename,outputFilename,startPlain,key;
+    float samplingFreq,cipherTime;
     int step,maxTau,startSample,endSample;
     alignmentFunction function;
     mode m;
+    bool printCorrelation;
     
 private:
     string configFile;

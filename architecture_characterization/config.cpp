@@ -76,7 +76,7 @@ void Config::init() {
                     exit(0);
                 }
                 string k=intIt->second.get<string>("key");
-                i.key=strtol(k.c_str(),NULL,16);  
+                i.key=strtol(k.c_str(),NULL,16);
                 i.model=intIt->second.get<string>("model");
                 ptree modelParams (intIt->second.get_child("modelParams"));
                 i.keySize=modelParams.get<int>("keySize");

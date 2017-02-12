@@ -21,7 +21,8 @@ Output::~Output() {
 }
 
 Output::Output(string outputFile,int step,
-           int numTraces,int samplesPerTrace,int plainLength,float**data,uint8_t**plains) {
+           int numTraces,int samplesPerTrace,
+           int plainLength,float**data,uint8_t**plains) {
     dataMatrix=data;
     plaintext=plains;
     filename=outputFile.c_str();
@@ -29,6 +30,8 @@ Output::Output(string outputFile,int step,
     this->numTraces=numTraces;
     this->step=step;
     this->plainLength=plainLength;
+    format='f';
+    fp=fopen(filename,"wb");
     if(fp==NULL) {
         cout<<"Can't open output file."<<endl;
         exit(0);
@@ -47,4 +50,12 @@ void Output::writeTraces() {
         fwrite(dataMatrix[i],sizeof(float),samplesPerTrace,fp);
         fwrite(plaintext[i],sizeof(uint8_t),plainLength,fp);
     }
+}
+
+void Output::rewindFile() {
+    fseek(fp,0,SEEK_SET);
+}
+
+void Output::setNumOfTraces(int numTraces) {
+    this->numTraces=numTraces;
 }

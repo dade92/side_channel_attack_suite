@@ -6,6 +6,7 @@
 #include"config.hpp"
 #include"../common/input.hpp"
 #include"../common/math.hpp"
+#include"../common/output.hpp"
 
 using namespace std;
 /**
@@ -18,6 +19,8 @@ class Realigner {
 public:
     Realigner(Config& config,Input& input,float*ref);
     void alignTraces(float** trace);
+    void autoCorrelate(float* correlation);
+    void divideTrace();
 private:
     float correlate(float* ,float*);
     void shiftTrace(float* trace,float* shiftedTrace,int tau);
@@ -25,5 +28,7 @@ private:
     alignmentFunction function;
     float* shiftedTrace;
     float* refTrace;
+    float samplingFreq,cipherTime;
+    string plaintext;
 };
 #endif

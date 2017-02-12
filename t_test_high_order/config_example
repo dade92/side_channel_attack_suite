@@ -2,8 +2,8 @@ filename /home/davide/Documenti/tesi/data/benchmark_load_caches.dat    ;filename
 filename2 /home/davide/Documenti/tesi/data/benchmark_mov_caches.dat    ;filename
 batch 1000                                                      ;number of traces to analyze at each iteration
 alpha 0.05                                                       ;confidence interval of the test
-samplingFreq 500                                                ;sampling frequency of the oscilloscope
-clockFreq 120                                                   ;frequency of the processor
+samplingFreq 500                                                ;sampling frequency of the oscilloscope [Mhz]
+clockFreq 120                                                   ;frequency of the processor [Mhz]
 startSample 0                                                  ;starting sample
 endSample 500                                                  ;ending sample. 0 means to the end
 imageParams {

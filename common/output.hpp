@@ -21,6 +21,8 @@ public:
     ~Output();
     void writeHeader();
     void writeTraces();
+    void rewindFile();
+    void setNumOfTraces(int numTraces);
 private:
     const char* filename;
     uint32_t samplesPerTrace,numTraces;

@@ -13,10 +13,6 @@ using namespace std;
  * or decryption
  */
 
-enum mode {
-    encrypt,decrypt
-};
-
 class AES {
 public:
     AES(uint8_t*key,int plainSize,int mode);

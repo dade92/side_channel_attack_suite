@@ -1,7 +1,7 @@
 filename            /home/davide/Documenti/tesi/data/cos_5_350_480_1000.dat  ;name of the file in input
 outputFilename      cos_filtered.dat	;name of the file in output
-step                1000                ;number of traces to put in memory
-samplingFreq        500                 ;sampling frequency
+step                3                ;number of traces to put in memory
+samplingFreq        1000                 ;sampling frequency
 padding             zero                ;padding type: zero,hold,mean
 filterCombination doNothing             ;what to do when more windows are combined: doNothing,clamp,normalize
 ;filterFile aes_adaptive_filter.dat     ;the file of the adaptive filter:if present, take the file,otherwise use the windows to generate the filter
@@ -11,8 +11,18 @@ windows {
     first {
         filterType highPass     	;type of filter:low pass, band pass or high pass
         windowType nuttall         	;type of window: rect,hann,nuttall
-	lowFrequency 450			;low frequency of the window
-;	highFrequency 30		;high frequency of the window
+	lowFrequency 450	        ;low frequency of the window
+    }
+    second {
+        filterType lowPass              ;type of filter:low pass, band pass or high pass
+        windowType hann                 ;type of window: rect,hann,nuttall
+        highFrequency 100               ;high frequency of the window
+    }
+    third {
+        filterType bandPass             ;type of filter:low pass, band pass or high pass
+        windowType rect                 ;type of window: rect,hann,nuttall
+        lowFrequency 100                ;low frequency of the window
+        highFrequency 170               ;high frequency of the window
     }
 }
 

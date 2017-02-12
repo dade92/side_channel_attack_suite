@@ -12,6 +12,9 @@ Realigner::Realigner(Config& config,Input& input,float*ref) {
     //store the very first trace
     for(int w=0;w<input.samplesPerTrace;w++)
         refTrace[w]=ref[w];
+    //TODO:remove these attributes if not used
+    samplingFreq=config.samplingFreq;
+    cipherTime=config.cipherTime;
 }
 
 void Realigner::alignTraces(float** trace) {
@@ -56,5 +59,12 @@ void Realigner::shiftTrace(float* trace,float* shiftedTrace,int tau) {
         }
         for(;n>=0;n--)
             shiftedTrace[n]=0;
+    }
+}
+
+void Realigner::autoCorrelate(float* correlation) {
+    for(int w=0;w<samplesPerTrace;w++) {
+        shiftTrace(refTrace,shiftedTrace,-w);
+        correlation[w]=crossCorrelate(refTrace,shiftedTrace,startSample,endSample);
     }
 }

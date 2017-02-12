@@ -39,10 +39,33 @@ void Config::init() {
                 exit(0);
             }
             string modeString=pt.get<string>("mode");
-            if(modeString.compare("single")==0)
-                m=single;
-            else if(modeString.compare("multiple")==0)
+            if(modeString.compare("multiple")==0)
                 m=multiple;
+            else if(modeString.compare("single")==0) {
+                m=single;
+                ptree singleModePtree (pt.get_child("singleMode"));
+                samplingFreq=singleModePtree.get<float>("samplingFreq");
+                if(samplingFreq<0) {
+                    cout<<"Invalid sampling frequency."<<endl;
+                    exit(0);
+                }
+                cipherTime=singleModePtree.get<float>("cipherTime");
+                if(cipherTime<0) {
+                    cout<<"Invalid cipher time."<<endl;
+                    exit(0);
+                }
+                startPlain=singleModePtree.get<string>("startPlain");
+                if(startPlain.size()%2!=0) {
+                    cout<<"Invalid start plain."<<endl;
+                    exit(0);
+                }
+                key=singleModePtree.get<string>("key");
+                if(key.size()!=startPlain.size()) {
+                    cout<<"Invalid key or plain size."<<endl;
+                    exit(0);
+                }
+                printCorrelation=singleModePtree.get<bool>("printCorr");
+            }
             else {
                 cout<<"Mode not recognized."<<endl;
                 exit(0);
