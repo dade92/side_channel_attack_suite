@@ -18,6 +18,14 @@ TraceSplitter::TraceSplitter(Config& c,Input& i) {
         key[i]=strtol(temp2.c_str(),NULL,16);
         n+=2;
     }
+    cout<<"Start plain:"<<endl;
+    for(int n=0;n<16;n++)
+        printf("0x%x ",startPlain[n]);
+    cout<<endl;
+    cout<<"Key:"<<endl;
+    for(int n=0;n<16;n++)
+        printf("0x%x ",key[n]);
+    cout<<endl;
     outputFilename=c.outputFilename;
     plainLength=i.plainLength;
 }
@@ -25,34 +33,37 @@ TraceSplitter::TraceSplitter(Config& c,Input& i) {
 void TraceSplitter::splitTrace(float*correlation,float**data) {  
     int n,i;
     int length=cipherTime*samplingFreq;
+    length=findMaxIndex(correlation,length/2,length/2+length);
+    cout<<"Detected cipher length:"<<length<<endl;
     int delayIndex,numTraces=1;
     float**trace=new float*[1];
     trace[0]=new float[length];
     uint8_t**plains=new uint8_t*[1];
     plains[0]=new uint8_t[plainLength];
+    for(n=0;n<plainLength;n++)
+        plains[0][n]=startPlain[n];
     AES aes(key,plainLength*8,AES_ENCRYPT);
-    aes.encrypt(plains[0],plains[0]);
     for(n=0;n<length;n++)
         trace[0][n]=data[0][n];
-    Output output(outputFilename,1,0,length,plainLength,trace,plains);
+    Output output(outputFilename,1,samplesPerTrace/length,length,plainLength,trace,plains);
     output.writeHeader();
     output.writeTraces();
+    aes.encrypt(plains[0],plains[0]);
+    cout<<"Second plain:"<<endl;
+    for(int x=0;x<16;x++)
+        printf("0x%x ",plains[0][x]);
     for(int w=length/2;w<samplesPerTrace-length;w+=length) {
         i=0;
         delayIndex=findMaxIndex(correlation,w,w+length);
-        aes.encrypt(plains[0],plains[0]);
         //TODO:put the trace correctly
         for(n=delayIndex;n<delayIndex+length;n++) {
             trace[0][i]=data[0][n];
             i++;
         }
         output.writeTraces();
+        aes.encrypt(plains[0],plains[0]);
         numTraces++;
     }
-    //to correct the header
-    output.rewindFile();
-    output.setNumOfTraces(numTraces);
-    output.writeHeader();
 }
 
 int TraceSplitter::findMaxIndex(float*correlation,int start,int end) {

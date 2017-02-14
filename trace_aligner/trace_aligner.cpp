@@ -108,7 +108,8 @@ void showCorrelation(float*corr,Input& input) {
     outputScript << "set output \""<< "correlation.png\";" << endl;
     outputScript << "set autoscale;" << endl;
     outputScript << "unset key;" << endl;
+    outputScript << "set xrange [0:10000]"<<endl;
     outputScript << "set xlabel \"Sample\" font \",20\";" << endl;
     outputScript << "set ylabel \"t\" font \",20\";" << endl << endl;
-    outputScript << "plot "<<datName<<".dat with lines"<<endl;
+    outputScript << "plot \""<<datName<<".dat\" with lines"<<endl;
 }

@@ -2,7 +2,7 @@ CC=g++
 CFLAGS=-O3 -march=native -std=c++11 -lm
 #CFLAGS=-std=c++11 -lm
 COMMONS=../common/input.o ../common/math.o ../common/output.o
-OBJECTS=config.o realigner.o traceSplitter.o trace_aligner.o ../aes/aes.o ../aes/aes_ttable.o
+OBJECTS=config.o realigner.o traceSplitter.o trace_aligner.o ../aes/aes.o
 
 all:trace_aligner.out
 

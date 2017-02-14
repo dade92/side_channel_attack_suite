@@ -18,21 +18,21 @@ Realigner::Realigner(Config& config,Input& input,float*ref) {
 }
 
 void Realigner::alignTraces(float** trace) {
-    int tau,finalTau;
+    int tau,finalTau=0;
     //inserted here and not inside the for loop for performance reasons
     switch(function) {
         case crossCorr:
             for(int i=1;i<step;i++) {
                 float index=0,currentIndex;
                 for(tau=-maxTau;tau<=maxTau;tau++) {
-                    shiftTrace(trace[i],shiftedTrace,tau);
                     currentIndex=crossCorrelate(refTrace,
-                                                shiftedTrace,startSample,endSample);
+                                                trace[i],startSample,endSample,tau,samplesPerTrace);
                     if(currentIndex>index) {
                         index=currentIndex;
                         finalTau=tau;
                     }
                 }
+                cout<<"Final tau found:"<<finalTau<<endl;
                 shiftTrace(trace[i],trace[i],finalTau);
             }
             break;
@@ -64,7 +64,6 @@ void Realigner::shiftTrace(float* trace,float* shiftedTrace,int tau) {
 
 void Realigner::autoCorrelate(float* correlation) {
     for(int w=0;w<samplesPerTrace;w++) {
-        shiftTrace(refTrace,shiftedTrace,-w);
-        correlation[w]=crossCorrelate(refTrace,shiftedTrace,startSample,endSample);
+        correlation[w]=crossCorrelate(refTrace,refTrace,startSample,endSample,-w,samplesPerTrace);
     }
 }

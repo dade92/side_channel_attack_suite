@@ -4,6 +4,7 @@
 #include<cstdint>
 #include<string>
 #include<string.h>
+#include<stdio.h>
 #include"../common/output.hpp"
 #include"../common/input.hpp"
 #include"../aes/aes.hpp"

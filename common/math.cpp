@@ -56,9 +56,28 @@ float generalized_cosine_window(float a0,float a1,float a2,float a3,int n,int N)
         -a3*cos(6*M_PI*n/(N-1));
 }
 
-float crossCorrelate(float*t1,float*t2,int start,int end) {
+float crossCorrelate(float*t1,float*t2,int start,int end,int tau,int dim) {
     float sum=0;
-    for(int n=start;n<end;n++)
-        sum+=t1[n]*t2[n];
+    int offset1,offset2;
+    if(tau<=0) {
+        tau=-tau;
+        int realEnd=MIN(end,dim-tau);
+        offset1=start;
+        offset2=start+tau;
+        while(offset1<end && offset2<realEnd) {
+            sum+=t1[offset1]*t2[offset2];
+            offset1++;
+            offset2++;
+        }
+    } else {
+        offset1=end;
+        offset2=end-tau;
+        int realStart=MAX(start,tau);
+        while(offset1>start && offset2>realStart) {
+            sum+=t1[offset1]*t2[offset2];
+            offset1--;
+            offset2--;
+        }
+    }
     return sum;
 }

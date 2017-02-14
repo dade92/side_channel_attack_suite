@@ -227,11 +227,21 @@ void inspectTraces(Config& config,Input& input) {
     }
     //I know the total number of samples for each instant in time: it is numTraces
     int n=0;
-    while(n<=numTraces) {
+    while(n<numTraces) {
         input.readData(trace,plain,step);
         if(!n)
             showTraces(config,input,trace);
         n+=step;
+        /*cout<<"Plaintext:"<<endl;
+        for(int x=0;x<16;x++)
+                printf("0x%x ",plain[0][x]);
+        cout<<endl;
+        for(int x=0;x<16;x++)
+                printf("0x%x ",plain[1][x]);
+        cout<<endl;
+        for(int x=0;x<16;x++)
+                printf("0x%x ",plain[2][x]);*/
+        cout<<endl;
         //for every sample
         for(int i=0;i<numSamples;i++) {
             count=n-step;
@@ -247,7 +257,7 @@ void inspectTraces(Config& config,Input& input) {
             }
         }
     }
-    savePersistence(persistence,numSamples,config);
+    //savePersistence(persistence,numSamples,config);
     //compute the dev standard
     for(int i=0;i<numSamples;i++) {
 	var[i]/=(numTraces-1);

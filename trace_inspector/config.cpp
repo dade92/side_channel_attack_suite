@@ -27,8 +27,8 @@ void Config::init() {
             samplingFreq=pt.get<float>("samplingFreq");
             clockFreq=pt.get<float>("clockFreq");
             tracesToPrint=pt.get<int>("numTraces");
-            if(tracesToPrint<0) {
-                cout<<"Invalid trace to print"<<endl;
+            if(tracesToPrint<0 || tracesToPrint>batch) {
+                cout<<"Invalid trace to print or trace to print greter than step size"<<endl;
                 exit(0);
             }
             if(samplingFreq<0 || clockFreq<0) {
