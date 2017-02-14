@@ -7,7 +7,6 @@ Realigner::Realigner(Config& config,Input& input,float*ref) {
     startSample=config.startSample;
     endSample=(config.endSample!=0 ? config.endSample : input.samplesPerTrace);
     function=config.function;
-    shiftedTrace=new float[input.samplesPerTrace];
     refTrace=new float[input.samplesPerTrace];
     //store the very first trace
     for(int w=0;w<input.samplesPerTrace;w++)
@@ -27,7 +26,7 @@ void Realigner::alignTraces(float** trace) {
                 for(tau=-maxTau;tau<=maxTau;tau++) {
                     currentIndex=crossCorrelate(refTrace,
                                                 trace[i],startSample,endSample,tau,samplesPerTrace);
-                    if(currentIndex>index) {
+                    if(currentIndex>index || (currentIndex>=index && abs(tau)<abs(finalTau))) {
                         index=currentIndex;
                         finalTau=tau;
                     }
@@ -63,7 +62,7 @@ void Realigner::shiftTrace(float* trace,float* shiftedTrace,int tau) {
 }
 
 void Realigner::autoCorrelate(float* correlation) {
-    for(int w=0;w<samplesPerTrace;w++) {
-        correlation[w]=crossCorrelate(refTrace,refTrace,startSample,endSample,-w,samplesPerTrace);
+    for(int tau=0;tau<endSample-startSample;tau++) {
+        correlation[tau]=crossCorrelate(refTrace,refTrace,startSample,endSample,-tau,samplesPerTrace);
     }
 }

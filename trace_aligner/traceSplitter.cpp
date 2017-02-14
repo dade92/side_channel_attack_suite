@@ -4,6 +4,8 @@ TraceSplitter::TraceSplitter(Config& c,Input& i) {
     cipherTime=c.cipherTime;
     samplingFreq=c.samplingFreq;
     samplesPerTrace=i.samplesPerTrace;
+    startSample=c.startSample;
+    endSample=(c.endSample!=0 ? c.endSample : i.samplesPerTrace);
     startPlain=new uint8_t[c.startPlain.size()/2];
     key=new uint8_t[c.key.size()/2];
     int n=0;
@@ -45,14 +47,14 @@ void TraceSplitter::splitTrace(float*correlation,float**data) {
     AES aes(key,plainLength*8,AES_ENCRYPT);
     for(n=0;n<length;n++)
         trace[0][n]=data[0][n];
-    Output output(outputFilename,1,samplesPerTrace/length,length,plainLength,trace,plains);
+    Output output(outputFilename,1,(endSample-startSample)/length,length,plainLength,trace,plains);
     output.writeHeader();
     output.writeTraces();
     aes.encrypt(plains[0],plains[0]);
     cout<<"Second plain:"<<endl;
     for(int x=0;x<16;x++)
         printf("0x%x ",plains[0][x]);
-    for(int w=length/2;w<samplesPerTrace-length;w+=length) {
+    for(int w=length/2;w<(endSample-startSample)-length;w+=length) {
         i=0;
         delayIndex=findMaxIndex(correlation,w,w+length);
         //TODO:put the trace correctly

@@ -54,6 +54,10 @@ void Config::init() {
                     cout<<"Invalid cipher time."<<endl;
                     exit(0);
                 }
+                if(endSample-startSample<cipherTime*samplingFreq) {
+                    cout<<"Invalid start end sample and cipher time"<<endl;
+                    exit(0);
+                }
                 startPlain=singleModePtree.get<string>("startPlain");
                 if(startPlain.size()%2!=0) {
                     cout<<"Invalid start plain."<<endl;

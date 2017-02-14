@@ -12,8 +12,8 @@
  * Tool that alignes traces
  */
 using namespace std;
-int findIndexMax(float*array,int start,int end);
-void showCorrelation(float*corr,Input& input);
+
+void showCorrelation(float*corr,Input& input,int startSample,int endSample);
 int main(int argc,char*argv[]) {
     if(argc<2) {
         cout<<"Usage trace_aligner.out configFile."<<endl;
@@ -55,7 +55,8 @@ int main(int argc,char*argv[]) {
         }
     } else if(config.m==single) {
         float** data=new float*[1];
-        input.samplesPerTrace=(config.endSample!=0 ? config.endSample : input.samplesPerTrace);
+        //input.samplesPerTrace=(config.endSample!=0 ? config.endSample : input.samplesPerTrace);
+        int endSample=(config.endSample!=0 ? config.endSample : input.samplesPerTrace);
         data[0]=new float[input.samplesPerTrace];
         plain=new uint8_t*[1];
         plain[0]=new uint8_t[input.plainLength];
@@ -64,10 +65,10 @@ int main(int argc,char*argv[]) {
         Realigner realigner(config,input,data[0]);
         cout<<"Realigning the single trace.."<<endl;
         //initialize its correlation array
-        float* correlation=new float[input.samplesPerTrace];
+        float* correlation=new float[endSample-config.startSample];
         realigner.autoCorrelate(correlation);
         if(config.printCorrelation)
-            showCorrelation(correlation,input);
+            showCorrelation(correlation,input,config.startSample,endSample);
         cout<<"Splitting the trace.."<<endl;
         TraceSplitter traceSplitter(config,input);
         traceSplitter.splitTrace(correlation,data);
@@ -76,16 +77,7 @@ int main(int argc,char*argv[]) {
     return 0;
 }
 
-int findIndexMax(float*array,int start,int end) {
-    int indexMax=start;
-    for(int i=start;i<end;i++) {
-        if(array[i]>array[indexMax])
-            indexMax=i;
-    }
-    return indexMax;
-}
-
-void showCorrelation(float*corr,Input& input) {  
+void showCorrelation(float*corr,Input& input,int startSample,int endSample) {  
     string datName="datCorr";
     string scriptName="correlation";
     std::ofstream outputScript,outputDat,outputPScript,outputPDat;
@@ -100,7 +92,7 @@ void showCorrelation(float*corr,Input& input) {
         cerr << "Please provide a correct output dat filename" << endl;
         exit(0);
     }
-    for(int i=0;i<input.samplesPerTrace;i++) {
+    for(int i=0;i<endSample-startSample;i++) {
 	outputDat<<i<<" ";
 	outputDat<<corr[i]<<endl;
     }
@@ -108,8 +100,7 @@ void showCorrelation(float*corr,Input& input) {
     outputScript << "set output \""<< "correlation.png\";" << endl;
     outputScript << "set autoscale;" << endl;
     outputScript << "unset key;" << endl;
-    outputScript << "set xrange [0:10000]"<<endl;
     outputScript << "set xlabel \"Sample\" font \",20\";" << endl;
-    outputScript << "set ylabel \"t\" font \",20\";" << endl << endl;
-    outputScript << "plot \""<<datName<<".dat\" with lines"<<endl;
+    outputScript << "set ylabel \"correlation\" font \",20\";" << endl << endl;
+    outputScript << "plot \""<<datName<<".dat\" with lines linecolor black"<<endl;
 }

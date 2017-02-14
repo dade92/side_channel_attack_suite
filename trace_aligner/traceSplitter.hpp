@@ -25,7 +25,7 @@ public:
 private:
     float cipherTime,samplingFreq;
     int findMaxIndex(float*,int,int);
-    int samplesPerTrace,plainLength;
+    int samplesPerTrace,plainLength,startSample,endSample;
     string outputFilename;
     uint8_t*startPlain;
     uint8_t*key;

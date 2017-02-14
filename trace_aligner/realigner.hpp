@@ -26,7 +26,6 @@ private:
     void shiftTrace(float* trace,float* shiftedTrace,int tau);
     int startSample,endSample,samplesPerTrace,step,maxTau;
     alignmentFunction function;
-    float* shiftedTrace;
     float* refTrace;
     float samplingFreq,cipherTime;
     string plaintext;
