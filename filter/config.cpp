@@ -47,6 +47,7 @@ void Config::init() {
             try {
                 filterFile=pt.get<string>("filterFile");
             } catch( ptree_error e) {}
+            demodularize=pt.get<bool>("demodulation");
             ptree windowsPtree (pt.get_child("windows"));
             ptree::const_iterator windowIt;
             string windowTypeString,filterTypeString;

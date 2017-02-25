@@ -18,23 +18,24 @@ using namespace std;
  * passed by the user in the config file, pads
  * the traces
  */
-
 class Transform {
 public:
     Transform(Config& config,Input& input,int traceSize,float** dataMatrix);
     void computeFilter();
     void computeFilter(string inputTrace);
     void padTraces();
-    void filterTraces();
-    
+    void filterTraces();    
 private:
     fftwf_complex* filterFunction;
     fftwf_complex* transformation;
+    fftwf_complex* buffer;
     float** dataMatrix;
     float samplingFreq;
     padding pad;
+    bool demodularize,first;
     filterCombination fc;
     vector<window> windows;
     int traceSize,samplesPerTrace,step;
+    void demodulate();
 };
 #endif

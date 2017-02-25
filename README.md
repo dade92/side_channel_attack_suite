@@ -22,13 +22,13 @@
                 make
                 make install
                 
-    About boost and libpng: you have only to install by apt-get
+    About boost and libpng: you have only to install by apt-get.
 
     1) Architectural analysis tool performs side channel attacks on a set of traces in dpacalc format. 
     It can also perform known input analysis, useful for architectural characterization.
 
     2) Trace inspector produces png images with the mean and the standard deviation of the traces.
-    It draws also the persistence graph of the traces.
+    It draws also the persistence graph of the traces and their spectrum (based on the mean).
 
     3) T-test tool performs t-test analysis on a pair of traces, of order 1 and higher (up to order 5,
     actually is useless implement attacks of order higher than that).
@@ -36,12 +36,14 @@
     4) Filter tool, used to filter raw traces and to generate an adaptive filter from a set of 
     dpacalc traces.
     
-    5) Trace aligner, used to align traces that could be not well aligned when acquired.
+    5) Trace aligner, used to align traces that could be not well aligned when acquired, and a splitter tool
+    that, given a single trace made up of different AES computations, try to split into different traces,
+    in which every trace correspond to an AES encryption.
 
     All of these tools accept as argument a config file, usage:
     ./tool_name.out configFile
     Each directory has a config file example with detailed information about all the parameters and
-    a README.md file that explain how the tool works.
+    a README.md file that explain how the tool works and its dependencies.
 
     All of these tools produce gnuplot scripts that should be passed to gnuplot in order to 
     generate the .png images or a .dat file of filtered/aligned traces.

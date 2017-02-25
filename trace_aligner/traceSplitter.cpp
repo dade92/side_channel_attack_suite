@@ -20,24 +20,25 @@ TraceSplitter::TraceSplitter(Config& c,Input& i) {
         key[i]=strtol(temp2.c_str(),NULL,16);
         n+=2;
     }
-    cout<<"Start plain:"<<endl;
+    /*cout<<"Start plain:"<<endl;
     for(int n=0;n<16;n++)
         printf("0x%x ",startPlain[n]);
     cout<<endl;
     cout<<"Key:"<<endl;
     for(int n=0;n<16;n++)
         printf("0x%x ",key[n]);
-    cout<<endl;
+    cout<<endl;*/
     outputFilename=c.outputFilename;
     plainLength=i.plainLength;
 }
 //TODO:trace is not necessary probably
-void TraceSplitter::splitTrace(float*correlation,float**data) {  
+void TraceSplitter::splitTrace(float*correlation,float**data) {
     int n,i;
     int length=cipherTime*samplingFreq;
+    cout<<"trying to derive the cipher length from sample "<<length/2<<" to sample "<<length/2+length<<endl;
     length=findMaxIndex(correlation,length/2,length/2+length);
     cout<<"Detected cipher length:"<<length<<endl;
-    int delayIndex,numTraces=1;
+    int delayIndex;
     float**trace=new float*[1];
     trace[0]=new float[length];
     uint8_t**plains=new uint8_t*[1];
@@ -51,26 +52,25 @@ void TraceSplitter::splitTrace(float*correlation,float**data) {
     output.writeHeader();
     output.writeTraces();
     aes.encrypt(plains[0],plains[0]);
-    cout<<"Second plain:"<<endl;
+    /*cout<<"Second plain:"<<endl;
     for(int x=0;x<16;x++)
-        printf("0x%x ",plains[0][x]);
+        printf("0x%x ",plains[0][x]);*/
     for(int w=length/2;w<(endSample-startSample)-length;w+=length) {
         i=0;
         delayIndex=findMaxIndex(correlation,w,w+length);
-        //TODO:put the trace correctly
+        cout<<"Max index found in interval ["<<w<<":"<<w+length<<"] :"<<delayIndex<<endl;
         for(n=delayIndex;n<delayIndex+length;n++) {
             trace[0][i]=data[0][n];
             i++;
         }
         output.writeTraces();
         aes.encrypt(plains[0],plains[0]);
-        numTraces++;
     }
 }
 
 int TraceSplitter::findMaxIndex(float*correlation,int start,int end) {
-    int maxIndex=0;
-    int max=0;
+    int maxIndex=start;
+    float max=correlation[start];
     for(int i=start;i<end;i++) {
         if(correlation[i]>max) {
             max=correlation[i];

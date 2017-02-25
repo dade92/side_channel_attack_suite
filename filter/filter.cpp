@@ -34,7 +34,7 @@ int main(int argc,char*argv[]) {
     //this matrix contains step plaintext
     uint8_t** plaintext=new uint8_t*[config.step];
     //derive the real size of the traces (power of 2 is better for DFT)
-    int traceSize=next_two_power(input.samplesPerTrace);
+    int traceSize=(input.samplesPerTrace);
     Transform transform(config,input,traceSize,traceMatrix);
     //init data matrix
     for(int w=0;w<config.step;w++) {
@@ -56,8 +56,8 @@ int main(int argc,char*argv[]) {
     while(i<input.numTraces) {
         int read=input.readData(traceMatrix,plaintext,config.step);
         cout<<"Read "<<read<<" elements."<<endl;
-        transform.padTraces();
-        cout<<"Traces padded. Applying filter.."<<endl;
+//         transform.padTraces();
+//         cout<<"Traces padded. Applying filter.."<<endl;
         transform.filterTraces();
         cout<<"Filter applied."<<endl;
         output.writeTraces();

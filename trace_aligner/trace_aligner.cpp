@@ -63,15 +63,26 @@ int main(int argc,char*argv[]) {
         cout<<"Reading data.."<<endl;
         input.readData(data,plain,1);
         Realigner realigner(config,input,data[0]);
-        cout<<"Realigning the single trace.."<<endl;
+        cout<<"Realigning the trace.."<<endl;
         //initialize its correlation array
         float* correlation=new float[endSample-config.startSample];
         realigner.autoCorrelate(correlation);
         if(config.printCorrelation)
             showCorrelation(correlation,input,config.startSample,endSample);
         cout<<"Splitting the trace.."<<endl;
-        TraceSplitter traceSplitter(config,input);
-        traceSplitter.splitTrace(correlation,data);
+        cout<<"Reading the file to be split"<<endl;
+        Input originalInput(config.originalFilename);
+        originalInput.readHeader();
+        if(originalInput.samplesPerTrace!=input.samplesPerTrace) {
+            cout<<"files with different length. Are you sure that the file used "
+            <<"to derive the correlation is correct?"<<endl;
+            exit(0);
+        }
+        float** originalData=new float*[1];
+        originalData[0]=new float[originalInput.samplesPerTrace];
+        originalInput.readData(originalData,plain,config.step);
+        TraceSplitter traceSplitter(config,originalInput);
+        traceSplitter.splitTrace(correlation,originalData);
         cout<<"Splitting ended, traces saved"<<endl;
     }
     return 0;
@@ -100,6 +111,8 @@ void showCorrelation(float*corr,Input& input,int startSample,int endSample) {
     outputScript << "set output \""<< "correlation.png\";" << endl;
     outputScript << "set autoscale;" << endl;
     outputScript << "unset key;" << endl;
+    outputScript << "set xtics 5000" <<endl;
+    outputScript << "set grid" <<endl;
     outputScript << "set xlabel \"Sample\" font \",20\";" << endl;
     outputScript << "set ylabel \"correlation\" font \",20\";" << endl << endl;
     outputScript << "plot \""<<datName<<".dat\" with lines linecolor black"<<endl;

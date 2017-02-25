@@ -7,6 +7,8 @@
 #include <png.h>
 #include <stdio.h>
 #include <cstdint>
+#include<fftw3.h>
+#include<math.h>
 
 #include "config.hpp"
 #include "../common/input.hpp"
@@ -29,6 +31,7 @@ void printUsage();
 void savePersistence(uint32_t** persistence,int numSamples,Config&);
 void showTraces(Config& config,Input& input,float** trace);
 void inspectTraces(Config& config,Input& input);
+void generateSpectrum(float* mean,Input& input,Config& config);
 inline void setRGB(png_byte *ptr, uint32_t val);
 
 /**
@@ -129,6 +132,7 @@ void showTraces(Config& config,Input& input,float** trace) {
     outputStatistics << "set autoscale;" << endl;
     outputStatistics << "set xtics auto font \",20\";" << endl;
     outputStatistics << "set ylabel \"\""<<endl;
+    outputStatistics << "set xlabel \"Time\""<<endl;
     if(config.grid) {
         if(config.xtics==0) {
             switch(config.unit) {
@@ -229,8 +233,11 @@ void inspectTraces(Config& config,Input& input) {
     int n=0;
     while(n<numTraces) {
         input.readData(trace,plain,step);
-        if(!n)
+        if(!n) {
+            cout<<"Computing the spectrum.."<<endl;
+            generateSpectrum(trace[0],input,config);
             showTraces(config,input,trace);
+        }
         n+=step;
         /*cout<<"Plaintext:"<<endl;
         for(int x=0;x<16;x++)
@@ -240,8 +247,8 @@ void inspectTraces(Config& config,Input& input) {
                 printf("0x%x ",plain[1][x]);
         cout<<endl;
         for(int x=0;x<16;x++)
-                printf("0x%x ",plain[2][x]);*/
-        cout<<endl;
+                printf("0x%x ",plain[2][x]);
+        cout<<endl;*/
         //for every sample
         for(int i=0;i<numSamples;i++) {
             count=n-step;
@@ -382,6 +389,71 @@ void inspectTraces(Config& config,Input& input) {
     }
     cout<<"traces inspected. You can find gnuplot script in \"inspectTrace.gpl\" and in \"meanAndVariance.gpl\" "
     		"data in \"inspectTrace.dat\" and \"meanAndVariance.dat\" "<<endl;
+}
+
+void generateSpectrum(float* mean,Input& input,Config& config) {
+    int start=config.startSample;
+    int end=(config.maxSample!=0 ? config.maxSample : input.samplesPerTrace);
+    std::ofstream spectrumStatistic,spectrumStatisticData;
+    spectrumStatistic.open(config.outputDir+"/spectrum.gpl");
+    spectrumStatisticData.open(config.outputDir+"/spectrum.dat");
+    if(!spectrumStatistic.is_open() || !spectrumStatisticData.is_open()) {
+        cout<<"Can't open output files."<<endl;
+        exit(0);
+    }
+    spectrumStatistic << "set term png size "<<config.figureWidth<<" ,"<<config.figureHeight<<";"<<endl;
+    spectrumStatistic << "set output \""<< "spectrum" <<".png\";" << endl;
+    spectrumStatistic << "set autoscale;" << endl;
+    if(config.grid) {
+        if(config.xtics==0) {
+            switch(config.unit) {
+                case samples:
+                    spectrumStatistic << "set xtics "<<config.samplingFreq/config.clockFreq<< " format \"\";" << endl;
+                    break;
+                case seconds:
+                    spectrumStatistic << "set xtics "<<1/config.clockFreq<< " format \"\";" << endl;
+                    break;
+            }
+            
+        }
+        else
+            spectrumStatistic << "set xtics "<<config.xtics<< " font \",20\";" << endl;
+        spectrumStatistic<<"set grid xtics "<<" lt rgb \"grey\" lw 1;"<<endl;
+        spectrumStatistic<<"set grid ytics "<<" lt rgb \"grey\" lw 1;"<<endl;
+    }
+    else {
+        if(config.xtics==0)
+            spectrumStatistic << "set xtics auto font \",20\";" << endl;
+        else
+            spectrumStatistic << "set xtics "<<config.xtics<<" font \",20\";" << endl;
+    }
+    spectrumStatistic << "set ytic auto font \",20\";" << endl;
+    spectrumStatistic << "unset key;" << endl;
+    spectrumStatistic << "set xlabel \"Frequency[Mhz]\" font \",20\";" << endl;
+    spectrumStatistic << "set ylabel \"Amplitude\" font \",20\";" << endl;
+    spectrumStatistic<<"plot ";
+    spectrumStatistic << "\""<< "spectrum.dat" << "\" ";
+    spectrumStatistic << "u 1:2 ";
+    spectrumStatistic << "t \"amplitude\" ";
+    spectrumStatistic << "with lines linecolor \"black\";"<<endl<<endl;
+    fftwf_plan plan;
+    int traceSize=end-start;
+    fftwf_complex* transformation=fftwf_alloc_complex(traceSize);
+    plan=fftwf_plan_dft_r2c_1d(traceSize,mean,transformation,FFTW_ESTIMATE);
+    fftwf_execute(plan);
+    float mod,maxFreq=config.samplingFreq;
+    //TODO:proportion
+    int i=-1;
+    /*for(int n=traceSize-1;n>traceSize/2;n--) {
+        mod=20*log10(sqrt(pow(transformation[n][0],2)+pow(transformation[n][1],2)));
+        spectrumStatisticData<<i*maxFreq/traceSize<<" "<<mod<<endl;
+        i--;
+    }*/
+    for(int n=0;n<=traceSize/2;n++) {
+        mod=(sqrt(pow(transformation[n][0],2)+pow(transformation[n][1],2)));
+        spectrumStatisticData<<n*maxFreq/traceSize<<" "<<mod<<endl;
+    }
+    fftwf_destroy_plan(plan);
 }
 
 void printUsage() {

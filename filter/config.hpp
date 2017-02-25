@@ -50,6 +50,7 @@ public:
     float samplingFreq;
     int step;
     padding pad;
+    bool demodularize;
     filterCombination filterComb;
     vector<window> windows;
     

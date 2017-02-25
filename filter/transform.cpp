@@ -9,13 +9,22 @@ Transform::Transform(Config& config,Input& input,int ts,float** data) {
     step=config.step;
     samplesPerTrace=input.samplesPerTrace;
     fc=config.filterComb;
+    demodularize=config.demodularize;
     //how many samples do I have to allocate?
     transformation=fftwf_alloc_complex(traceSize);
     filterFunction=fftwf_alloc_complex(traceSize);
     for(int i=0;i<traceSize;i++) {
-        filterFunction[i][0]=0;
-        filterFunction[i][1]=0;
+        transformation[i][0]=transformation[i][1]=0;
+        filterFunction[i][0]=filterFunction[i][1]=0;
     }
+    if(demodularize) {
+        buffer=fftwf_alloc_complex(traceSize);
+        for(int i=0;i<traceSize;i++) {
+            buffer[i][0]=
+            buffer[i][1]=0;
+        }
+    }
+    first=true;
 }
 
 void Transform::padTraces() {
@@ -197,19 +206,90 @@ void Transform::computeFilter(string inputTrace) {
 }
 
 void Transform::filterTraces() {
-    fftwf_plan plan,anti_plan;
     int i,n;
+    //uncomment these lines if you want to plot the filter function
+    std::ofstream spectrumStatistic,spectrumStatisticData;
+    spectrumStatistic.open("spectrumwindow.gpl");
+    spectrumStatisticData.open("spectrumwindow.dat");
+    if(!spectrumStatistic.is_open() || !spectrumStatisticData.is_open()) {
+        cout<<"Can't open output files."<<endl;
+        exit(0);
+    }
+    spectrumStatistic << "set term png size 1024,850"<<endl;
+    spectrumStatistic << "set output \""<< "spectrumWindow" <<".png\";" << endl;
+    spectrumStatistic << "set autoscale;" << endl;
+    spectrumStatistic<<"plot ";
+    spectrumStatistic << "\""<< "spectrumwindow.dat" << "\" ";
+    spectrumStatistic << "u 1:2 ";
+    spectrumStatistic << "t \"amplitude\" ";
+    spectrumStatistic << "with lines linecolor \"black\";"<<endl<<endl;
+    float mod;
+    for(n=0;n<=traceSize/2;n++) {
+        mod=(sqrt(pow(filterFunction[n][0],2)+pow(filterFunction[n][1],2)));
+        spectrumStatisticData<<n*samplingFreq/traceSize<<" "<<mod<<endl;
+    }
+    
     for(i=0;i<step;i++) {
-        plan=fftwf_plan_dft_r2c_1d(traceSize,dataMatrix[i],transformation,FFTW_ESTIMATE);
+        fftwf_plan plan=fftwf_plan_dft_r2c_1d(traceSize,dataMatrix[i],transformation,FFTW_ESTIMATE);
         fftwf_execute(plan);
-        for(n=0;n<traceSize;n++) {
+        if(first) {
+            std::ofstream spectrumStatistic,spectrumStatisticData;
+            spectrumStatistic.open("spectrum_before.gpl");
+            spectrumStatisticData.open("spectrum_before.dat");
+            if(!spectrumStatistic.is_open() || !spectrumStatisticData.is_open()) {
+                cout<<"Can't open output files."<<endl;
+                exit(0);
+            }
+            spectrumStatistic << "set term png size 1024,850"<<endl;
+            spectrumStatistic << "set output \""<< "spectrum_before" <<".png\";" << endl;
+            spectrumStatistic << "set autoscale;" << endl;
+            spectrumStatistic<<"plot ";
+            spectrumStatistic << "\""<< "spectrum_before.dat" << "\" ";
+            spectrumStatistic << "u 1:2 ";
+            spectrumStatistic << "t \"amplitude\" ";
+            spectrumStatistic << "with lines linecolor \"black\";"<<endl<<endl;
+            for(n=0;n<=traceSize/2;n++) {
+                mod=(sqrt(pow(transformation[n][0],2)+pow(transformation[n][1],2)));
+                spectrumStatisticData<<n*samplingFreq/traceSize<<" "<<mod<<endl;
+            }
+        }
+        for(n=0;n<=traceSize/2;n++) {
             transformation[n][0]=transformation[n][0]*filterFunction[n][0] - 
                 transformation[n][1]*filterFunction[n][1];
             transformation[n][1]=transformation[n][0]*filterFunction[n][1]+
                 transformation[n][1]*filterFunction[n][0];
         }
+        if(first) {
+            std::ofstream spectrumStatistic,spectrumStatisticData;
+            spectrumStatistic.open("spectrum_after.gpl");
+            spectrumStatisticData.open("spectrum_after.dat");
+            if(!spectrumStatistic.is_open() || !spectrumStatisticData.is_open()) {
+                cout<<"Can't open output files."<<endl;
+                exit(0);
+            }
+            spectrumStatistic << "set term png size 1024,850"<<endl;
+            spectrumStatistic << "set output \""<< "spectrum_after" <<".png\";" << endl;
+            spectrumStatistic << "set autoscale;" << endl;
+            spectrumStatistic<<"plot ";
+            spectrumStatistic << "\""<< "spectrum_after.dat" << "\" ";
+            spectrumStatistic << "u 1:2 ";
+            spectrumStatistic << "t \"amplitude\" ";
+            spectrumStatistic << "with lines linecolor \"black\";"<<endl<<endl;
+            for(n=0;n<=traceSize/2;n++) {
+                mod=(sqrt(pow(transformation[n][0],2)+pow(transformation[n][1],2)));
+                spectrumStatisticData<<n*samplingFreq/traceSize<<" "<<mod<<endl;
+            }
+            first=false;
+        }
         fftwf_destroy_plan(plan);
-        anti_plan=fftwf_plan_dft_c2r_1d(traceSize,transformation,dataMatrix[i],FFTW_ESTIMATE);
+        fftwf_plan anti_plan;
+        if(demodularize) {
+            cout<<"Demodularizing..."<<endl;
+            demodulate();
+            anti_plan=fftwf_plan_dft_c2r_1d(traceSize,buffer,dataMatrix[i],FFTW_ESTIMATE);
+        }
+        else
+            anti_plan=fftwf_plan_dft_c2r_1d(traceSize,transformation,dataMatrix[i],FFTW_ESTIMATE);
         fftwf_execute(anti_plan);
         fftwf_destroy_plan(anti_plan);
     }
@@ -217,5 +297,32 @@ void Transform::filterTraces() {
     for(i=0;i<step;i++) {
         for(n=0;n<traceSize;n++)
             dataMatrix[i][n]/=traceSize;
+    }
+}
+
+void Transform::demodulate() {
+    vector<window>::iterator it;
+    int freqIndexLow,freqIndexHigh,pivot,N,w=0,i;
+    for(it=windows.begin();it!=windows.end();++it) {
+        if(it->type==bandPass) {
+            freqIndexLow=it->lowFrequency*traceSize/samplingFreq;;
+            freqIndexHigh=it->highFrequency*traceSize/samplingFreq;
+            N=freqIndexHigh-freqIndexLow;
+            pivot=freqIndexLow+N/2;
+            for(int i=pivot;i<traceSize/2;i++) {
+                buffer[w][0]=transformation[i][0];
+                buffer[w][1]=transformation[i][1];
+//                 buffer[i][0]=buffer[i][1]=0;
+                w++;
+            }
+            w=traceSize;
+            //first traces go to the end
+            for(i=pivot-1;i>=0;i--) {
+                buffer[w][0]=transformation[i][0];
+                buffer[w][1]=transformation[w][1];
+//                 buffer[i][0]=buffer[i][1]=0;
+                w--;
+            }
+        }
     }
 }

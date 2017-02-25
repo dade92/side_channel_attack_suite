@@ -28,7 +28,7 @@ class Config {
 public:
     Config(string configFile);
     void init();
-    string filename,outputFilename,startPlain,key;
+    string filename,outputFilename,startPlain,key,originalFilename;
     float samplingFreq,cipherTime;
     int step,maxTau,startSample,endSample;
     alignmentFunction function;
