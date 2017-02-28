@@ -48,7 +48,7 @@ void TraceSplitter::splitTrace(float*correlation,float**data) {
     AES aes(key,plainLength*8,AES_ENCRYPT);
     for(n=0;n<length;n++)
         trace[0][n]=data[0][n];
-    Output output(outputFilename,1,(endSample-startSample)/length,length,plainLength,trace,plains);
+    Output output(outputFilename,1,(endSample-startSample)/length+1,length,plainLength,trace,plains);
     output.writeHeader();
     output.writeTraces();
     aes.encrypt(plains[0],plains[0]);
@@ -58,7 +58,6 @@ void TraceSplitter::splitTrace(float*correlation,float**data) {
     for(int w=length/2;w<(endSample-startSample)-length;w+=length) {
         i=0;
         delayIndex=findMaxIndex(correlation,w,w+length);
-        cout<<"Max index found in interval ["<<w<<":"<<w+length<<"] :"<<delayIndex<<endl;
         for(n=delayIndex;n<delayIndex+length;n++) {
             trace[0][i]=data[0][n];
             i++;

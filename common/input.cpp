@@ -38,7 +38,7 @@ void Input::readHeader() {
     long long plainSize=plainLength*numTraces;
     long long traceSize=(long long)numTraces*samplesPerTrace*dataDimension;
     if(10+plainSize+traceSize!=fileSize) {
-        cout<<"Incorrect file size."<<endl;
+        cout<<"Incorrect file size: it should be "<<10+plainSize+traceSize<<" bytes but it is "<<fileSize<<" bytes"<<endl;
         exit(0);
     }
 }

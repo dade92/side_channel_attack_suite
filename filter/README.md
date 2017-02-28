@@ -7,6 +7,7 @@
     -rect,
     -Hann,
     -Nuttall 
+    (can be easily extended, see the code for extensions).
     
     Adaptive filter generator instead is a tool that generates
     an adaptive filter taking as input a set of dpacalc traces,

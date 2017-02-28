@@ -3,6 +3,8 @@
 #include<iostream>
 #include<string>
 #include<fstream>
+#include<complex.h>
+#include<fftw3.h>
 #include"config.hpp"
 #include"../common/input.hpp"
 #include"../common/math.hpp"

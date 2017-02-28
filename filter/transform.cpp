@@ -305,7 +305,7 @@ void Transform::demodulate() {
     int freqIndexLow,freqIndexHigh,pivot,N,w=0,i;
     for(it=windows.begin();it!=windows.end();++it) {
         if(it->type==bandPass) {
-            freqIndexLow=it->lowFrequency*traceSize/samplingFreq;;
+            freqIndexLow=it->lowFrequency*traceSize/samplingFreq;
             freqIndexHigh=it->highFrequency*traceSize/samplingFreq;
             N=freqIndexHigh-freqIndexLow;
             pivot=freqIndexLow+N/2;

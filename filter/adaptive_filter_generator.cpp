@@ -18,7 +18,7 @@ int main(int argc,char*argv[]) {
     Input input(config.filename);
     input.readHeader();
     //used for padding
-    int traceSize=next_two_power(input.samplesPerTrace);
+    int traceSize=(input.samplesPerTrace);
     fftwf_plan plan;
     FILE*fp; 
     float delta;
@@ -36,6 +36,7 @@ int main(int argc,char*argv[]) {
     int n=0;
     int count=0;
     float x;
+    //TODO:is it correct to compute the mean? or it is better to take a single AES trace?
     cout<<"File loaded, computing mean.."<<endl;
     while(n<=input.numTraces) {
         input.readData(trace,plain,config.step);
@@ -82,12 +83,12 @@ int main(int argc,char*argv[]) {
         filterFunction[i][0]/=modulus;
         filterFunction[i][1]/=modulus;
     }
-    fftwf_destroy_plan(plan);
     //write the trace, with header
     cout<<"Writing to file.."<<endl;
     fp=fopen(config.outputFilename.c_str(),"wb");
     fwrite(&traceSize, sizeof(int), 1, fp);
     //write the mean
     fwrite(filterFunction,sizeof(fftwf_complex),traceSize,fp);
+    fftwf_destroy_plan(plan);
     return 0;    
 }
