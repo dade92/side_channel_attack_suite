@@ -50,7 +50,7 @@ int main(int argc,char*argv[]) {
     Input input(config.filename);
     input.readHeader();
     if(input.numTraces%config.batch!=0) {
-        cout<<"batch size should be a divisor of the number of traces"<<endl;
+        cout<<"step size should be a divisor of the number of traces"<<endl;
         exit(0);
     } else if(input.samplesPerTrace<config.maxSample) {
         cout<<"Wrong max sample."<<endl;
@@ -183,8 +183,8 @@ void showTraces(Config& config,Input& input,float** trace) {
     
 }
 /**
- * plots mean and dev standard of the
- * traces
+ * plots mean dev standard and spectrum
+ * of the traces
  */
 void inspectTraces(Config& config,Input& input) {
     int step=config.batch;
@@ -196,9 +196,9 @@ void inspectTraces(Config& config,Input& input) {
     int numSamples=maxSample-config.startSample;
     float* mean=new float[numSamples];
     float* var=new float[numSamples];
-    uint16_t index;
-    int16_t integer_sample;
-    int matrix_index;
+//     uint16_t index;
+//     int16_t integer_sample;
+//     int matrix_index;
     float delta;
     int count=0;
     for(int i=0;i<step;i++) {
@@ -258,9 +258,9 @@ void inspectTraces(Config& config,Input& input) {
                 delta=x-mean[i];
                 mean[i]+=delta/count;
                 var[i]+=delta*(x-mean[i]);
-                integer_sample=(int16_t) x;
-                matrix_index = integer_sample/256 + 128;
-                persistence[matrix_index][i]++;
+//                 integer_sample=(int16_t) x;
+//                 matrix_index = integer_sample/256 + 128;
+//                 persistence[matrix_index][i]++;
             }
         }
     }
@@ -391,7 +391,7 @@ void inspectTraces(Config& config,Input& input) {
     		"data in \"inspectTrace.dat\" and \"meanAndVariance.dat\" "<<endl;
 }
 
-void generateSpectrum(float* mean,Input& input,Config& config) {
+void generateSpectrum(float* trace,Input& input,Config& config) {
     int start=config.startSample;
     int end=(config.maxSample!=0 ? config.maxSample : input.samplesPerTrace);
     std::ofstream spectrumStatistic,spectrumStatisticData;
@@ -429,7 +429,7 @@ void generateSpectrum(float* mean,Input& input,Config& config) {
     }
     spectrumStatistic << "set ytic auto font \",20\";" << endl;
     spectrumStatistic << "unset key;" << endl;
-    spectrumStatistic << "set xlabel \"Frequency[Mhz]\" font \",20\";" << endl;
+    spectrumStatistic << "set xlabel \"Frequency\" font \",20\";" << endl;
     spectrumStatistic << "set ylabel \"Amplitude\" font \",20\";" << endl;
     spectrumStatistic<<"plot ";
     spectrumStatistic << "\""<< "spectrum.dat" << "\" ";
@@ -439,16 +439,14 @@ void generateSpectrum(float* mean,Input& input,Config& config) {
     fftwf_plan plan;
     int traceSize=end-start;
     fftwf_complex* transformation=fftwf_alloc_complex(traceSize);
-    plan=fftwf_plan_dft_r2c_1d(traceSize,mean,transformation,FFTW_ESTIMATE);
+    fftwf_complex* trace_complex=fftwf_alloc_complex(traceSize);
+    for(int i=0;i<traceSize;i++)
+        trace_complex[i][0]=trace[i];
+    plan=fftwf_plan_dft_1d(traceSize,trace_complex,transformation,FFTW_FORWARD,FFTW_ESTIMATE);
     fftwf_execute(plan);
     float mod,maxFreq=config.samplingFreq;
-    //TODO:proportion
     int i=-1;
-    /*for(int n=traceSize-1;n>traceSize/2;n--) {
-        mod=20*log10(sqrt(pow(transformation[n][0],2)+pow(transformation[n][1],2)));
-        spectrumStatisticData<<i*maxFreq/traceSize<<" "<<mod<<endl;
-        i--;
-    }*/
+    //real transformat exploits the simmetry, so there are only half of samples
     for(int n=0;n<=traceSize/2;n++) {
         mod=(sqrt(pow(transformation[n][0],2)+pow(transformation[n][1],2)));
         spectrumStatisticData<<n*maxFreq/traceSize<<" "<<mod<<endl;

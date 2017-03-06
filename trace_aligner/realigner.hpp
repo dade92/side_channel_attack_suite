@@ -3,8 +3,8 @@
 #include<iostream>
 #include<string>
 #include<fstream>
-#include<complex.h>
 #include<fftw3.h>
+#include<math.h>
 #include"config.hpp"
 #include"../common/input.hpp"
 #include"../common/math.hpp"
@@ -21,14 +21,18 @@ class Realigner {
 public:
     Realigner(Config& config,Input& input,float*ref);
     void alignTraces(float** trace);
-    void autoCorrelate(float* correlation);
     void divideTrace();
 private:
     float correlate(float* ,float*);
     void shiftTrace(float* trace,float* shiftedTrace,int tau);
-    int startSample,endSample,samplesPerTrace,step,maxTau;
+    int samplesPerTrace,step;
     alignmentFunction function;
-    float* refTrace;
+    fftwf_complex* refTrace;
+    fftwf_complex* refTraceTransform;
+    fftwf_complex* complexTrace;
+    fftwf_complex* complexTraceTransform;
+    fftwf_complex* correlationComplex;
+    fftwf_complex* out_product;
     float samplingFreq,cipherTime;
     string plaintext;
 };

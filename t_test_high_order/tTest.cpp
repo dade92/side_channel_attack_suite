@@ -53,7 +53,7 @@ void startTest(Config& config) {
         exit(0);
     }
     if(input1.numTraces%config.batch!=0) {
-        cout<<"Batch size should be a multiple of the number of traces"<<endl;
+        cout<<"Step size should be a multiple of the number of traces"<<endl;
         exit(0);
     }
     if(maxSample>input1.samplesPerTrace) {

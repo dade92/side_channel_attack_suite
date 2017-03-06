@@ -1,16 +1,13 @@
 filename ../filter/aes_ttable_single_filtered_bandpass.dat
 outputFilename aes_split.dat                            ;output file
 step 1                                                  ;number of traces to put in memory
-maxTau 7000                                             ;max tau to compute the alignment.IGNORED IF SINGLE MODE ENABLED
 alignmentFunction crossCorr                             ;type of alignment function
-startSample 0                                           ;start sample
-endSample 90000                                         ;end sample. 0 stands for final sample
 mode single                                             ;multiple align with different traces, 
                                                         ;single split one trace in more traces, building a new .dat file
 ;IGNORED IF MULTIPLE MODE IS ENABLED
 singleMode {
-    samplingFreq 500                                    ;sampling frequency [Mhz]
-    cipherTime 8                                        ;time length of the cipher [us]
+    samplingFreq 500                                    ;sampling frequency
+    cipherTime 8                                        ;time length of the cipher
     startPlain 3143f6a8885a308d313198a2e0370734         ;starting plaintext in hex format
     key 2b7e151628aed2a6abf7158809cf4f3c                ;key in hex format
     printCorr true

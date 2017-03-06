@@ -28,6 +28,8 @@ public:
 private:
     fftwf_complex* filterFunction;
     fftwf_complex* transformation;
+    fftwf_complex* complex_input;
+    fftwf_complex* complex_output;
     fftwf_complex* buffer;
     float** dataMatrix;
     float samplingFreq;

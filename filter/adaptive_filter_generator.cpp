@@ -24,13 +24,19 @@ int main(int argc,char*argv[]) {
     float delta;
     float** trace=new float*[input.numTraces];
     uint8_t** plain=new uint8_t*[input.numTraces];
-    float* average=new float[traceSize];
     //where to put the filter
     fftwf_complex* filterFunction=fftwf_alloc_complex(traceSize);
+    fftwf_complex* signal=fftwf_alloc_complex(traceSize);
     for(int w=0;w<input.numTraces;w++) {
         trace[w]=new float[input.samplesPerTrace];
         plain[w]=new uint8_t[input.plainLength];
     }
+    input.readData(trace,plain,1);
+    for(int i=0;i<traceSize;i++) {
+        signal[i][0]=trace[0][i];
+        signal[i][1]=0;
+    }
+    /*
     for(int w=0;w<input.samplesPerTrace;w++)
         average[w]=0;
     int n=0;
@@ -71,8 +77,8 @@ int main(int argc,char*argv[]) {
             }
             break;
     }
-    cout<<"Mean computed, transforming to frequency domain.."<<endl;
-    plan=fftwf_plan_dft_r2c_1d(traceSize,average,filterFunction,FFTW_ESTIMATE);
+    cout<<"Mean computed, transforming to frequency domain.."<<endl;*/
+    plan=fftwf_plan_dft_1d(traceSize,signal,filterFunction,FFTW_FORWARD,FFTW_ESTIMATE);
     //transformation
     fftwf_execute(plan);
     //normalize the filter

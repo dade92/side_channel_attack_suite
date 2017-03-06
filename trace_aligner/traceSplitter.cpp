@@ -4,8 +4,6 @@ TraceSplitter::TraceSplitter(Config& c,Input& i) {
     cipherTime=c.cipherTime;
     samplingFreq=c.samplingFreq;
     samplesPerTrace=i.samplesPerTrace;
-    startSample=c.startSample;
-    endSample=(c.endSample!=0 ? c.endSample : i.samplesPerTrace);
     startPlain=new uint8_t[c.startPlain.size()/2];
     key=new uint8_t[c.key.size()/2];
     int n=0;
@@ -20,18 +18,15 @@ TraceSplitter::TraceSplitter(Config& c,Input& i) {
         key[i]=strtol(temp2.c_str(),NULL,16);
         n+=2;
     }
-    /*cout<<"Start plain:"<<endl;
-    for(int n=0;n<16;n++)
-        printf("0x%x ",startPlain[n]);
-    cout<<endl;
-    cout<<"Key:"<<endl;
-    for(int n=0;n<16;n++)
-        printf("0x%x ",key[n]);
-    cout<<endl;*/
     outputFilename=c.outputFilename;
     plainLength=i.plainLength;
 }
-//TODO:trace is not necessary probably
+/**
+ * given a long trace (pointed by data[0])
+ * and its auto correlation array, splits
+ * the trace into sub traces, based on its
+ * auto correlation
+ */
 void TraceSplitter::splitTrace(float*correlation,float**data) {
     int n,i;
     int length=cipherTime*samplingFreq;
@@ -48,14 +43,14 @@ void TraceSplitter::splitTrace(float*correlation,float**data) {
     AES aes(key,plainLength*8,AES_ENCRYPT);
     for(n=0;n<length;n++)
         trace[0][n]=data[0][n];
-    Output output(outputFilename,1,(endSample-startSample)/length+1,length,plainLength,trace,plains);
+    Output output(outputFilename,1,samplesPerTrace/length+1,length,plainLength,trace,plains);
     output.writeHeader();
     output.writeTraces();
     aes.encrypt(plains[0],plains[0]);
     /*cout<<"Second plain:"<<endl;
     for(int x=0;x<16;x++)
         printf("0x%x ",plains[0][x]);*/
-    for(int w=length/2;w<(endSample-startSample)-length;w+=length) {
+    for(int w=length/2;w<samplesPerTrace-length;w+=length) {
         i=0;
         delayIndex=findMaxIndex(correlation,w,w+length);
         for(n=delayIndex;n<delayIndex+length;n++) {

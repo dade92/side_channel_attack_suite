@@ -8,7 +8,7 @@
 
 filename /home/davide/Documenti/tesi/data/aes_7500.dat	;name of the file
 outputDir output			;output directory, where to put all the images and gnuplot scripts
-step 2500				;number of traces to put in memory
+step 2500				;number of traces to put in memory (suggested a low number, up to 2500)
 alpha 0.1				;confidence interval of the test
 samplingFreq 500			;sampling frequency of the oscilloscope
 clockFreq 120				;clock frequency of the processor

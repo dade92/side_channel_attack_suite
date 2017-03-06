@@ -30,7 +30,7 @@ int main(int argc,char* argv[]) {
     input.readHeader();
     //little constraint
     if(input.numTraces%config.step!=0) {
-        cout<<"Step should be a divisor of the number of traces."<<endl;
+        cout<<"Step size should be a divisor of the number of traces."<<endl;
         exit(0);
     }
     vector<interval>::iterator iterator;

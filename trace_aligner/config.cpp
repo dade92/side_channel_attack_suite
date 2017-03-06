@@ -20,22 +20,11 @@ void Config::init() {
             filename=pt.get<string>("filename");
             outputFilename=pt.get<string>("outputFilename");
             step=pt.get<int>("step");
-            maxTau=pt.get<int>("maxTau");
-            if(maxTau<0) {
-                cout<<"maxTau should be a positive integer."<<endl;
-                exit(0);
-            }
             string typeString=pt.get<string>("alignmentFunction");
             if(typeString.compare("crossCorr")==0)
                 function=crossCorr;
             else {
                 cout<<"Unrecognized alignment function."<<endl;
-                exit(0);
-            }
-            startSample=pt.get<int>("startSample");
-            endSample=pt.get<int>("endSample");
-            if(startSample>endSample || startSample<0 || endSample<0) {
-                cout<<"Wrong start/end sample."<<endl;
                 exit(0);
             }
             string modeString=pt.get<string>("mode");

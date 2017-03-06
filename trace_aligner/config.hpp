@@ -30,7 +30,7 @@ public:
     void init();
     string filename,outputFilename,startPlain,key,originalFilename;
     float samplingFreq,cipherTime;
-    int step,maxTau,startSample,endSample;
+    int step;
     alignmentFunction function;
     mode m;
     bool printCorrelation;
