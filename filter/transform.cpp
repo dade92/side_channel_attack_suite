@@ -210,7 +210,7 @@ void Transform::computeFilter(string inputTrace) {
 void Transform::filterTraces() {
     int i,n;
     //uncomment these lines if you want to plot the filter function
-    std::ofstream spectrumStatistic,spectrumStatisticData;
+    /*std::ofstream spectrumStatistic,spectrumStatisticData;
     spectrumStatistic.open("spectrumwindow.gpl");
     spectrumStatisticData.open("spectrumwindow.dat");
     if(!spectrumStatistic.is_open() || !spectrumStatisticData.is_open()) {
@@ -224,7 +224,7 @@ void Transform::filterTraces() {
     spectrumStatistic << "\""<< "spectrumwindow.dat" << "\" ";
     spectrumStatistic << "u 1:2 ";
     spectrumStatistic << "t \"amplitude\" ";
-    spectrumStatistic << "with lines linecolor \"black\";"<<endl<<endl;
+    spectrumStatistic << "with lines linecolor \"black\";"<<endl<<endl;*/
     float mod;
     for(n=0;n<traceSize;n++) {
         mod=(sqrt(pow(filterFunction[n][0],2)+pow(filterFunction[n][1],2)));
@@ -236,7 +236,7 @@ void Transform::filterTraces() {
             complex_input[w][0]=dataMatrix[i][w];
         fftwf_plan plan=fftwf_plan_dft_1d(traceSize,complex_input,transformation,FFTW_FORWARD,FFTW_ESTIMATE);
         fftwf_execute(plan);
-        if(first) {
+        /*if(first) {
             std::ofstream spectrumStatistic,spectrumStatisticData;
             spectrumStatistic.open("spectrum_before.gpl");
             spectrumStatisticData.open("spectrum_before.dat");
@@ -256,14 +256,14 @@ void Transform::filterTraces() {
                 mod=(sqrt(pow(transformation[n][0],2)+pow(transformation[n][1],2)));
                 spectrumStatisticData<<n*samplingFreq/traceSize<<" "<<mod<<endl;
             }
-        }
+        }*/
         for(n=0;n<traceSize;n++) {
             transformation[n][0]=transformation[n][0]*filterFunction[n][0] - 
                 transformation[n][1]*filterFunction[n][1];
             transformation[n][1]=transformation[n][0]*filterFunction[n][1]+
                 transformation[n][1]*filterFunction[n][0];
         }
-        if(first) {
+        /*if(first) {
             std::ofstream spectrumStatistic,spectrumStatisticData;
             spectrumStatistic.open("spectrum_after.gpl");
             spectrumStatisticData.open("spectrum_after.dat");
@@ -284,7 +284,7 @@ void Transform::filterTraces() {
                 spectrumStatisticData<<n*samplingFreq/traceSize<<" "<<mod<<endl;
             }
             first=false;
-        }
+        }*/
         fftwf_destroy_plan(plan);
         fftwf_plan anti_plan;
         if(demodularize) {
@@ -298,8 +298,8 @@ void Transform::filterTraces() {
             }
             //after the conversion, i should normalize the time signal, before re-transforming again!
             fftwf_plan test=fftwf_plan_dft_1d(traceSize,complex_output,buffer,FFTW_BACKWARD,FFTW_ESTIMATE);
-            fftwf_execute(test);
-                std::ofstream spectrumStatistic,spectrumStatisticData;
+            fftwf_execute(test);*/
+                /*std::ofstream spectrumStatistic,spectrumStatisticData;
     spectrumStatistic.open("demodulated.gpl");
     spectrumStatisticData.open("demodulated.dat");
     if(!spectrumStatistic.is_open() || !spectrumStatisticData.is_open()) {
@@ -313,12 +313,28 @@ void Transform::filterTraces() {
             spectrumStatistic << "\""<< "demodulated.dat" << "\" ";
             spectrumStatistic << "u 1:2 ";
             spectrumStatistic << "t \"amplitude\" ";
-            spectrumStatistic << "with lines linecolor \"black\";"<<endl<<endl;
-            float mod;
+            spectrumStatistic << "with lines linecolor \"black\";"<<endl<<endl;*/
+            /*float** testData=new float*[1];
+            testData[0]=new float[traceSize];
+            Input test("/home/davide/Documenti/matlab/sin_50_1000");
+            test.readHeader();
+            uint8_t** testPlain=new uint8_t*[1];
+            testPlain[0]=new uint8_t[test.plainLength];
+            test.readData(testData,testPlain,1);
+            fftwf_plan test_plan;
+            fftwf_complex* complex_test_input=fftwf_alloc_complex(traceSize);
+            fftwf_complex* complex_test_output=fftwf_alloc_complex(traceSize);
+            for(int i=0;i<traceSize;i++) {
+                complex_test_input[i][0]=testData[0][i];
+                complex_test_input[i][1]=0;
+            }
+            test_plan=fftwf_plan_dft_1d(traceSize,complex_test_input,complex_test_output,FFTW_FORWARD,FFTW_ESTIMATE);
+            fftwf_execute(test_plan);*/
             for(int n=0;n<traceSize;n++) {
                 mod=(sqrt(pow(buffer[n][0],2)+pow(buffer[n][1],2)));
+//                 mod=(atan(buffer[n][1]/buffer[n][0]))-(atan(complex_test_output[n][1]/complex_test_output[n][0]));
                 spectrumStatisticData<<n*samplingFreq/traceSize<<" "<<mod<<endl;
-            }*/
+            }
         }
         else {
             anti_plan=fftwf_plan_dft_1d(traceSize,transformation,complex_output,FFTW_BACKWARD,FFTW_ESTIMATE);
@@ -344,15 +360,16 @@ void Transform::filterTraces() {
             spectrumStatistic << "set term png size 2000,850"<<endl;
             spectrumStatistic << "set output \""<< "time_signal" <<".png\";" << endl;
             spectrumStatistic << "set autoscale;" << endl;
+            spectrumStatistic << "set xrange [0:200]"<<endl;
             spectrumStatistic<<"plot ";
             spectrumStatistic << "\""<< "time_signal.dat" << "\" ";
             spectrumStatistic << "u 1:2 ";
             spectrumStatistic << "t \"amplitude\" ";
             spectrumStatistic << "with lines linecolor \"black\";"<<endl<<endl;
              for(int n=0;n<traceSize;n++) {
-                spectrumStatisticData<<n<<" "<<dataMatrix[0][n]<<endl;
+                spectrumStatisticData<<n<<" "<<complex_output[n][0]<<endl;
             }
-    }    */
+    }*/  
     
 }
 //TODO:does not work well, why?
@@ -368,43 +385,26 @@ void Transform::demodulate() {
             //take the bins and put at low frequencies (beginning of the frequency array)
             index=freqIndexLow+ceil((double)N/2);
 //             cout<<"index:"<<index<<endl;
-            for(i=index;i<=freqIndexHigh;i++) {
+            for(i=index;i<=traceSize/2;i++) {
                 buffer[w][0]+=transformation[i][0];
                 buffer[w][1]+=transformation[i][1];
                 w++;
             }
             w=traceSize-1;
             //first traces go to the end
-            for(i=index-1;i>=freqIndexLow;i--) {
+            for(i=index-1;i>=0;i--) {
                 buffer[w][0]+=transformation[i][0];
                 buffer[w][1]+=transformation[i][1];
                 w--;
-            }/*
+            }
+            /*//shift the negative frequencies
+            index=traceSize/2-index;
             //negative elements are shifted too, and arrived at the high frequencies
-            for(i=traceSize-freqIndexLow;i>=traceSize-(freqIndexLow+freqIndexHigh);i--) {
+            for(i=traceSize-freqIndexLow;i>=traceSize/2;i--) {
                 buffer[i-index][0]=transformation[i][0];
                 buffer[i-index][1]=transformation[i][1];
+                w--;
             }*/
         }
     }
-   /* std::ofstream spectrumStatistic,spectrumStatisticData;
-    spectrumStatistic.open("demodulated.gpl");
-    spectrumStatisticData.open("demodulated.dat");
-    if(!spectrumStatistic.is_open() || !spectrumStatisticData.is_open()) {
-                cout<<"Can't open output files."<<endl;
-                exit(0);
-    }
-            spectrumStatistic << "set term png size 1024,850"<<endl;
-            spectrumStatistic << "set output \""<< "demodulated" <<".png\";" << endl;
-            spectrumStatistic << "set autoscale;" << endl;
-            spectrumStatistic<<"plot ";
-            spectrumStatistic << "\""<< "demodulated.dat" << "\" ";
-            spectrumStatistic << "u 1:2 ";
-            spectrumStatistic << "t \"amplitude\" ";
-            spectrumStatistic << "with lines linecolor \"black\";"<<endl<<endl;
-            float mod;
-            for(int n=0;n<traceSize;n++) {
-                mod=(sqrt(pow(buffer[n][0],2)+pow(buffer[n][1],2)));
-                spectrumStatisticData<<n*samplingFreq/traceSize<<" "<<mod<<endl;
-            }*/
 }
