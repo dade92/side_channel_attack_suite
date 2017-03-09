@@ -34,7 +34,8 @@ public:
                       vector<float**>& totalPearson);
 private:
     string outputDir,filename;
-    int numTraces,xtics,figureWidth,figureHeight;
+    int numTraces,xtics;
+    float figureWidth,figureHeight;
     int numIntervals,numSteps,step;
     float alpha,samplingFreq,clockFreq,scale;
     Timescale timescale;

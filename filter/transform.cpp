@@ -224,12 +224,12 @@ void Transform::filterTraces() {
     spectrumStatistic << "\""<< "spectrumwindow.dat" << "\" ";
     spectrumStatistic << "u 1:2 ";
     spectrumStatistic << "t \"amplitude\" ";
-    spectrumStatistic << "with lines linecolor \"black\";"<<endl<<endl;*/
+    spectrumStatistic << "with lines linecolor \"black\";"<<endl<<endl;
     float mod;
     for(n=0;n<traceSize;n++) {
         mod=(sqrt(pow(filterFunction[n][0],2)+pow(filterFunction[n][1],2)));
         spectrumStatisticData<<n*samplingFreq/traceSize<<" "<<mod<<endl;
-    }
+    }*/
     
     for(i=0;i<step;i++) {
         for(int w=0;w<traceSize;w++)
@@ -299,7 +299,7 @@ void Transform::filterTraces() {
             //after the conversion, i should normalize the time signal, before re-transforming again!
             fftwf_plan test=fftwf_plan_dft_1d(traceSize,complex_output,buffer,FFTW_BACKWARD,FFTW_ESTIMATE);
             fftwf_execute(test);*/
-                /*std::ofstream spectrumStatistic,spectrumStatisticData;
+                std::ofstream spectrumStatistic,spectrumStatisticData;
     spectrumStatistic.open("demodulated.gpl");
     spectrumStatisticData.open("demodulated.dat");
     if(!spectrumStatistic.is_open() || !spectrumStatisticData.is_open()) {
@@ -313,7 +313,7 @@ void Transform::filterTraces() {
             spectrumStatistic << "\""<< "demodulated.dat" << "\" ";
             spectrumStatistic << "u 1:2 ";
             spectrumStatistic << "t \"amplitude\" ";
-            spectrumStatistic << "with lines linecolor \"black\";"<<endl<<endl;*/
+            spectrumStatistic << "with lines linecolor \"black\";"<<endl<<endl;
             /*float** testData=new float*[1];
             testData[0]=new float[traceSize];
             Input test("/home/davide/Documenti/matlab/sin_50_1000");
@@ -330,6 +330,7 @@ void Transform::filterTraces() {
             }
             test_plan=fftwf_plan_dft_1d(traceSize,complex_test_input,complex_test_output,FFTW_FORWARD,FFTW_ESTIMATE);
             fftwf_execute(test_plan);*/
+            float mod;
             for(int n=0;n<traceSize;n++) {
                 mod=(sqrt(pow(buffer[n][0],2)+pow(buffer[n][1],2)));
 //                 mod=(atan(buffer[n][1]/buffer[n][0]))-(atan(complex_test_output[n][1]/complex_test_output[n][0]));
@@ -375,15 +376,15 @@ void Transform::filterTraces() {
 //TODO:does not work well, why?
 void Transform::demodulate() {
     vector<window>::iterator it;
-    int freqIndexLow,freqIndexHigh,index,N,i;
-    int w=0;
+    int freqIndexLow,freqIndexHigh,index,N,i,w;
     for(it=windows.begin();it!=windows.end();++it) {
+        w=0;
         if(it->type==bandPass) {
             freqIndexLow=it->lowFrequency*traceSize/samplingFreq;
             freqIndexHigh=it->highFrequency*traceSize/samplingFreq;
             N=freqIndexHigh-freqIndexLow;
             //take the bins and put at low frequencies (beginning of the frequency array)
-            index=freqIndexLow+ceil((double)N/2);
+            index=freqIndexLow+floor((double)N/2);
 //             cout<<"index:"<<index<<endl;
             for(i=index;i<=traceSize/2;i++) {
                 buffer[w][0]+=transformation[i][0];

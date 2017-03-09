@@ -61,16 +61,16 @@ void Output::writeResults(vector<result*>& results,vector<float**>& finalPearson
             count++;
         }    
         //write the gnuplot confidence script, for each interval
-        confidenceScriptStream<<"set term png size "<<figureWidth<<", "<<figureHeight<<endl;
-        confidenceScriptStream<<"set output \"confidence"<<intervals[i].name<<".png\";"<<endl;
+        confidenceScriptStream<<"set terminal epslatex size "<<figureWidth<<", "<<figureHeight<<endl;
+        confidenceScriptStream<<"set output \"confidence"<<intervals[i].name<<".tex\";"<<endl;
         confidenceScriptStream<<"set autoscale;"<<endl;
         confidenceScriptStream<<"unset key"<<endl;
-        confidenceScriptStream<<"set lmargin 13;set rmargin 7;set tmargin 2;set bmargin 3;"<<endl;
+//         confidenceScriptStream<<"set lmargin 13;set rmargin 7;set tmargin 2;set bmargin 3;"<<endl;
         confidenceScriptStream << "set xtics font \"arial,25\" " <<endl;
         confidenceScriptStream << "set ytics font \"arial,25\" " <<endl;
         confidenceScriptStream<<"set xlabel\"number of traces\" font \"arial,20\";"<<endl;
-            confidenceScriptStream<<"set ylabel \"Best and second best Pearson coefficient\""
-             <<" font \"arial,25\" offset -2,2;"<<endl<<endl<<endl;
+            confidenceScriptStream<<"set ylabel \"Pearson coefficient\""
+             <<" font \"arial,25\";"<<endl<<endl<<endl;
         confidenceScriptStream<<"plot";
         //six lines to plot
         for(int k=0;k<6;k++) {
@@ -87,8 +87,8 @@ void Output::writeResults(vector<result*>& results,vector<float**>& finalPearson
         
         
         //write the gnuplot script file
-        scriptStream<<"set term png size "<<figureWidth<<", "<<figureHeight<<endl;
-        scriptStream<<"set output \""<<intervals[i].name<<".png\";"<<endl;
+        scriptStream<<"set terminal epslatex size "<<figureWidth<<", "<<figureHeight<<endl;
+        scriptStream<<"set output \""<<intervals[i].name<<".tex\";"<<endl;
         if(scale==0)
             scriptStream<<"set autoscale;"<<endl;
         else
@@ -107,29 +107,29 @@ void Output::writeResults(vector<result*>& results,vector<float**>& finalPearson
                 
             }
             else
-                scriptStream << "set xtics "<<xtics<<" font \",25\" " <<endl;
+                scriptStream << "set xtics "<<xtics<<"  " <<endl;
             scriptStream<<"set grid xtics "<<" lt 0 lc  rgb \"grey\" lw 1;"<<endl;
             scriptStream<<"set grid ytics "<<" lt 0 lc  rgb \"grey\" lw 1;"<<endl;
         }
         else {
             if(xtics==0)
-                scriptStream << "set xtics auto font \"arial,25\" " <<endl;
+                scriptStream << "set xtics auto " <<endl;
             else
-                scriptStream << "set xtics "<<xtics<<" font \"arial,25\" " <<endl;
+                scriptStream << "set xtics "<<xtics<<"  " <<endl;
         }
-        scriptStream << "set ytics font \"arial,25\" " <<endl;
+        scriptStream << "set ytics   " <<endl;
         switch(unit) {
             case samples:
-                scriptStream<<"set xlabel\"Time\" font \"arial,25\";"<<endl;
+                scriptStream<<"set xlabel\"Time\" ;"<<endl;
                 break;
             case seconds:
-                scriptStream<<"set xlabel\"Time[us]\" font \"arial,25\";"<<endl;
+                scriptStream<<"set xlabel\"Time[us]\" ;"<<endl;
                 break;
         }
-        scriptStream<<"set ylabel \"Pearson coefficient\" font \"arial,25\" offset -2,2;"<<endl;
+        scriptStream<<"set ylabel \"Pearson coefficient\";"<<endl;
         if(bw) {
             scriptStream<<"unset key"<<endl;
-            scriptStream<<"set lmargin 13;set rmargin 7;set tmargin 2;set bmargin 3;"<<endl;
+//             scriptStream<<"set lmargin 13;set rmargin 7;set tmargin 2;set bmargin 3;"<<endl;
         }
         else scriptStream << "set key outside right;" << endl;
         scriptStream<<"plot";

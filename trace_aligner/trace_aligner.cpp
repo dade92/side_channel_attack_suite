@@ -30,6 +30,10 @@ int main(int argc,char*argv[]) {
     }
     uint8_t**plain;
     if(config.m==multiple) {
+        if(input.numTraces<=1) {
+            cout<<"Multiple mode should be used with different traces."<<endl;
+            exit(0);
+        }
         cout<<"Multiple mode selected, realigning traces"<<endl;
         float** data=new float*[config.step];
         plain=new uint8_t*[config.step];

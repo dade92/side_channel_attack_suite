@@ -30,8 +30,8 @@ void Config::init() {
             xtics=imageParams.get<int>("xtics");
             bw=imageParams.get<bool>("bw");
             unitString=imageParams.get<string>("unit");
-            figureWidth=imageParams.get<int>("figureWidth");
-            figureHeight=imageParams.get<int>("figureHeight");
+            figureWidth=imageParams.get<float>("figureWidth");
+            figureHeight=imageParams.get<float>("figureHeight");
             scale=imageParams.get<float>("scale");
             if(scale<0) {
                 cout<<"Invalid scale."<<endl;

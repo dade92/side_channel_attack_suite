@@ -16,6 +16,8 @@ analysis.out: $(COMMONS) $(OBJECTS)
 clean_images:
 	rm output/*.gpl
 	rm output/*.dat
+	rm output/*.tex
+	rm output/*.eps
 	rm output/*.png
 clean:
 	rm *.o *.out
