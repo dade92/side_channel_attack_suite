@@ -44,8 +44,8 @@ void Config::init() {
                 cout<<"Invalid start/ending sample."<<endl;
                 exit(0);
             }
-            imageWidth=imageParams.get<int>("imageWidth");
-            imageHeight=imageParams.get<int>("imageHeight");
+            imageWidth=imageParams.get<float>("imageWidth");
+            imageHeight=imageParams.get<float>("imageHeight");
             order=pt.get<int>("order");
             if(order<1 || order>5) {
                 cout<<"Invalid test order."<<endl;
