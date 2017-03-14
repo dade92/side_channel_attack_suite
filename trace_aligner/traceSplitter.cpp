@@ -22,7 +22,7 @@ TraceSplitter::TraceSplitter(Config& c,Input& i) {
     plainLength=i.plainLength;
 }
 /**
- * given a long trace (pointed by data[0])
+ * given a long trace (pointed by data)
  * and its auto correlation array, splits
  * the trace into sub traces, based on its
  * auto correlation
@@ -30,8 +30,8 @@ TraceSplitter::TraceSplitter(Config& c,Input& i) {
 void TraceSplitter::splitTrace(float*correlation,float**data) {
     int n,i;
     int length=cipherTime*samplingFreq;
-    cout<<"trying to derive the cipher length from sample "<<length/2<<" to sample "<<length/2+length<<endl;
-    length=findMaxIndex(correlation,length/2,length/2+length);
+    cout<<"trying to derive the cipher length from sample "<<samplesPerTrace+length/2<<" to sample "<<samplesPerTrace+length/2+length<<endl;
+    length=findMaxIndex(correlation,samplesPerTrace+length/2,samplesPerTrace+length/2+length)-samplesPerTrace;
     cout<<"Detected cipher length:"<<length<<endl;
     int delayIndex;
     float**trace=new float*[1];
@@ -43,16 +43,16 @@ void TraceSplitter::splitTrace(float*correlation,float**data) {
     AES aes(key,plainLength*8,AES_ENCRYPT);
     for(n=0;n<length;n++)
         trace[0][n]=data[0][n];
-    Output output(outputFilename,1,samplesPerTrace/length+1,length,plainLength,trace,plains);
+    Output output(outputFilename,1,'f',samplesPerTrace/length+1,length,plainLength,trace,plains);
     output.writeHeader();
     output.writeTraces();
-    aes.encrypt(plains[0],plains[0]);
+//     aes.encrypt(plains[0],plains[0]);
     /*cout<<"Second plain:"<<endl;
     for(int x=0;x<16;x++)
         printf("0x%x ",plains[0][x]);*/
-    for(int w=length/2;w<samplesPerTrace-length;w+=length) {
+    for(int w=samplesPerTrace+length/2;w<2*samplesPerTrace-length;w+=length) {
         i=0;
-        delayIndex=findMaxIndex(correlation,w,w+length);
+        delayIndex=findMaxIndex(correlation,w,w+length)-samplesPerTrace;
         for(n=delayIndex;n<delayIndex+length;n++) {
             trace[0][i]=data[0][n];
             i++;

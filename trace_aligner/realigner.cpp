@@ -3,6 +3,7 @@
 Realigner::Realigner(Config& config,Input& input,float*ref) {
     step=config.step;
     samplesPerTrace=input.samplesPerTrace;
+    maxTau=config.maxTau;
     function=config.function;
     refTrace=(fftwf_complex *) fftwf_malloc(sizeof(fftwf_complex) * (2 * samplesPerTrace - 1));
     refTraceTransform=(fftwf_complex *) fftwf_malloc(sizeof(fftwf_complex) * (2 * samplesPerTrace - 1));
@@ -44,10 +45,14 @@ void Realigner::alignTraces(float** trace) {
             fftwf_plan px =  fftwf_plan_dft_1d(2 * samplesPerTrace - 1,out_product
                 ,correlationComplex,FFTW_BACKWARD,FFTW_ESTIMATE);
             for(int i=1;i<step;i++) {
-                for(int w=0;w<samplesPerTrace;w++)
+                for(int w=0;w<samplesPerTrace;w++) {
                     complexTrace[w][0]=trace[i][w];
-                for(int w=samplesPerTrace;w<2*samplesPerTrace-1;w++)
+                    complexTrace[w][1]=0;
+                }
+                for(int w=samplesPerTrace;w<2*samplesPerTrace-1;w++) {
                     complexTrace[w][0]=0;
+                    complexTrace[w][1]=0;
+                }
                 fftwf_execute(pa);
                 for (int i = 0; i< 2 * samplesPerTrace - 1; i++) {
                     out_product[i][0] = refTraceTransform[i][0] * complexTraceTransform[i][0] 
@@ -84,14 +89,21 @@ void Realigner::alignTraces(float** trace) {
                 outputScript << "set xlabel \"Tau\" font \",20\";" << endl;
                 outputScript << "set ylabel \"correlation\" font \",20\";" << endl << endl;
                 outputScript << "plot \""<<datName<<".dat\" with lines linecolor black"<<endl;
-                max=correlation[0];
-                for(tau=0;tau<2*samplesPerTrace-1;tau++) {
+                max=correlation[samplesPerTrace-maxTau];
+                //TODO:conclude modification
+                for(tau=samplesPerTrace-maxTau;tau<samplesPerTrace+maxTau;tau++) {
                     if(correlation[tau]>max) {
                         max=correlation[tau];
                         finalTau=tau;
+                    } else if(correlation[tau]==max) {
+                        if(abs(tau-samplesPerTrace)<abs(finalTau-samplesPerTrace)) {
+                            max=correlation[tau];
+                            finalTau=tau;
+                        }
                     }
                 }
                 finalTau-=(samplesPerTrace-1);
+                cout<<"Obtained tau:"<<finalTau<<endl;
                 shiftTrace(trace[i],trace[i],finalTau);
             }
             break;

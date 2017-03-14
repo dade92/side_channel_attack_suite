@@ -33,7 +33,7 @@ public:
     Unit unit;
     int batch,maxSample,startSample,
         xtics,figureWidth,figureHeight,tracesToPrint;
-    bool grid;
+    bool grid,logScale;
     float samplingFreq,clockFreq;    
 private:
     string configFile;

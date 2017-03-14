@@ -18,7 +18,7 @@ using namespace boost::property_tree;
 
 //here add the filter type, then modify configuration parsing
 enum windowType {
-    rect,hann,nuttall
+    rect,hann,nuttall,tukey
 };
 
 enum filterType {
@@ -47,7 +47,7 @@ public:
     Config(string configFile);
     void init();
     string filename,outputFilename,filterFile;
-    float samplingFreq;
+    float samplingFreq,alpha;
     int step;
     padding pad;
     bool demodularize;

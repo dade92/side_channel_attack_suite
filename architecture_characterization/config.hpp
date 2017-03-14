@@ -47,8 +47,8 @@ public:
     string filename;
     string outputDir,unitString,timescaleString;
     Unit unit;
-    int step,xtics;
-    float figureWidth,figureHeight;
+    int step;
+    float figureWidth,figureHeight,xtics;
     bool grid,bw,abs_value;
     float alpha,samplingFreq,clockFreq,scale;
     Timescale timescale;

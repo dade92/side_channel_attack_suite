@@ -73,6 +73,14 @@ void Config::init() {
                     w.windowFunction=hann;
                 else if(windowTypeString.compare("nuttall")==0)
                     w.windowFunction=nuttall;
+                else if(windowTypeString.compare("tukey")==0) {
+                    w.windowFunction=tukey;
+                    alpha=windowIt->second.get<float>("alpha");
+                    if(alpha<0 || alpha>1) {
+                        cout<<"Wrong alpha"<<endl;
+                        exit(0);
+                    }
+                }
                 else {
                     cout<<"Wrong window filter type."<<endl;
                     exit(0);
@@ -83,13 +91,17 @@ void Config::init() {
                 }
                 else if(w.type==highPass) {
                     w.lowFrequency=windowIt->second.get<float>("lowFrequency");
-                    w.highFrequency=samplingFreq/2;
+                    w.highFrequency=0;
                 } else {
                     w.lowFrequency=windowIt->second.get<float>("lowFrequency");
                     w.highFrequency=windowIt->second.get<float>("highFrequency");
+                    if(w.lowFrequency>w.highFrequency || w.lowFrequency>samplingFreq/2
+                        || w.highFrequency>samplingFreq/2) {
+                        cout<<"Wrong frequencies."<<endl;
+                        exit(0);
+                    }   
                 }
-                if(w.lowFrequency>w.highFrequency || w.lowFrequency>samplingFreq/2
-                    || w.highFrequency>samplingFreq/2) {
+                if(w.lowFrequency>samplingFreq/2 || w.highFrequency>samplingFreq/2) {
                     cout<<"Wrong frequencies."<<endl;
                     exit(0);
                 }

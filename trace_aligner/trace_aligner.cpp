@@ -28,9 +28,13 @@ int main(int argc,char*argv[]) {
         cout<<"Step size should be a multiple of the number of traces."<<endl;
         exit(0);
     }
+    if(config.maxTau>input.samplesPerTrace) {
+        cout<<"Wrong maxTau."<<endl;
+        exit(0);
+    }
     uint8_t**plain;
     if(config.m==multiple) {
-        if(input.numTraces<=1) {
+        if(input.numTraces<=1 || config.step<=1) {
             cout<<"Multiple mode should be used with different traces."<<endl;
             exit(0);
         }
@@ -74,6 +78,7 @@ int main(int argc,char*argv[]) {
         if(config.printCorrelation)
             showCorrelation(correlation,input);
         cout<<"Splitting the trace.."<<endl;
+        //opens the file where the real trace is (the other trace is used for correlation analysis)
         Input originalInput(config.originalFilename);
         originalInput.readHeader();
         if(originalInput.samplesPerTrace!=input.samplesPerTrace) {
@@ -107,7 +112,7 @@ void showCorrelation(float*corr,Input& input) {
         exit(0);
     }
     for(int i=0;i<2 * input.samplesPerTrace - 1;i++) {
-	outputDat<<i<<" ";
+	outputDat<<i-input.samplesPerTrace<<" ";
 	outputDat<<corr[i]<<endl;
     }
     outputScript << "set term png size "<<1280<<","<<850<<endl;

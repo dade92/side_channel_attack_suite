@@ -11,17 +11,24 @@ demodulation true                                                               
 windows {   
     first {
         filterType highPass     	;type of filter:low pass, band pass or high pass
-        windowType nuttall         	;type of window: rect,hann,nuttall
+        windowType nuttall         	;type of window: rect,hann,nuttall,tukey
 	lowFrequency 450	        ;low frequency of the window
     }
     second {
         filterType lowPass              ;type of filter:low pass, band pass or high pass
-        windowType hann                 ;type of window: rect,hann,nuttall
+        windowType hann                 ;type of window: rect,hann,nuttall,tukey
         highFrequency 100               ;high frequency of the window
     }
     third {
         filterType bandPass             ;type of filter:low pass, band pass or high pass
-        windowType rect                 ;type of window: rect,hann,nuttall
+        windowType rect                 ;type of window: rect,hann,nuttall,tukey
+        lowFrequency 100                ;low frequency of the window
+        highFrequency 170               ;high frequency of the window
+    }
+    fourth {
+        filterType bandPass             ;type of filter:low pass, band pass or high pass
+        windowType tukey                 ;type of window: rect,hann,nuttall,tukey
+        alpha 0.8                       ;alpha parameter of tukey window [0:1]
         lowFrequency 100                ;low frequency of the window
         highFrequency 170               ;high frequency of the window
     }

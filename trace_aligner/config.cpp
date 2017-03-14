@@ -27,6 +27,7 @@ void Config::init() {
                 cout<<"Unrecognized alignment function."<<endl;
                 exit(0);
             }
+            maxTau=pt.get<int>("maxTau");
             string modeString=pt.get<string>("mode");
             if(modeString.compare("multiple")==0)
                 m=multiple;

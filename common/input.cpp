@@ -41,6 +41,7 @@ void Input::readHeader() {
         cout<<"Incorrect file size: it should be "<<10+plainSize+traceSize<<" bytes but it is "<<fileSize<<" bytes"<<endl;
         exit(0);
     }
+    temp=NULL;
 }
 
 void Input::rewind_file() {
@@ -58,6 +59,17 @@ void Input::readPlaintext(int index,char*plains,int step) {
 }
 //reads incrementally all data, both the trace and the plaintext.returns the number of read bytes
 int Input::readData(float** dataMatrix,uint8_t** plains,int step) {
+    //takes all the trace length
+    int r=0;
+    for(int i=0;i<step;i++) {
+        r+=fread(dataMatrix[i],dataDimension,samplesPerTrace,file);
+        //always char type
+        fread(plains[i],sizeof(uint8_t),plainLength,file);
+    }
+    return r;
+}
+//reads incrementally all data, both the trace and the plaintext.returns the number of read bytes
+int Input::readData(double** dataMatrix,uint8_t** plains,int step) {
     //takes all the trace length
     int r=0;
     for(int i=0;i<step;i++) {

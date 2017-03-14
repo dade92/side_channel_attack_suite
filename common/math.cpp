@@ -54,7 +54,14 @@ float generalized_cosine_window(float a0,float a1,float a2,float a3,int n,int N)
         +a2*cos(4*M_PI*n/(N-1))
         -a3*cos(6*M_PI*n/(N-1));
 }
-
+float tukey_window(float alpha,int n,int N) {
+    if(n<alpha*(N-1)/2) {
+        return 0.5*(1+cos(M_PI*((2*n)/(alpha*(N-1)) - 1)));
+    } else if(n>=alpha*(N-1)/2 && n<=(N-1)*(1-alpha/2))
+        return 1;
+    else if(n>(N-1)*(1-alpha/2) && n<=(N-1))
+        return 0.5*(1+cos(M_PI*((2*n)/(alpha*(N-1)) - 2/alpha+1)));
+}
 /**
  * given a long trace (pointed by data[0]),
  * returns the auto correlation array, where

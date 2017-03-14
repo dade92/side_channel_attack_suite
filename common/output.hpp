@@ -5,7 +5,9 @@
 #include<iostream>
 #include<string>
 #include"input.hpp"
-
+#define SAMPLE_FORMAT_FLOAT 'f'
+#define SAMPLE_FORMAT_DOUBLE 'd'
+#define SAMPLE_FORMAT_CHAR 'c'
 /**
  * Output class of the filter tool, save a .dat file
  * containing the filtered traces
@@ -16,8 +18,12 @@ public:
     Output(string outputFile,int step,
            Input& input,float** data,uint8_t**plains);
     //in some cases I need to store objects without having a compatible .dat input file
-    Output(string outputFile,int step,
+    Output(string outputFile,int step,char format,
            int numTraces,int samplesPerTrace,int plaintLength,float**data,uint8_t**plains);
+    Output(string outputFile,int step,
+           Input& input,double** data,uint8_t**plains);
+    Output(string outputFile,int step,char format,
+           int numTraces,int samplesPerTrace,int plaintLength,double**data,uint8_t**plains);
     ~Output();
     void writeHeader();
     void writeTraces();
@@ -29,6 +35,7 @@ private:
     uint8_t format;
     uint8_t plainLength;
     float** dataMatrix;
+    double** dataMatrix2;
     uint8_t** plaintext;
     int step;
     FILE* fp;

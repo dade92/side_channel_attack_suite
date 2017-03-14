@@ -32,7 +32,7 @@ private:
     fftwf_complex* complex_output;
     fftwf_complex* buffer;
     float** dataMatrix;
-    float samplingFreq;
+    float samplingFreq,alpha;
     padding pad;
     bool demodularize,first;
     filterCombination fc;

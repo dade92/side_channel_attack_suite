@@ -23,6 +23,7 @@ public:
     void readHeader();
     void readPlaintext(int index,char*plains,int step);
     int readData(float** dataMatrix,uint8_t** plains,int step);
+    int readData(double** dataMatrix,uint8_t** plains,int step);
     void rewind_file();
     void printInformation();
     int samplesPerTrace;
@@ -30,6 +31,7 @@ public:
     short dataDimension;
     char format;
     char plainLength;
+    float** temp;
 private:
     FILE* file;
     long long fileSize;

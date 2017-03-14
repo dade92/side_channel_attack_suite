@@ -27,7 +27,7 @@ void Config::init() {
             clockFreq=pt.get<float>("clockFreq");
             ptree imageParams(pt.get_child("imageParams"));
             grid=imageParams.get<bool>("displayGrid");
-            xtics=imageParams.get<int>("xtics");
+            xtics=imageParams.get<float>("xtics");
             bw=imageParams.get<bool>("bw");
             unitString=imageParams.get<string>("unit");
             figureWidth=imageParams.get<float>("figureWidth");

@@ -19,6 +19,7 @@ float findMax(float* samples,int dim);
 float generalized_hamming_window(float alpha,float beta,int n,int N);
 //tuning a0,a1,a2 and a3 you can generate different types of windows
 float generalized_cosine_window(float a0,float a1,float a2,float a3,int n,int N);
+float tukey_window(float alpha,int n,int N);
 float* autoCorrelate(float* data,int spt);
 float* crossCorrelate(float*,float*,int dim);
 

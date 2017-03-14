@@ -34,6 +34,7 @@ private:
     fftwf_complex* correlationComplex;
     fftwf_complex* out_product;
     float samplingFreq,cipherTime;
+    int maxTau;
     string plaintext;
 };
 #endif

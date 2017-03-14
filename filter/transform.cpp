@@ -9,6 +9,7 @@ Transform::Transform(Config& config,Input& input,int ts,float** data) {
     step=config.step;
     samplesPerTrace=input.samplesPerTrace;
     fc=config.filterComb;
+    alpha=config.alpha;
     demodularize=config.demodularize;
     //how many samples do I have to allocate?
     transformation=fftwf_alloc_complex(traceSize);
@@ -58,12 +59,16 @@ void Transform::computeFilter() {
     int i,k,N,n;
     vector<window>::iterator it;
     int freqIndexLow,freqIndexHigh;
+    float a0=0.355768;
+    float a1=0.487396;
+    float a2=0.144232;
+    float a3=0.012604;
     //for each window, compute the filter specified by the user
     for(it=windows.begin();it!=windows.end();++it) {
         //init the windows index (k:N=f:F)
         freqIndexLow=it->lowFrequency*traceSize/samplingFreq;
         freqIndexHigh=it->highFrequency*traceSize/samplingFreq;
-        N=freqIndexHigh-freqIndexLow;
+        N=abs(freqIndexHigh-freqIndexLow);
         if(N%2==0)
             N+=1;
         //TODO:manage even or odd window
@@ -120,18 +125,22 @@ void Transform::computeFilter() {
                         }
                         break;
                     case highPass:
-                        for(k=freqIndexLow;k<traceSize/2+(traceSize/2-freqIndexLow);k++) {
-                            n=k-freqIndexLow;
+                        freqIndexHigh=freqIndexLow;
+                        for(k=0;k<freqIndexLow;k++) {
+                            n=k+N;
                             filterFunction[k][0]+=generalized_hamming_window(0.5,0.5,n,2*N);
                         }
+                        for(k=traceSize-freqIndexLow;k<traceSize;k++) {
+                            n=k-(traceSize-freqIndexLow);
+                            filterFunction[k][0]+=generalized_hamming_window(0.5,0.5,n,2*N);
+                        }
+                        //generate the high pass filter
+                        for(k=0;k<traceSize;k++)
+                            filterFunction[k][0]=1-filterFunction[k][0];
                         break;
                 }
                 break;
             case nuttall:
-                float a0=0.355768;
-                float a1=0.487396;
-                float a2=0.144232;
-                float a3=0.012604;
                 switch(it->type) {
                     case lowPass:
                         for(k=0;k<freqIndexHigh;k++) {
@@ -158,13 +167,61 @@ void Transform::computeFilter() {
                         }
                         break;
                     case highPass:
-                    for(k=freqIndexLow;k<traceSize/2+(traceSize/2-freqIndexLow);k++) {
-                            n=k-freqIndexLow;
+                        freqIndexHigh=freqIndexLow;
+                        for(k=0;k<freqIndexLow;k++) {
+                            n=k+N;
                             filterFunction[k][0]+=generalized_cosine_window(a0,a1,a2,a3,n,2*N);
-                        }                        
+                        }
+                        for(k=traceSize-freqIndexLow;k<traceSize;k++) {
+                            n=k-(traceSize-freqIndexLow);
+                            filterFunction[k][0]+=generalized_cosine_window(a0,a1,a2,a3,n,2*N);
+                        }
+                        //generate the high pass filter
+                        for(k=0;k<traceSize;k++)
+                            filterFunction[k][0]=1-filterFunction[k][0];
                         break;
                 }
                 break;
+            case tukey:
+                switch(it->type) {
+                    case lowPass:
+                        for(k=0;k<freqIndexHigh;k++) {
+                            n=k+N;
+                            filterFunction[k][0]+=tukey_window(alpha,n,2*N);
+                        }
+                        for(k=traceSize-freqIndexHigh;k<traceSize;k++) {
+                            n=k-(traceSize-freqIndexHigh);
+                            filterFunction[k][0]+=tukey_window(alpha,n,2*N);
+                        }
+                        break;
+                    case bandPass:
+                        for(k=0;k<traceSize/2;k++) {
+                            if(k>=freqIndexLow && k<=freqIndexHigh) {
+                                n=k-freqIndexLow;
+                                filterFunction[k][0]+=tukey_window(alpha,n,N);
+                            }
+                        }
+                        for(;k<traceSize;k++) {
+                            if(k>=traceSize-freqIndexHigh && k<=traceSize-freqIndexLow) {
+                                n=k-(traceSize-freqIndexHigh);
+                                filterFunction[k][0]+=tukey_window(alpha,n,N);
+                            }
+                        }
+                        break;
+                    case highPass:
+                        for(k=0;k<freqIndexLow;k++) {
+                            n=k+N;
+                            filterFunction[k][0]+=tukey_window(alpha,n,2*N);
+                        }
+                        for(k=traceSize-freqIndexLow;k<traceSize;k++) {
+                            n=k-(traceSize-freqIndexLow);
+                            filterFunction[k][0]+=tukey_window(alpha,n,2*N);
+                        }
+                        //generate the high pass filter
+                        for(k=0;k<traceSize;k++)
+                            filterFunction[k][0]=1-filterFunction[k][0];
+                    }
+            break;
                 //add here other window types
         }
     }
@@ -195,16 +252,35 @@ void Transform::computeFilter(string inputTrace) {
         cout<<"Can't open filter."<<endl;
         exit(0);
     }
-    int numSamples;
-    //gets the number of bins of the filter
+    uint32_t numSamples;
+    uint32_t numTraces;
+    char sampleType;
+    uint8_t pl;
+    //reads the header
+    fread(&numTraces,sizeof(int),1,fp);
     fread(&numSamples,sizeof(int),1,fp);
+    fread(&sampleType,sizeof(char),1,fp);
+    fread(&pl,sizeof(uint8_t),1,fp);
     cout<<"Num samples:"<<numSamples<<endl;
     if(numSamples!=traceSize) {
         cout<<"Different size of filter and traces."<<endl;
         exit(0);
     }
     //get  the filter from file
-    fread(filterFunction,sizeof(fftwf_complex),numSamples,fp);
+    if(sampleType=='c')
+        fread(filterFunction,sizeof(fftwf_complex),numSamples,fp);
+    else if(sampleType=='f') {
+        float*filterFloat=new float[numSamples];
+        fread(filterFloat,sizeof(float),numSamples,fp);
+        for(int i=0;i<numSamples;i++) {
+            filterFunction[i][0]=filterFloat[i];
+            filterFunction[i][1]=0;
+        }
+    }
+    else {
+        cout<<"Unrecognized sample type."<<endl;
+        exit(0);
+    }
 }
 
 void Transform::filterTraces() {
@@ -228,12 +304,17 @@ void Transform::filterTraces() {
     float mod;
     for(n=0;n<traceSize;n++) {
         mod=(sqrt(pow(filterFunction[n][0],2)+pow(filterFunction[n][1],2)));
-        spectrumStatisticData<<n*samplingFreq/traceSize<<" "<<mod<<endl;
+        spectrumStatisticData<<n*samplingFreq/traceSize<<" "<<20*log10(mod)<<endl;
     }*/
-    
+    if(demodularize)
+        cout<<"Starting filtering with demodulation..."<<endl;
+    else 
+        cout<<"Starting filtering..."<<endl;
     for(i=0;i<step;i++) {
-        for(int w=0;w<traceSize;w++)
+        for(int w=0;w<traceSize;w++) {
             complex_input[w][0]=dataMatrix[i][w];
+            complex_input[w][1]=0;
+        }
         fftwf_plan plan=fftwf_plan_dft_1d(traceSize,complex_input,transformation,FFTW_FORWARD,FFTW_ESTIMATE);
         fftwf_execute(plan);
         /*if(first) {
@@ -254,7 +335,7 @@ void Transform::filterTraces() {
             spectrumStatistic << "with lines linecolor \"black\";"<<endl<<endl;
             for(n=0;n<traceSize;n++) {
                 mod=(sqrt(pow(transformation[n][0],2)+pow(transformation[n][1],2)));
-                spectrumStatisticData<<n*samplingFreq/traceSize<<" "<<mod<<endl;
+                spectrumStatisticData<<n*samplingFreq/traceSize<<" "<<log10(mod)<<endl;
             }
         }*/
         for(n=0;n<traceSize;n++) {
@@ -281,17 +362,15 @@ void Transform::filterTraces() {
             spectrumStatistic << "with lines linecolor \"black\";"<<endl<<endl;
             for(n=0;n<traceSize;n++) {
                 mod=(sqrt(pow(transformation[n][0],2)+pow(transformation[n][1],2)));
-                spectrumStatisticData<<n*samplingFreq/traceSize<<" "<<mod<<endl;
+                spectrumStatisticData<<n*samplingFreq/traceSize<<" "<<20*log10(mod)<<endl;
             }
             first=false;
         }*/
         fftwf_destroy_plan(plan);
         fftwf_plan anti_plan;
         if(demodularize) {
-            cout<<"Demodulating..."<<endl;
             anti_plan=fftwf_plan_dft_1d(traceSize,buffer,complex_output,FFTW_BACKWARD,FFTW_ESTIMATE);
             demodulate();
-            fftwf_execute(anti_plan);
             /*for(int i=0;i<traceSize;i++) {
                 complex_output[i][0]/=traceSize;
                 complex_output[i][1]/=traceSize;
@@ -299,7 +378,7 @@ void Transform::filterTraces() {
             //after the conversion, i should normalize the time signal, before re-transforming again!
             fftwf_plan test=fftwf_plan_dft_1d(traceSize,complex_output,buffer,FFTW_BACKWARD,FFTW_ESTIMATE);
             fftwf_execute(test);*/
-                std::ofstream spectrumStatistic,spectrumStatisticData;
+        /*        std::ofstream spectrumStatistic,spectrumStatisticData;
     spectrumStatistic.open("demodulated.gpl");
     spectrumStatisticData.open("demodulated.dat");
     if(!spectrumStatistic.is_open() || !spectrumStatisticData.is_open()) {
@@ -313,7 +392,7 @@ void Transform::filterTraces() {
             spectrumStatistic << "\""<< "demodulated.dat" << "\" ";
             spectrumStatistic << "u 1:2 ";
             spectrumStatistic << "t \"amplitude\" ";
-            spectrumStatistic << "with lines linecolor \"black\";"<<endl<<endl;
+            spectrumStatistic << "with lines linecolor \"black\";"<<endl<<endl;*/
             /*float** testData=new float*[1];
             testData[0]=new float[traceSize];
             Input test("/home/davide/Documenti/matlab/sin_50_1000");
@@ -329,18 +408,17 @@ void Transform::filterTraces() {
                 complex_test_input[i][1]=0;
             }
             test_plan=fftwf_plan_dft_1d(traceSize,complex_test_input,complex_test_output,FFTW_FORWARD,FFTW_ESTIMATE);
-            fftwf_execute(test_plan);*/
+            fftwf_execute(test_plan);
             float mod;
             for(int n=0;n<traceSize;n++) {
                 mod=(sqrt(pow(buffer[n][0],2)+pow(buffer[n][1],2)));
 //                 mod=(atan(buffer[n][1]/buffer[n][0]))-(atan(complex_test_output[n][1]/complex_test_output[n][0]));
-                spectrumStatisticData<<n*samplingFreq/traceSize<<" "<<mod<<endl;
-            }
+                spectrumStatisticData<<n*samplingFreq/traceSize<<" "<<log10(mod)<<endl;
+            }*/
         }
-        else {
+        else
             anti_plan=fftwf_plan_dft_1d(traceSize,transformation,complex_output,FFTW_BACKWARD,FFTW_ESTIMATE);
-            fftwf_execute(anti_plan);
-        }
+        fftwf_execute(anti_plan);
         for(int w=0;w<traceSize;w++)
             dataMatrix[i][w]=complex_output[w][0];
         fftwf_destroy_plan(anti_plan);
@@ -350,6 +428,36 @@ void Transform::filterTraces() {
         for(n=0;n<traceSize;n++)
                 dataMatrix[i][n]/=traceSize;
     }
+    /*{
+        fftwf_plan plan2;
+        fftwf_complex* complex_input2=(fftwf_complex*) fftwf_malloc(sizeof(fftwf_complex) * traceSize);
+        fftwf_complex* complex_output2=(fftwf_complex*) fftwf_malloc(sizeof(fftwf_complex) * traceSize);
+        for(int w=0;w<traceSize;w++) {
+            complex_input2[w][0]=dataMatrix[0][w];
+            complex_input2[w][1]=0; //TODO:ALWAYS INIT TO 0
+        }
+        plan2=fftwf_plan_dft_1d(traceSize,complex_input2,complex_output2,FFTW_FORWARD,FFTW_ESTIMATE);
+        fftwf_execute(plan2);
+        std::ofstream spectrumStatistic,spectrumStatisticData;
+            spectrumStatistic.open("spectrum_after_after.gpl");
+            spectrumStatisticData.open("spectrum_after_after.dat");
+            if(!spectrumStatistic.is_open() || !spectrumStatisticData.is_open()) {
+                cout<<"Can't open output files."<<endl;
+                exit(0);
+            }
+            spectrumStatistic << "set term png size 1024,850"<<endl;
+            spectrumStatistic << "set output \""<< "spectrum_after_after" <<".png\";" << endl;
+            spectrumStatistic << "set autoscale;" << endl;
+            spectrumStatistic<<"plot ";
+            spectrumStatistic << "\""<< "spectrum_after_after.dat" << "\" ";
+            spectrumStatistic << "u 1:2 ";
+            spectrumStatistic << "t \"amplitude\" ";
+            spectrumStatistic << "with lines linecolor \"black\";"<<endl<<endl;
+            for(n=0;n<traceSize;n++) {
+                mod=(sqrt(pow(complex_output2[n][0],2)+pow(complex_output2[n][1],2)));
+                spectrumStatisticData<<n*samplingFreq/traceSize<<" "<<20*log10(mod)<<endl;
+            }
+    }*/
     /*{
     std::ofstream spectrumStatistic,spectrumStatisticData;
     spectrumStatistic.open("time_signal.gpl");
@@ -383,6 +491,8 @@ void Transform::demodulate() {
             freqIndexLow=it->lowFrequency*traceSize/samplingFreq;
             freqIndexHigh=it->highFrequency*traceSize/samplingFreq;
             N=freqIndexHigh-freqIndexLow;
+            if(N%2==0)
+                N+=1;
             //take the bins and put at low frequencies (beginning of the frequency array)
             index=freqIndexLow+floor((double)N/2);
 //             cout<<"index:"<<index<<endl;
@@ -406,6 +516,10 @@ void Transform::demodulate() {
                 buffer[i-index][1]=transformation[i][1];
                 w--;
             }*/
+        }
+        else {
+            cout<<"Some filter windows are not band pass."<<endl;
+            exit(0);
         }
     }
 }

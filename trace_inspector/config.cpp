@@ -59,6 +59,7 @@ void Config::init() {
                 cout<<"Invalid start/ending sample"<<endl;
                 exit(0);
             }
+            logScale=imageParams.get<bool>("logScale");
         } catch( ptree_error e) {
             cerr << "Analysis configuration error. Check the config file" << endl;
             exit (3);
