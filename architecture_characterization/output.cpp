@@ -31,7 +31,7 @@ void Output::writeResults(vector<result*>& results,vector<float**>& finalPearson
     ofstream logStream(outputDir+"/"+"logFile",ofstream::out);
     //write some useful information about the .dat file
     logStream<<"Log of the file: "<<filename<<":"<<endl;
-    logStream<<"numTraces: "<<numTraces<<endl<<endl;
+    logStream<<"NumTraces: "<<numTraces<<endl<<endl;
     logStream<<boost::format("%-32s %-25s %-25s %-12s %-15s %-10s %-7s %-8s %-10s %-10s\n") % 
     "interval" % "bestKeyFound!=correct" % "bestPearson!=correct" % "correctKey" % 
     "PearsonCorrect" % "relevant?" % "found?" % "model" % "position" % "ic width";
@@ -67,10 +67,10 @@ void Output::writeResults(vector<result*>& results,vector<float**>& finalPearson
             count++;
         }    
         //write the gnuplot confidence script, for each interval
-        confidenceScriptStream<<"set terminal epslatex size "<<figureWidth<<", "<<figureHeight<<endl;
-//         confidenceScriptStream<<"set terminal png size "<<figureWidth<<", "<<figureHeight<<endl;
-        confidenceScriptStream<<"set output \"confidence"<<intervals[i].name<<".tex\";"<<endl;
-//         confidenceScriptStream<<"set output \"confidence"<<intervals[i].name<<".png\";"<<endl;
+//         confidenceScriptStream<<"set terminal epslatex size "<<figureWidth<<", "<<figureHeight<<endl;
+         confidenceScriptStream<<"set terminal png size "<<figureWidth<<", "<<figureHeight<<endl;
+//         confidenceScriptStream<<"set output \"confidence"<<intervals[i].name<<".tex\";"<<endl;
+         confidenceScriptStream<<"set output \"confidence"<<intervals[i].name<<".png\";"<<endl;
         confidenceScriptStream<<"set autoscale;"<<endl;
         confidenceScriptStream<<"unset key"<<endl;
 //         confidenceScriptStream<<"set lmargin 13;set rmargin 7;set tmargin 2;set bmargin 3;"<<endl;
@@ -95,10 +95,10 @@ void Output::writeResults(vector<result*>& results,vector<float**>& finalPearson
         
         
         //write the gnuplot script file
-        scriptStream<<"set terminal epslatex size "<<figureWidth<<", "<<figureHeight<<endl;
-//         scriptStream<<"set terminal png size "<<figureWidth<<", "<<figureHeight<<endl;
-        scriptStream<<"set output \""<<intervals[i].name<<".tex\";"<<endl;
-//         scriptStream<<"set output \""<<intervals[i].name<<".png\";"<<endl;
+//         scriptStream<<"set terminal epslatex size "<<figureWidth<<", "<<figureHeight<<endl;
+         scriptStream<<"set terminal png size "<<figureWidth<<", "<<figureHeight<<endl;
+//         scriptStream<<"set output \""<<intervals[i].name<<".tex\";"<<endl;
+         scriptStream<<"set output \""<<intervals[i].name<<".png\";"<<endl;
         if(scale==0)
             scriptStream<<"set autoscale;"<<endl;
         else

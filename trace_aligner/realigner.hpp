@@ -26,6 +26,7 @@ private:
     float correlate(float* ,float*);
     void shiftTrace(float* trace,float* shiftedTrace,int tau);
     int samplesPerTrace,step;
+    bool printCorr;
     alignmentFunction function;
     fftwf_complex* refTrace;
     fftwf_complex* refTraceTransform;

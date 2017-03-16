@@ -4,9 +4,10 @@ step                3                                                           
 samplingFreq        1000                                                        ;sampling frequency
 padding             zero                                                        ;padding type: zero,hold,mean
 filterCombination doNothing                                                     ;window combination: doNothing,clamp,normalize
+plotFilter    true                                                              ;true if you want to plot the filter. false otherwise
 ;filterFile aes_adaptive_filter.dat                                             ;optional adaptive filter file
 demodulation true                                                               ;if true, the output is demodularized
-
+demFrequency 10                                                                   ;cut frequency of the demodulated
 ;list of filter windows
 windows {   
     first {
@@ -27,7 +28,7 @@ windows {
     }
     fourth {
         filterType bandPass             ;type of filter:low pass, band pass or high pass
-        windowType tukey                 ;type of window: rect,hann,nuttall,tukey
+        windowType tukey                ;type of window: rect,hann,nuttall,tukey
         alpha 0.8                       ;alpha parameter of tukey window [0:1]
         lowFrequency 100                ;low frequency of the window
         highFrequency 170               ;high frequency of the window

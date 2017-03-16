@@ -237,7 +237,7 @@ void PowerModel::generate(uint8_t** plaintext,unsigned**powerMatrix) {
                     powerMatrix[s][k]=hammingWeight(ptx^k);
                 }
                 else {
-                    //take the plaintext, xor with the key and substitution. Best attack so far
+                    //take the plaintext, xor with the key and substitution.
                     powerMatrix[s][k]=hammingWeight(SBOX[ptx^k]);
                 }
             }

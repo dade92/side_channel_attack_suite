@@ -1,4 +1,5 @@
-    This is an analysis tool that performs correlation power analysis (CPA).
+    Architectural Analysis tool  of Side Channel suite.
+    Performs correlation power analysis (CPA)
 
     The analysis tool takes as input a config file; an example of the 
     config file format can be found in config_example.

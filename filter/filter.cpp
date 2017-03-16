@@ -60,6 +60,8 @@ int main(int argc,char*argv[]) {
 //         cout<<"Traces padded. Applying filter.."<<endl;
         transform.filterTraces();
         cout<<"Filter applied."<<endl;
+        if(config.demodularize)
+            transform.demodulate(config.demFrequency);
         output.writeTraces();
         cout<<"Batch stored."<<endl;
         i+=config.step;

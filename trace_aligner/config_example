@@ -1,4 +1,4 @@
-filename ../filter/aes_ttable_single_filtered_bandpass.dat  ;input file
+filename ../filter/aes_split_filtered.dat  ;input file
 outputFilename aes_split.dat                                ;output file
 step 1                                                      ;number of traces to put in memory
 alignmentFunction crossCorr                                 ;type of alignment function

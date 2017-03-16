@@ -37,6 +37,14 @@ void Config::init() {
             }
             startSample=pt.get<int>("startSample");
             maxSample=pt.get<int>("endSample");
+            startBin=pt.get<int>("startFrequency");
+            endBin=pt.get<int>("endFrequency");
+            if(startBin<-samplingFreq/2 || endBin>samplingFreq/2 || startBin>endBin) {
+                cout<<"Wrong start/end bin."<<endl;
+                exit(0);
+            }
+            startBin=(startBin!=0 ? startBin : -samplingFreq/2);
+            endBin=(endBin!=0 ? endBin : samplingFreq/2);
             ptree imageParams(pt.get_child("imageParams"));
             grid=imageParams.get<bool>("displayGrid");
             xtics=imageParams.get<int>("xtics");

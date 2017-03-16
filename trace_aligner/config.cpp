@@ -66,11 +66,11 @@ void Config::init() {
                 exit(0);
             }
         } catch( ptree_error e) {
-            cerr << "Analysis configuration error. Check the config file" << endl;
+            cerr << "Analysis configuration error. Check the config file." << endl;
             exit (3);
         }        
     } catch ( info_parser::info_parser_error e) {
-        cerr << "Cannot parse Analysis configuration" << endl;
+        cerr << "Cannot parse config file." << endl;
         exit ( 3 );
     }
 }

@@ -22,7 +22,7 @@ enum windowType {
 };
 
 enum filterType {
-    lowPass,bandPass,highPass
+    lowPass,bandPass,highPass,stopBand
 };
 
 enum filterCombination {
@@ -47,10 +47,10 @@ public:
     Config(string configFile);
     void init();
     string filename,outputFilename,filterFile;
-    float samplingFreq,alpha;
+    float samplingFreq,alpha,demFrequency;
     int step;
     padding pad;
-    bool demodularize;
+    bool demodularize,plotFilter;
     filterCombination filterComb;
     vector<window> windows;
     

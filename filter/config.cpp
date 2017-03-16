@@ -44,10 +44,16 @@ void Config::init() {
                 cout<<"Wrong filter combination options."<<endl;
                 exit(0);
             }
+            plotFilter=pt.get<bool>("plotFilter");
             try {
                 filterFile=pt.get<string>("filterFile");
             } catch( ptree_error e) {}
             demodularize=pt.get<bool>("demodulation");
+            demFrequency=pt.get<float>("demFrequency");
+            if(demFrequency>samplingFreq/2 || demFrequency<0) {
+                cout<<"Wrong demFrequency."<<endl;
+                exit(0);
+            }
             ptree windowsPtree (pt.get_child("windows"));
             ptree::const_iterator windowIt;
             string windowTypeString,filterTypeString;
@@ -62,6 +68,8 @@ void Config::init() {
                     w.type=bandPass;
                 else if(filterTypeString.compare("highPass")==0)
                     w.type=highPass;
+                else if(filterTypeString.compare("stopBand")==0)
+                    w.type=stopBand;
                 else {
                     cout<<"Wrong band type."<<endl;
                     exit(0);
@@ -108,11 +116,11 @@ void Config::init() {
                 windows.push_back(w);
             }
         } catch( ptree_error e) {
-            cerr << "Analysis configuration error. Check the config file" << endl;
+            cerr << "Analysis configuration error. Check the config file." << endl;
             exit (3);
         }        
     } catch ( info_parser::info_parser_error e) {
-        cerr << "Cannot parse Analysis configuration" << endl;
+        cerr << "Cannot parse config file." << endl;
         exit ( 3 );
     }
 }

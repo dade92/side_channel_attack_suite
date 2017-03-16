@@ -32,7 +32,8 @@ public:
     string filename,unitString,outputDir;
     Unit unit;
     int batch,maxSample,startSample,
-        xtics,figureWidth,figureHeight,tracesToPrint;
+        xtics,figureWidth,figureHeight,tracesToPrint,
+        startBin,endBin;
     bool grid,logScale;
     float samplingFreq,clockFreq;    
 private:

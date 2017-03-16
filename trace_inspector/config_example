@@ -6,6 +6,8 @@ clockFreq 120                                                   ;frequency of th
 numTraces 10                                                    ;num of traces to print
 startSample 0                                                   ;starting sample
 endSample 0                                                     ;ending sample. 0 means to the end
+startFrequency  0                                                   ;starting bin of the spectrum. 0 for -samplingFreq/2
+endFrequency  0                                                      ;ending bin of the spectrum. 0 for samplingFreq/2
 imageParams {
     displayGrid false                                           ;true if you want a grid that shows the clock
     xtics   0                                                   ;distance in time between x labels. 0 means auto

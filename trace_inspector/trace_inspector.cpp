@@ -276,6 +276,7 @@ void inspectTraces(Config& config,Input& input) {
     }
     cout<<"Computing the spectrum.."<<endl;
     generateSpectrum(temp,input,config);
+    cout<<"plotting the spectrum from frequency "<<config.startBin<<" to frequency "<<config.endBin<<endl;
     std::ofstream outputStatistics,outputStatisticsData;
     outputStatistics.open(config.outputDir+"/meanAndVariance.gpl");
     outputStatisticsData.open(config.outputDir+"/meanAndVariance.dat");
@@ -437,9 +438,9 @@ void generateSpectrum(float** trace,Input& input,Config& config) {
     }
     spectrumStatistic << "set ytic auto font \",20\";" << endl;
     spectrumStatistic << "unset key;" << endl;
-    spectrumStatistic << "set xlabel \"Frequency [MHz]\" font \",20\";" << endl;
+    spectrumStatistic << "set xlabel \"Frequency [Hz]\" font \",20\";" << endl;
     spectrumStatistic << "set ylabel \"Amplitude\" font \",20\";" << endl;
-    spectrumStatistic << "set xrange ["<<-config.samplingFreq/2<<":"<<config.samplingFreq/2<<"];"<<endl;
+    spectrumStatistic << "set xrange ["<<config.startBin<<":"<<config.endBin<<"];"<<endl;
     spectrumStatistic<<"plot ";
     spectrumStatistic << "\""<< "spectrum.dat" << "\" ";
     spectrumStatistic << "u 1:2 ";
