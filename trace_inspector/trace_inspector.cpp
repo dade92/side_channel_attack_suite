@@ -286,8 +286,14 @@ void inspectTraces(Config& config,Input& input) {
         exit(0);
     }
     //plot the mean .png
-    outputStatistics << "set term png size "<<config.figureWidth<<" ,"<<config.figureHeight<<";"<<endl;
-    outputStatistics << "set output \""<< "mean" <<".png\";" << endl;
+    if(config.latexOutput) {
+        outputStatistics << "set term epslatex size "<<config.figureWidth<<" ,"<<config.figureHeight<<";"<<endl;
+        outputStatistics << "set output \""<< "mean" <<".tex\";" << endl;
+    }
+    else {
+        outputStatistics << "set term png size "<<config.figureWidth<<" ,"<<config.figureHeight<<";"<<endl;
+        outputStatistics << "set output \""<< "mean" <<".png\";" << endl;
+    }
     outputStatistics << "set autoscale;" << endl;
     if(grid) {
         if(config.xtics==0) {
@@ -336,8 +342,14 @@ void inspectTraces(Config& config,Input& input) {
     
     
     //plot the standard deviation .png
-    outputStatistics << "set term png size "<<config.figureWidth<<" ,"<<config.figureHeight<<";"<<endl;
-    outputStatistics << "set output \""<< "standardDev" <<".png\";" << endl;
+    if(config.latexOutput) {
+        outputStatistics << "set term epslatex size "<<config.figureWidth<<" ,"<<config.figureHeight<<";"<<endl;
+        outputStatistics << "set output \""<< "standardDev" <<".tex\";" << endl;
+    }
+    else {
+        outputStatistics << "set term png size "<<config.figureWidth<<" ,"<<config.figureHeight<<";"<<endl;
+        outputStatistics << "set output \""<< "standardDev" <<".png\";" << endl;
+    }
     outputStatistics << "set autoscale;" << endl;
     if(grid) {
         if(config.xtics==0) {
@@ -410,8 +422,14 @@ void generateSpectrum(float** trace,Input& input,Config& config) {
         cout<<"Can't open output files."<<endl;
         exit(0);
     }
-    spectrumStatistic << "set term png size "<<config.figureWidth<<" ,"<<config.figureHeight<<";"<<endl;
-    spectrumStatistic << "set output \""<< "spectrum" <<".png\";" << endl;
+    if(config.latexOutput) {
+        spectrumStatistic <<"set terminal epslatex size "<<config.figureWidth<<" ,"<<config.figureHeight<<";"<<endl;
+        spectrumStatistic << "set output \""<< "spectrum" <<".tex\";" << endl;
+    }
+    else {
+        spectrumStatistic << "set term png size "<<config.figureWidth<<" ,"<<config.figureHeight<<";"<<endl;
+        spectrumStatistic << "set output \""<< "spectrum" <<".png\";" << endl;
+    }
     spectrumStatistic << "set autoscale;" << endl;
     if(config.grid) {
         if(config.xtics==0) {

@@ -6,7 +6,11 @@
     of the first trace.
     
     It takes as input a config file with the needed parameters.
-    An example can be found in config_example.
+    An example can be found in config_example. In the config file
+    you will find different useful parameters to set the output
+    image; during my thesis project I found these parameters quite
+    important, looking the traces or the spectrum carefully usually
+    brings clever deductions.
     
     IMPORTANT: the fftw3 library that computes the DFT and IDFT
     was compiled passing --enable-float parameter to the 

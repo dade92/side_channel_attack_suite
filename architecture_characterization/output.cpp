@@ -19,6 +19,7 @@ Output::Output(Config& c,Input& input) {
     scale=c.scale;
     timescale=c.timescale;
     abs_value=c.abs_value;
+    latex=c.latexOutput;
 }
 
 /* IMPORTANT: if you want
@@ -67,10 +68,14 @@ void Output::writeResults(vector<result*>& results,vector<float**>& finalPearson
             count++;
         }    
         //write the gnuplot confidence script, for each interval
-//         confidenceScriptStream<<"set terminal epslatex size "<<figureWidth<<", "<<figureHeight<<endl;
-         confidenceScriptStream<<"set terminal png size "<<figureWidth<<", "<<figureHeight<<endl;
-//         confidenceScriptStream<<"set output \"confidence"<<intervals[i].name<<".tex\";"<<endl;
-         confidenceScriptStream<<"set output \"confidence"<<intervals[i].name<<".png\";"<<endl;
+        if(latex) {
+            confidenceScriptStream<<"set terminal epslatex size "<<figureWidth<<", "<<figureHeight<<endl;
+            confidenceScriptStream<<"set output \"confidence"<<intervals[i].name<<".tex\";"<<endl;
+        }
+        else {
+            confidenceScriptStream<<"set terminal png size "<<figureWidth<<", "<<figureHeight<<endl;
+            confidenceScriptStream<<"set output \"confidence"<<intervals[i].name<<".png\";"<<endl;
+        }
         confidenceScriptStream<<"set autoscale;"<<endl;
         confidenceScriptStream<<"unset key"<<endl;
 //         confidenceScriptStream<<"set lmargin 13;set rmargin 7;set tmargin 2;set bmargin 3;"<<endl;
@@ -95,10 +100,14 @@ void Output::writeResults(vector<result*>& results,vector<float**>& finalPearson
         
         
         //write the gnuplot script file
-//         scriptStream<<"set terminal epslatex size "<<figureWidth<<", "<<figureHeight<<endl;
-         scriptStream<<"set terminal png size "<<figureWidth<<", "<<figureHeight<<endl;
-//         scriptStream<<"set output \""<<intervals[i].name<<".tex\";"<<endl;
-         scriptStream<<"set output \""<<intervals[i].name<<".png\";"<<endl;
+        if(latex) {
+            scriptStream<<"set terminal epslatex size "<<figureWidth<<", "<<figureHeight<<endl;
+            scriptStream<<"set output \""<<intervals[i].name<<".tex\";"<<endl;
+        }
+        else {
+            scriptStream<<"set terminal png size "<<figureWidth<<", "<<figureHeight<<endl;
+            scriptStream<<"set output \""<<intervals[i].name<<".png\";"<<endl;
+        }
         if(scale==0)
             scriptStream<<"set autoscale;"<<endl;
         else

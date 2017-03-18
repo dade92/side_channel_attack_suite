@@ -25,6 +25,17 @@ void Config::init() {
             alpha= pt.get<float>("alpha");
             samplingFreq=pt.get<float>("samplingFreq");
             clockFreq=pt.get<float>("clockFreq");
+            modeString=pt.get<string>("mode");
+            if(modeString.compare("char")==0)
+                m=charac;
+            else if(modeString.compare("aes")==0)
+                m=aes;
+            else if(modeString.compare("ttable")==0)
+                m=ttable;
+            else {
+                cout<<"Mode not recognized."<<endl;
+                exit(0);
+            }
             ptree imageParams(pt.get_child("imageParams"));
             grid=imageParams.get<bool>("displayGrid");
             xtics=imageParams.get<float>("xtics");
@@ -63,6 +74,7 @@ void Config::init() {
                 exit(0);
             }
             abs_value=imageParams.get<bool>("abs");
+            latexOutput=imageParams.get<bool>("latexOutput");
             //parse the intervals and put all inside the vector
             ptree windows (pt.get_child("intervals"));
             ptree::const_iterator intIt;

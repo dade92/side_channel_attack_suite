@@ -12,6 +12,7 @@ step 2500				;number of traces to put in memory (suggested a low number, up to 2
 alpha 0.1				;confidence interval of the test
 samplingFreq 500			;sampling frequency of the oscilloscope
 clockFreq 120				;clock frequency of the processor
+mode aes                                ;mode: char for characterization, aes for normal aes, ttable for ttable impl
 imageParams {                           ;params for gnuplot script
     displayGrid true			;do you want a grid in the images?
     xtics 100                           ;tics on x axis. 0 means auto
@@ -22,6 +23,7 @@ imageParams {                           ;params for gnuplot script
     scale 0				;scale of the output figure. 0 stands for auto
     timescale absolute                  ;absolute:x axis starts from the sample of the interval. Relative:starts from 0
     abs true                            ;draw absolute Pearson (true) or not (false)
+    latexOutput false                   ;if true, the gnuplot scripts produces .text files, otherwise .png
 }
 ;list of intervals: each interval has a name,contains start sample, end sample,
 ;value of the correct key in that interval, model used, bw if 

@@ -15,4 +15,5 @@ imageParams {
     figureWidth 2000                                            ;output figure width
     figureHeight 850                                            ;output figure height
     logScale false                                              ;if true the spectrum is plotted in logScale
+    latexOutput false                                           ;if true the output scripts generate .tex documents
 }

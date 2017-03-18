@@ -14,11 +14,11 @@ analysis.out: $(COMMONS) $(OBJECTS)
 	$(CC) -o $@ -c $< $(CFLAGS)
 
 clean_images:
-	rm output/*.gpl
-	rm output/*.dat
-	rm output/*.tex
-	rm output/*.eps
-	rm output/*.png
+	find . -name "*.gpl" -type f|xargs rm -f
+	find . -name "*.dat" -type f|xargs rm -f
+	find . -name "*.png" -type f|xargs rm -f
+	find . -name "*.tex" -type f|xargs rm -f
+	find . -name "*.eps" -type f|xargs rm -f
 clean:
 	rm *.o *.out
 

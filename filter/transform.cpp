@@ -187,10 +187,10 @@ void Transform::computeFilter() {
                         for(k=0;k<traceSize/2;k++) {
                             if(k>=freqIndexLow && k<=freqIndexHigh) {
                                 n=k-freqIndexLow;
-                                    filterFunction[k][0]+=generalized_cosine_window(a0,a1,a2,a3,n,N);
+                                filterFunction[k][0]+=generalized_cosine_window(a0,a1,a2,a3,n,N);
                             }
                         }
-                        for(k=traceSize/2;k<traceSize;k++) {
+                        for(;k<traceSize;k++) {
                             if(k>=traceSize-freqIndexHigh && k<=traceSize-freqIndexLow) {
                                 n=k-(traceSize-freqIndexHigh);
                                 filterFunction[k][0]+=generalized_cosine_window(a0,a1,a2,a3,n,N);
@@ -217,7 +217,7 @@ void Transform::computeFilter() {
                                     filterFunctionStop[k][0]+=generalized_cosine_window(a0,a1,a2,a3,n,N);
                             }
                         }
-                        for(k=traceSize/2;k<traceSize;k++) {
+                        for(;k<traceSize;k++) {
                             if(k>=traceSize-freqIndexHigh && k<=traceSize-freqIndexLow) {
                                 n=k-(traceSize-freqIndexHigh);
                                 filterFunctionStop[k][0]+=generalized_cosine_window(a0,a1,a2,a3,n,N);
@@ -483,7 +483,7 @@ void Transform::plotFilter(fftwf_complex* f) {
             spectrumStatisticData<<-i*(samplingFreq/2)/traceSize<<" "<<20*log10(mod)<<endl;
             i-=2;
         }
-        for(int n=0;n<=traceSize/2;n++) {
+        for(int n=0;n<traceSize/2;n++) {
             mod=(sqrt(pow(f[n][0],2)+pow(f[n][1],2)));
             spectrumStatisticData<<n*(samplingFreq)/traceSize<<" "<<20*log10(mod)<<endl;
         }

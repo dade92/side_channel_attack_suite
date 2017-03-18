@@ -39,7 +39,7 @@ private:
     int numIntervals,numSteps,step;
     float alpha,samplingFreq,clockFreq,scale;
     Timescale timescale;
-    bool grid,bw,abs_value;
+    bool grid,bw,abs_value,latex;
     Unit unit;
     string getKeyAsString(int key);
     //vector that contains the intervals

@@ -1,13 +1,13 @@
-filename            /home/davide/Documenti/tesi/data/cos_5_350_480_1000.dat     ;name of the file in input
+filename            test.dat                                                    ;name of the file in input
 outputFilename      cos_filtered.dat	                                        ;name of the file in output
 step                3                                                           ;number of traces to put in memory
 samplingFreq        1000                                                        ;sampling frequency
 padding             zero                                                        ;padding type: zero,hold,mean
-filterCombination doNothing                                                     ;window combination: doNothing,clamp,normalize
-plotFilter    true                                                              ;true if you want to plot the filter. false otherwise
-;filterFile aes_adaptive_filter.dat                                             ;optional adaptive filter file
-demodulation true                                                               ;if true, the output is demodularized
-demFrequency 10                                                                   ;cut frequency of the demodulated
+filterCombination   doNothing                                                   ;window combination: doNothing,clamp,normalize
+plotFilter          true                                                        ;true if you want to plot the filter. false not
+;filterFile         aes_adaptive_filter.dat                                     ;optional adaptive filter file
+demodulation        true                                                        ;if true, the output is demodularized
+demFrequency        10                                                          ;cut frequency of the demodulated
 ;list of filter windows
 windows {   
     first {

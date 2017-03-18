@@ -40,7 +40,7 @@ void Config::init() {
             startBin=pt.get<int>("startFrequency");
             endBin=pt.get<int>("endFrequency");
             if(startBin<-samplingFreq/2 || endBin>samplingFreq/2 || startBin>endBin) {
-                cout<<"Wrong start/end bin."<<endl;
+                cout<<"Wrong start/end frequency."<<endl;
                 exit(0);
             }
             startBin=(startBin!=0 ? startBin : -samplingFreq/2);
@@ -68,6 +68,7 @@ void Config::init() {
                 exit(0);
             }
             logScale=imageParams.get<bool>("logScale");
+            latexOutput=imageParams.get<bool>("latexOutput");
         } catch( ptree_error e) {
             cerr << "Analysis configuration error. Check the config file" << endl;
             exit (3);

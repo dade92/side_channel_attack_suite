@@ -34,7 +34,7 @@ public:
     int batch,maxSample,startSample,
         xtics,figureWidth,figureHeight,tracesToPrint,
         startBin,endBin;
-    bool grid,logScale;
+    bool grid,logScale,latexOutput;
     float samplingFreq,clockFreq;    
 private:
     string configFile;
