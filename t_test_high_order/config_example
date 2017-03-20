@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 filename /home/dbotti/src/pc_side/dpacalc_measure/attack_baremetal.dat      ;filename
 filename2 /home/dbotti/src/pc_side/dpacalc_measure/attack_baremetal_cp.dat    ;filename
 batch 2500                                                      ;number of traces to analyze at each iteration
@@ -6,11 +7,21 @@ samplingFreq 500                                                ;sampling freque
 clockFreq 120                                                   ;frequency of the processor [Mhz]
 startSample 0                                                  ;starting sample
 endSample 0                                                  ;ending sample. 0 means to the end
+=======
+filename /home/davide/Documenti/tesi/data/benchmark_load_caches.dat     ;filename
+filename2 /home/davide/Documenti/tesi/data/benchmark_mov_caches.dat     ;filename
+batch 1000                                                              ;number of traces to analyze at each iteration
+alpha 0.05                                                              ;confidence interval of the test
+samplingFreq 500                                                        ;sampling frequency of the oscilloscope [Mhz]
+clockFreq 120                                                           ;frequency of the processor [Mhz]
+startSample 0                                                           ;starting sample
+endSample 500                                                           ;ending sample. 0 means to the end
+>>>>>>> 68a3045ab480dfc276efa98f37b97aeec3e4f81c
 imageParams {
-    displayGrid false                                               ;true if you want a grid that shows the clock
-    xtics 0                                                        ;tics on x axis
-    imageWidth 2000                                             ;width of the output image
-    imageHeight 850                                             ;height of the output image
+    displayGrid false                                                   ;true if you want a grid that shows the clock
+    xtics 0                                                             ;tics on x axis
+    imageWidth 2000                                                     ;width of the output image
+    imageHeight 850                                                     ;height of the output image
 }
-order 1                                                         ;order of the test
-maxTau2 50                                                      ;max tau to consider for order 2
+order 1                                                                 ;order of the test
+maxTau2 50                                                              ;max tau to consider for order 2

@@ -4,5 +4,10 @@
 *.dat
 *.png
 *.svg
+*.eps
+*.tex
+*.zip
+*.rar
+*.gz
 configuration
 output

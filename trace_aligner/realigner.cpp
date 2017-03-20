@@ -3,6 +3,7 @@
 Realigner::Realigner(Config& config,Input& input,float*ref) {
     step=config.step;
     samplesPerTrace=input.samplesPerTrace;
+    maxTau=config.maxTau;
     function=config.function;
     refTrace=(fftwf_complex *) fftwf_malloc(sizeof(fftwf_complex) * (2 * samplesPerTrace - 1));
     refTraceTransform=(fftwf_complex *) fftwf_malloc(sizeof(fftwf_complex) * (2 * samplesPerTrace - 1));
@@ -20,6 +21,7 @@ Realigner::Realigner(Config& config,Input& input,float*ref) {
     //TODO:remove these attributes if not used
     samplingFreq=config.samplingFreq;
     cipherTime=config.cipherTime;
+    printCorr=config.printCorrelation;
 }
 /**
  * given a set of traces, it 
@@ -34,6 +36,7 @@ void Realigner::alignTraces(float** trace) {
     complexTraceTransform=(fftwf_complex *) fftwf_malloc(sizeof(fftwf_complex) * (2 * samplesPerTrace - 1));
     out_product=(fftwf_complex *) fftwf_malloc(sizeof(fftwf_complex) * (2 * samplesPerTrace - 1));
     correlationComplex=(fftwf_complex *) fftwf_malloc(sizeof(fftwf_complex) * (2 * samplesPerTrace - 1));
+    bool first=true;
     //inserted here and not inside the for loop for performance reasons
     switch(function) {
         case crossCorr:
@@ -44,10 +47,14 @@ void Realigner::alignTraces(float** trace) {
             fftwf_plan px =  fftwf_plan_dft_1d(2 * samplesPerTrace - 1,out_product
                 ,correlationComplex,FFTW_BACKWARD,FFTW_ESTIMATE);
             for(int i=1;i<step;i++) {
-                for(int w=0;w<samplesPerTrace;w++)
+                for(int w=0;w<samplesPerTrace;w++) {
                     complexTrace[w][0]=trace[i][w];
-                for(int w=samplesPerTrace;w<2*samplesPerTrace-1;w++)
+                    complexTrace[w][1]=0;
+                }
+                for(int w=samplesPerTrace;w<2*samplesPerTrace-1;w++) {
                     complexTrace[w][0]=0;
+                    complexTrace[w][1]=0;
+                }
                 fftwf_execute(pa);
                 for (int i = 0; i< 2 * samplesPerTrace - 1; i++) {
                     out_product[i][0] = refTraceTransform[i][0] * complexTraceTransform[i][0] 
@@ -59,39 +66,48 @@ void Realigner::alignTraces(float** trace) {
                 for (int i = 0; i<2 * samplesPerTrace - 1; i++)
                     correlation[i] = correlationComplex[(i + samplesPerTrace) 
                     % (2 * samplesPerTrace - 1)][0] / (2 * samplesPerTrace - 1);
-                string datName="datCorr";
-                string scriptName="correlation";
-                std::ofstream outputScript,outputDat,outputPScript,outputPDat;
-                
-                outputScript.open(scriptName+".gpl");
-                if(outputScript.fail()) {
-                    cerr << "Please provide a correct output script filename" << endl;
-                    exit(0);
+                if(printCorr && first) {
+                    first=false;
+                    string datName="datCorr";
+                    string scriptName="correlation";
+                    std::ofstream outputScript,outputDat,outputPScript,outputPDat;
+                    
+                    outputScript.open(scriptName+".gpl");
+                    if(outputScript.fail()) {
+                        cerr << "Please provide a correct output script filename" << endl;
+                        exit(0);
+                    }
+                    outputDat.open(datName+".dat");
+                    if(outputDat.fail()) {
+                        cerr << "Please provide a correct output dat filename" << endl;
+                        exit(0);
+                    }
+                    for(int i=0;i<2 * samplesPerTrace - 1;i++) {
+                        outputDat<<i-samplesPerTrace<<" ";
+                        outputDat<<correlation[i]<<endl;
+                    }
+                    outputScript << "set term png size "<<1280<<","<<850<<endl;
+                    outputScript << "set output \""<< "correlation.png\";" << endl;
+                    outputScript << "set autoscale;" << endl;
+                    outputScript << "unset key;" << endl;
+                    outputScript << "set xlabel \"Tau\" font \",20\";" << endl;
+                    outputScript << "set ylabel \"correlation\" font \",20\";" << endl << endl;
+                    outputScript << "plot \""<<datName<<".dat\" with lines linecolor black"<<endl;
                 }
-                outputDat.open(datName+".dat");
-                if(outputDat.fail()) {
-                    cerr << "Please provide a correct output dat filename" << endl;
-                    exit(0);
-                }
-                for(int i=0;i<2 * samplesPerTrace - 1;i++) {
-                    outputDat<<i<<" ";
-                    outputDat<<correlation[i]<<endl;
-                }
-                outputScript << "set term png size "<<1280<<","<<850<<endl;
-                outputScript << "set output \""<< "correlation.png\";" << endl;
-                outputScript << "set autoscale;" << endl;
-                outputScript << "unset key;" << endl;
-                outputScript << "set xlabel \"Tau\" font \",20\";" << endl;
-                outputScript << "set ylabel \"correlation\" font \",20\";" << endl << endl;
-                outputScript << "plot \""<<datName<<".dat\" with lines linecolor black"<<endl;
-                max=correlation[0];
-                for(tau=0;tau<2*samplesPerTrace-1;tau++) {
+                max=correlation[samplesPerTrace-maxTau];
+                //TODO:conclude modification
+                for(tau=samplesPerTrace-maxTau;tau<=samplesPerTrace+maxTau;tau++) {
                     if(correlation[tau]>max) {
                         max=correlation[tau];
                         finalTau=tau;
-                    }
+                    } /*else if(correlation[tau]==max) {
+                        if(abs(tau-samplesPerTrace)<abs(finalTau-samplesPerTrace)) {
+                            max=correlation[tau];
+                            finalTau=tau;
+                        }
+                    }*/
                 }
-                finalTau-=(samplesPerTrace-1);
+                finalTau-=(samplesPerTrace);
                 shiftTrace(trace[i],trace[i],finalTau);
             }
             break;

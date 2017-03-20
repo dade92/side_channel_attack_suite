@@ -34,12 +34,12 @@ public:
                       vector<float**>& totalPearson);
 private:
     string outputDir,filename;
-    int numTraces,xtics;
-    float figureWidth,figureHeight;
+    int numTraces;
+    float figureWidth,figureHeight,xtics;
     int numIntervals,numSteps,step;
     float alpha,samplingFreq,clockFreq,scale;
     Timescale timescale;
-    bool grid,bw,abs_value;
+    bool grid,bw,abs_value,latex;
     Unit unit;
     string getKeyAsString(int key);
     //vector that contains the intervals

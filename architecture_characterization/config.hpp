@@ -40,18 +40,25 @@ enum Timescale {
     relative
 };
 
+enum Mode {
+    charac,
+    aes,
+    ttable
+};
+
 class Config {
 public:
     Config(string configFile);
     void init();
     string filename;
-    string outputDir,unitString,timescaleString;
+    string outputDir,unitString,timescaleString,modeString;
     Unit unit;
-    int step,xtics;
-    float figureWidth,figureHeight;
-    bool grid,bw,abs_value;
+    int step;
+    float figureWidth,figureHeight,xtics;
+    bool grid,bw,abs_value,latexOutput;
     float alpha,samplingFreq,clockFreq,scale;
     Timescale timescale;
+    Mode m;
     vector<interval> intervals;
     
 private:

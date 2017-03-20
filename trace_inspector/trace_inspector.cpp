@@ -31,7 +31,7 @@ void printUsage();
 void savePersistence(uint32_t** persistence,int numSamples,Config&);
 void showTraces(Config& config,Input& input,float** trace);
 void inspectTraces(Config& config,Input& input);
-void generateSpectrum(float* mean,Input& input,Config& config);
+void generateSpectrum(float**,Input& input,Config& config);
 inline void setRGB(png_byte *ptr, uint32_t val);
 
 /**
@@ -127,10 +127,12 @@ void showTraces(Config& config,Input& input,float** trace) {
         cout<<"Can't open output files."<<endl;
         exit(0);
     }
+    int maxSample=(config.maxSample!=0 ? config.maxSample : input.samplesPerTrace);
     outputStatistics << "set term png size "<<config.figureWidth<<" ,"<<config.figureHeight<<";"<<endl;
     outputStatistics << "set output \""<< "traces" <<".png\";" << endl;
     outputStatistics << "set autoscale;" << endl;
     outputStatistics << "set xtics auto font \",20\";" << endl;
+    outputStatistics << "set xrange ["<<config.startSample<<":"<<maxSample<<"];"<<endl;
     outputStatistics << "set ylabel \"\""<<endl;
     outputStatistics << "set xlabel \"Time\""<<endl;
     if(config.grid) {
@@ -165,7 +167,6 @@ void showTraces(Config& config,Input& input,float** trace) {
             outputStatistics<<",";
     }
     //write the .dat file
-    int maxSample=(config.maxSample!=0 ? config.maxSample : input.samplesPerTrace);
     for(int i=0;i<maxSample-config.startSample;i++) {
         switch(config.unit) {
             case samples:
@@ -176,7 +177,7 @@ void showTraces(Config& config,Input& input,float** trace) {
                 break;
         }
         for(int n=0;n<config.tracesToPrint;n++) {
-            outputStatisticsData<<trace[n][i]<<" ";
+            outputStatisticsData<<trace[n][i+config.startSample]<<" ";
         }
         outputStatisticsData<<endl;
     }
@@ -196,6 +197,8 @@ void inspectTraces(Config& config,Input& input) {
     int numSamples=maxSample-config.startSample;
     float* mean=new float[numSamples];
     float* var=new float[numSamples];
+    float** temp=new float*[1];
+    temp[0]=new float[input.samplesPerTrace];
 //     uint16_t index;
 //     int16_t integer_sample;
 //     int matrix_index;
@@ -233,11 +236,12 @@ void inspectTraces(Config& config,Input& input) {
     int n=0;
     while(n<numTraces) {
         input.readData(trace,plain,step);
-        if(!n) {
-            cout<<"Computing the spectrum.."<<endl;
-            generateSpectrum(trace[0],input,config);
+        /*for(int y=0;y<step;y++) {
+            for(int z=0;z<input.samplesPerTrace;z++)
+                trace[y][z]=trace2[y][z];
+        }*/
+        if(!n)
             showTraces(config,input,trace);
-        }
         n+=step;
         /*cout<<"Plaintext:"<<endl;
         for(int x=0;x<16;x++)
@@ -270,6 +274,9 @@ void inspectTraces(Config& config,Input& input) {
 	var[i]/=(numTraces-1);
 	var[i]=sqrt(var[i]);
     }
+    cout<<"Computing the spectrum.."<<endl;
+    generateSpectrum(temp,input,config);
+    cout<<"plotting the spectrum from frequency "<<config.startBin<<" to frequency "<<config.endBin<<endl;
     std::ofstream outputStatistics,outputStatisticsData;
     outputStatistics.open(config.outputDir+"/meanAndVariance.gpl");
     outputStatisticsData.open(config.outputDir+"/meanAndVariance.dat");
@@ -279,8 +286,14 @@ void inspectTraces(Config& config,Input& input) {
         exit(0);
     }
     //plot the mean .png
-    outputStatistics << "set term png size "<<config.figureWidth<<" ,"<<config.figureHeight<<";"<<endl;
-    outputStatistics << "set output \""<< "mean" <<".png\";" << endl;
+    if(config.latexOutput) {
+        outputStatistics << "set term epslatex size "<<config.figureWidth<<" ,"<<config.figureHeight<<";"<<endl;
+        outputStatistics << "set output \""<< "mean" <<".tex\";" << endl;
+    }
+    else {
+        outputStatistics << "set term png size "<<config.figureWidth<<" ,"<<config.figureHeight<<";"<<endl;
+        outputStatistics << "set output \""<< "mean" <<".png\";" << endl;
+    }
     outputStatistics << "set autoscale;" << endl;
     if(grid) {
         if(config.xtics==0) {
@@ -329,8 +342,14 @@ void inspectTraces(Config& config,Input& input) {
     
     
     //plot the standard deviation .png
-    outputStatistics << "set term png size "<<config.figureWidth<<" ,"<<config.figureHeight<<";"<<endl;
-    outputStatistics << "set output \""<< "standardDev" <<".png\";" << endl;
+    if(config.latexOutput) {
+        outputStatistics << "set term epslatex size "<<config.figureWidth<<" ,"<<config.figureHeight<<";"<<endl;
+        outputStatistics << "set output \""<< "standardDev" <<".tex\";" << endl;
+    }
+    else {
+        outputStatistics << "set term png size "<<config.figureWidth<<" ,"<<config.figureHeight<<";"<<endl;
+        outputStatistics << "set output \""<< "standardDev" <<".png\";" << endl;
+    }
     outputStatistics << "set autoscale;" << endl;
     if(grid) {
         if(config.xtics==0) {
@@ -368,30 +387,32 @@ void inspectTraces(Config& config,Input& input) {
             break;
         
     }
-    outputStatistics << "unset key;" << endl;
-    outputStatistics << "set ylabel \"standard deviation\" font \",20\";" << endl;
-    outputStatistics<<"plot ";
-    outputStatistics << "\""<< "meanAndVariance.dat" << "\" ";
-    outputStatistics << "u 1:3 ";
-    outputStatistics << "t \"dev standard\" ";
-    outputStatistics << "with lines linecolor \"black\";"<<endl<<endl;
-    //write data file
-    for(int i=0;i<numSamples;i++) {
-        switch(config.unit) {
-            case samples:
-                outputStatisticsData<<i+config.startSample<<" ";
-                break;
-            case seconds:
-                outputStatisticsData<<(i+config.startSample)/config.samplingFreq<<" ";
-                break;
-        }
-	outputStatisticsData<<mean[i]<<" "<<var[i]<<endl;
+    if(numTraces>1) {
+        outputStatistics << "unset key;" << endl;
+        outputStatistics << "set ylabel \"standard deviation\" font \",20\";" << endl;
+        outputStatistics<<"plot ";
+        outputStatistics << "\""<< "meanAndVariance.dat" << "\" ";
+        outputStatistics << "u 1:3 ";
+        outputStatistics << "t \"dev standard\" ";
+        outputStatistics << "with lines linecolor \"black\";"<<endl<<endl;
+    }
+        //write data file
+        for(int i=0;i<numSamples;i++) {
+            switch(config.unit) {
+                case samples:
+                    outputStatisticsData<<i+config.startSample<<" ";
+                    break;
+                case seconds:
+                    outputStatisticsData<<(i+config.startSample)/config.samplingFreq<<" ";
+                    break;
+            }
+            outputStatisticsData<<mean[i]<<" "<<var[i]<<endl;
     }
     cout<<"traces inspected. You can find gnuplot script in \"inspectTrace.gpl\" and in \"meanAndVariance.gpl\" "
     		"data in \"inspectTrace.dat\" and \"meanAndVariance.dat\" "<<endl;
 }
 
-void generateSpectrum(float* trace,Input& input,Config& config) {
+void generateSpectrum(float** trace,Input& input,Config& config) {
     int start=config.startSample;
     int end=(config.maxSample!=0 ? config.maxSample : input.samplesPerTrace);
     std::ofstream spectrumStatistic,spectrumStatisticData;
@@ -401,8 +422,14 @@ void generateSpectrum(float* trace,Input& input,Config& config) {
         cout<<"Can't open output files."<<endl;
         exit(0);
     }
-    spectrumStatistic << "set term png size "<<config.figureWidth<<" ,"<<config.figureHeight<<";"<<endl;
-    spectrumStatistic << "set output \""<< "spectrum" <<".png\";" << endl;
+    if(config.latexOutput) {
+        spectrumStatistic <<"set terminal epslatex size "<<config.figureWidth<<" ,"<<config.figureHeight<<";"<<endl;
+        spectrumStatistic << "set output \""<< "spectrum" <<".tex\";" << endl;
+    }
+    else {
+        spectrumStatistic << "set term png size "<<config.figureWidth<<" ,"<<config.figureHeight<<";"<<endl;
+        spectrumStatistic << "set output \""<< "spectrum" <<".png\";" << endl;
+    }
     spectrumStatistic << "set autoscale;" << endl;
     if(config.grid) {
         if(config.xtics==0) {
@@ -429,27 +456,54 @@ void generateSpectrum(float* trace,Input& input,Config& config) {
     }
     spectrumStatistic << "set ytic auto font \",20\";" << endl;
     spectrumStatistic << "unset key;" << endl;
-    spectrumStatistic << "set xlabel \"Frequency\" font \",20\";" << endl;
+    spectrumStatistic << "set xlabel \"Frequency [Hz]\" font \",20\";" << endl;
     spectrumStatistic << "set ylabel \"Amplitude\" font \",20\";" << endl;
+    spectrumStatistic << "set xrange ["<<config.startBin<<":"<<config.endBin<<"];"<<endl;
     spectrumStatistic<<"plot ";
     spectrumStatistic << "\""<< "spectrum.dat" << "\" ";
     spectrumStatistic << "u 1:2 ";
     spectrumStatistic << "t \"amplitude\" ";
     spectrumStatistic << "with lines linecolor \"black\";"<<endl<<endl;
+    Input input2(config.filename);
+    input2.readHeader();
+    uint8_t** plain=new uint8_t*[1];
+    for(int i=0;i<1;i++) {
+        plain[i]=new uint8_t[input2.plainLength];
+    }
+    input2.readData(trace,plain,1);
     fftwf_plan plan;
-    int traceSize=end-start;
+    int traceSize=input2.samplesPerTrace;
     fftwf_complex* transformation=fftwf_alloc_complex(traceSize);
     fftwf_complex* trace_complex=fftwf_alloc_complex(traceSize);
-    for(int i=0;i<traceSize;i++)
-        trace_complex[i][0]=trace[i];
+    for(int i=0;i<traceSize;i++) {
+        trace_complex[i][0]=trace[0][i];
+        trace_complex[i][1]=0;
+    }
     plan=fftwf_plan_dft_1d(traceSize,trace_complex,transformation,FFTW_FORWARD,FFTW_ESTIMATE);
     fftwf_execute(plan);
     float mod,maxFreq=config.samplingFreq;
-    int i=-1;
-    //real transformat exploits the simmetry, so there are only half of samples
-    for(int n=0;n<=traceSize/2;n++) {
-        mod=(sqrt(pow(transformation[n][0],2)+pow(transformation[n][1],2)));
-        spectrumStatisticData<<n*maxFreq/traceSize<<" "<<mod<<endl;
+    int i=(traceSize);
+    //i:traceSize=f:maxFreq
+    if(config.logScale) {
+        for(int n=traceSize/2;n<traceSize;n++) {
+            mod=(sqrt(pow(transformation[n][0],2)+pow(transformation[n][1],2)));
+            spectrumStatisticData<<-i*(maxFreq/2)/traceSize<<" "<<20*log10(mod)<<endl;
+            i-=2;
+        }
+        for(int n=0;n<=traceSize/2;n++) {
+            mod=(sqrt(pow(transformation[n][0],2)+pow(transformation[n][1],2)));
+            spectrumStatisticData<<n*(maxFreq)/traceSize<<" "<<20*log10(mod)<<endl;
+        }
+    } else {
+        for(int n=traceSize/2;n<traceSize;n++) {
+            mod=(sqrt(pow(transformation[n][0],2)+pow(transformation[n][1],2)));
+            spectrumStatisticData<<-i*(maxFreq/2)/traceSize<<" "<<(mod)<<endl;
+            i-=2;
+        }
+        for(int n=0;n<=traceSize/2;n++) {
+            mod=(sqrt(pow(transformation[n][0],2)+pow(transformation[n][1],2)));
+            spectrumStatisticData<<n*(maxFreq)/traceSize<<" "<<(mod)<<endl;
+        }
     }
     fftwf_destroy_plan(plan);
 }

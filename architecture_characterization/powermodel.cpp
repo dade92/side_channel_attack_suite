@@ -8,7 +8,18 @@ PowerModel::PowerModel(interval& it,Config& c) {
     position=it.position;
     intSize=it.intSize;
     key=it.key;
+    m=c.m;
+    /*printf("0x%x\n",FT0[0]);
+    printf("0x%x\n",FT0[5]);*/
 }
+
+uint32_t PowerModel::substitute(uint8_t v) {
+    if(m==aes)
+        return SBOX[v];
+    else if(m==ttable)
+        return FT0[v];
+}
+
 
 void PowerModel::generate(uint8_t** plaintext,unsigned**powerMatrix) {
     uint32_t ptx,ptx2;
@@ -98,6 +109,54 @@ void PowerModel::generate(uint8_t** plaintext,unsigned**powerMatrix) {
         }
         else if(position.compare("sub7_11")==0) {
             sbox=7;
+            p=11;
+        }
+        else if(position.compare("sub5_10")==0) {
+            sbox=5;
+            p=10;
+        }
+        else if(position.compare("sub15_0")==0) {
+            sbox=15;
+            p=0;
+        }
+        else if(position.compare("sub10_15")==0) {
+            sbox=10;
+            p=15;
+        }
+        else if(position.compare("sub4_9")==0) {
+            sbox=4;
+            p=9;
+        }
+        else if(position.compare("sub9_14")==0) {
+            sbox=9;
+            p=14;
+        }
+        else if(position.compare("sub14_3")==0) {
+            sbox=14;
+            p=3;
+        }
+        else if(position.compare("sub8_13")==0) {
+            sbox=10;
+            p=13;
+        }
+        else if(position.compare("sub13_2")==0) {
+            sbox=13;
+            p=2;
+        }
+        else if(position.compare("sub2_7")==0) {
+            sbox=2;
+            p=7;
+        }
+        else if(position.compare("sub12_1")==0) {
+            sbox=12;
+            p=1;
+        }
+        else if(position.compare("sub1_6")==0) {
+            sbox=1;
+            p=6;
+        }
+        else if(position.compare("sub6_11")==0) { 
+            sbox=6;
             p=11;
         }
         else {
@@ -237,8 +296,8 @@ void PowerModel::generate(uint8_t** plaintext,unsigned**powerMatrix) {
                     powerMatrix[s][k]=hammingWeight(ptx^k);
                 }
                 else {
-                    //take the plaintext, xor with the key and substitution. Best attack so far
-                    powerMatrix[s][k]=hammingWeight(SBOX[ptx^k]);
+                    //take the plaintext, xor with the key and substitution.
+                    powerMatrix[s][k]=hammingWeight(substitute(ptx^k));
                 }
             }
         }
@@ -260,57 +319,96 @@ void PowerModel::generate(uint8_t** plaintext,unsigned**powerMatrix) {
                 else {
                     //attack subbytes, 8 bit attack, one part of the key is fixed (it's a cheat)
                     if(sbox==0 && p==1)
-                        powerMatrix[s][k]=hammingDistance(SBOX[ptx^0x2b],
-                                                      SBOX[ptx2^k]);
+                        powerMatrix[s][k]=hammingDistance(substitute(ptx^0x2b),
+                                                      substitute(ptx2^k));
                     else if(sbox==1 && p==2)
-                        powerMatrix[s][k]=hammingDistance(SBOX[ptx^0x7e],
-                                                     SBOX[ptx2^k]);
+                        powerMatrix[s][k]=hammingDistance(substitute(ptx^0x7e),
+                                                     substitute(ptx2^k));
                     else if(sbox==2 && p==3)
-                        powerMatrix[s][k]=hammingDistance(SBOX[ptx^0x15],
-                                                     SBOX[ptx2^k]);
+                        powerMatrix[s][k]=hammingDistance(substitute(ptx^0x15),
+                                                     substitute(ptx2^k));
                     else if(sbox==3 && p==4)
-                        powerMatrix[s][k]=hammingDistance(SBOX[ptx^0x16],
-                                                     SBOX[ptx2^k]);
+                        powerMatrix[s][k]=hammingDistance(substitute(ptx^0x16),
+                                                     substitute(ptx2^k));
                     else if(sbox==4 && p==5)
-                        powerMatrix[s][k]=hammingDistance(SBOX[ptx^0x28],
-                                                     SBOX[ptx2^k]);
+                        powerMatrix[s][k]=hammingDistance(substitute(ptx^0x28),
+                                                     substitute(ptx2^k));
                     else if(sbox==5 && p==6)
-                        powerMatrix[s][k]=hammingDistance(SBOX[ptx^0xae],
-                                                     SBOX[ptx2^k]);
+                        powerMatrix[s][k]=hammingDistance(substitute(ptx^0xae),
+                                                     substitute(ptx2^k));
                     else if(sbox==6 && p==7)
-                        powerMatrix[s][k]=hammingDistance(SBOX[ptx^0xd2],
-                                                     SBOX[ptx2^k]);
+                        powerMatrix[s][k]=hammingDistance(substitute(ptx^0xd2),
+                                                     substitute(ptx2^k));
                     else if(sbox==7 && p==8)
-                        powerMatrix[s][k]=hammingDistance(SBOX[ptx^0xa6],
-                                                     SBOX[ptx2^k]);
+                        powerMatrix[s][k]=hammingDistance(substitute(ptx^0xa6),
+                                                     substitute(ptx2^k));
                     //attack shift rows
                     else if(sbox==5 && p==9)
-                        powerMatrix[s][k]=hammingDistance(SBOX[ptx^0xae],
-                                                     SBOX[ptx2^k]);
+                        powerMatrix[s][k]=hammingDistance(substitute(ptx^0xae),
+                                                     substitute(ptx2^k));
                     else if(sbox==9 && p==13)
-                        powerMatrix[s][k]=hammingDistance(SBOX[ptx^0xf7],
-                                                     SBOX[ptx2^k]);
+                        powerMatrix[s][k]=hammingDistance(substitute(ptx^0xf7),
+                                                     substitute(ptx2^k));
                     else if(sbox==13 && p==1)
-                        powerMatrix[s][k]=hammingDistance(SBOX[ptx^0xcf],
-                                                     SBOX[ptx2^k]);
+                        powerMatrix[s][k]=hammingDistance(substitute(ptx^0xcf),
+                                                     substitute(ptx2^k));
                     else if(sbox==10 && p==14)
-                        powerMatrix[s][k]=hammingDistance(SBOX[ptx^0x15],
-                                                     SBOX[ptx2^k]);
+                        powerMatrix[s][k]=hammingDistance(substitute(ptx^0x15),
+                                                     substitute(ptx2^k));
                     else if(sbox==14 && p==2)
-                        powerMatrix[s][k]=hammingDistance(SBOX[ptx^0x4f],
-                                                     SBOX[ptx2^k]);
+                        powerMatrix[s][k]=hammingDistance(substitute(ptx^0x4f),
+                                                     substitute(ptx2^k));
                     else if(sbox==2 && p==6)
-                        powerMatrix[s][k]=hammingDistance(SBOX[ptx^0x15],
-                                                     SBOX[ptx2^k]);
+                        powerMatrix[s][k]=hammingDistance(substitute(ptx^0x15),
+                                                     substitute(ptx2^k));
                     else if(sbox==15 && p==3)
-                        powerMatrix[s][k]=hammingDistance(SBOX[ptx^0x3c],
-                                                     SBOX[ptx2^k]);
+                        powerMatrix[s][k]=hammingDistance(substitute(ptx^0x3c),
+                                                     substitute(ptx2^k));
                     else if(sbox==3 && p==7)
-                        powerMatrix[s][k]=hammingDistance(SBOX[ptx^0x16],
-                                                     SBOX[ptx2^k]);
+                        powerMatrix[s][k]=hammingDistance(substitute(ptx^0x16),
+                                                     substitute(ptx2^k));
                     else if(sbox==7 && p==11)
-                        powerMatrix[s][k]=hammingDistance(SBOX[ptx^0xa6],
-                                                     SBOX[ptx2^k]);
+                        powerMatrix[s][k]=hammingDistance(substitute(ptx^0xa6),
+                                                     substitute(ptx2^k));
+                    else if(sbox==0 && p==5)
+                        powerMatrix[s][k]=hammingDistance(substitute(ptx^0x2b),
+                                                     substitute(ptx2^k));
+                    else if(sbox==5 && p==10)
+                        powerMatrix[s][k]=hammingDistance(substitute(ptx^0xae),
+                                                     substitute(ptx2^k));
+                    else if(sbox==10 && p==15)
+                        powerMatrix[s][k]=hammingDistance(substitute(ptx^0x15),
+                                                     substitute(ptx2^k));
+                    else if(sbox==4 && p==9)
+                        powerMatrix[s][k]=hammingDistance(substitute(ptx^0x28),
+                                                     substitute(ptx2^k));
+                    else if(sbox==9 && p==14)
+                        powerMatrix[s][k]=hammingDistance(substitute(ptx^0xf7),
+                                                     substitute(ptx2^k));
+                    else if(sbox==14 && p==3)
+                        powerMatrix[s][k]=hammingDistance(substitute(ptx^0x4f),
+                                                     substitute(ptx2^k));
+                    else if(sbox==8 && p==13)
+                        powerMatrix[s][k]=hammingDistance(substitute(ptx^0xab),
+                                                     substitute(ptx2^k));
+                    else if(sbox==13 && p==2)
+                        powerMatrix[s][k]=hammingDistance(substitute(ptx^0xcf),
+                                                     substitute(ptx2^k));
+                    else if(sbox==2 && p==7)
+                        powerMatrix[s][k]=hammingDistance(substitute(ptx^0x15),
+                                                     substitute(ptx2^k));
+                    else if(sbox==12 && p==1)
+                        powerMatrix[s][k]=hammingDistance(substitute(ptx^0x09),
+                                                     substitute(ptx2^k));
+                    else if(sbox==1 && p==6)
+                        powerMatrix[s][k]=hammingDistance(substitute(ptx^0x7e),
+                                                     substitute(ptx2^k));
+                    else if(sbox==6 && p==11)
+                        powerMatrix[s][k]=hammingDistance(substitute(ptx^0xd2),
+                                                     substitute(ptx2^k));
+                    else if(sbox==15 && p==0)
+                        powerMatrix[s][k]=hammingDistance(substitute(ptx^0x3c),
+                                                     substitute(ptx2^k));
                 }
             }
         }        

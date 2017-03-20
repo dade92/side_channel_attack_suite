@@ -25,19 +25,22 @@ public:
     void computeFilter(string inputTrace);
     void padTraces();
     void filterTraces();    
+    void demodulate(float);
 private:
     fftwf_complex* filterFunction;
     fftwf_complex* transformation;
     fftwf_complex* complex_input;
     fftwf_complex* complex_output;
+    fftwf_complex* filterFunctionStop;
     fftwf_complex* buffer;
     float** dataMatrix;
-    float samplingFreq;
+    float samplingFreq,alpha;
     padding pad;
-    bool demodularize,first;
+    bool demodularize,first,showFilter;
     filterCombination fc;
     vector<window> windows;
     int traceSize,samplesPerTrace,step;
     void demodulate();
+    void plotFilter(fftwf_complex*);
 };
 #endif

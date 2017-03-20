@@ -37,6 +37,14 @@ void Config::init() {
             }
             startSample=pt.get<int>("startSample");
             maxSample=pt.get<int>("endSample");
+            startBin=pt.get<int>("startFrequency");
+            endBin=pt.get<int>("endFrequency");
+            if(startBin<-samplingFreq/2 || endBin>samplingFreq/2 || startBin>endBin) {
+                cout<<"Wrong start/end frequency."<<endl;
+                exit(0);
+            }
+            startBin=(startBin!=0 ? startBin : -samplingFreq/2);
+            endBin=(endBin!=0 ? endBin : samplingFreq/2);
             ptree imageParams(pt.get_child("imageParams"));
             grid=imageParams.get<bool>("displayGrid");
             xtics=imageParams.get<int>("xtics");
@@ -59,6 +67,8 @@ void Config::init() {
                 cout<<"Invalid start/ending sample"<<endl;
                 exit(0);
             }
+            logScale=imageParams.get<bool>("logScale");
+            latexOutput=imageParams.get<bool>("latexOutput");
         } catch( ptree_error e) {
             cerr << "Analysis configuration error. Check the config file" << endl;
             exit (3);

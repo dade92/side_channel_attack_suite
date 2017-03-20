@@ -18,7 +18,7 @@ int main(int argc,char*argv[]) {
     Input input(config.filename);
     input.readHeader();
     //used for padding
-    int traceSize=(input.samplesPerTrace);
+    uint32_t traceSize=(input.samplesPerTrace);
     fftwf_plan plan;
     FILE*fp; 
     float delta;
@@ -92,7 +92,13 @@ int main(int argc,char*argv[]) {
     //write the trace, with header
     cout<<"Writing to file.."<<endl;
     fp=fopen(config.outputFilename.c_str(),"wb");
-    fwrite(&traceSize, sizeof(int), 1, fp);
+    uint32_t numTraces=1;
+    char sampleType='c';
+    uint8_t plainLength=0;
+    fwrite(&numTraces, sizeof(uint32_t), 1, fp);
+    fwrite(&traceSize, sizeof(uint32_t), 1, fp);
+    fwrite(&sampleType,sizeof(char),1,fp);
+    fwrite(&plainLength, sizeof(uint8_t), 1, fp);
     //write the mean
     fwrite(filterFunction,sizeof(fftwf_complex),traceSize,fp);
     fftwf_destroy_plan(plan);

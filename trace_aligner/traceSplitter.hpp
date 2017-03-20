@@ -16,7 +16,9 @@ using namespace std;
  * Class of the trace alignment tool
  * that divide the long trace in different
  * AES traces based on correlation
- * computed before
+ * computed before.
+ * NOTE:needs one single long trace
+ * in input, used only in single mode
  */
 class TraceSplitter {
 public:

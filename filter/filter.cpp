@@ -35,7 +35,6 @@ int main(int argc,char*argv[]) {
     uint8_t** plaintext=new uint8_t*[config.step];
     //derive the real size of the traces (power of 2 is better for DFT)
     int traceSize=(input.samplesPerTrace);
-    Transform transform(config,input,traceSize,traceMatrix);
     //init data matrix
     for(int w=0;w<config.step;w++) {
         traceMatrix[w]=new float[traceSize];
@@ -44,6 +43,7 @@ int main(int argc,char*argv[]) {
     Output output(config.outputFilename,config.step,input,traceMatrix,plaintext);
     //for every batch of traces, apply the filter and save on HD
     output.writeHeader();
+    Transform transform(config,input,traceSize,traceMatrix);
     //generate the filter window, storing in RAM
     if(config.filterFile.empty()) {
         cout<<"No adaptive filter, computing the windows."<<endl;
@@ -60,6 +60,8 @@ int main(int argc,char*argv[]) {
 //         cout<<"Traces padded. Applying filter.."<<endl;
         transform.filterTraces();
         cout<<"Filter applied."<<endl;
+        if(config.demodularize)
+            transform.demodulate(config.demFrequency);
         output.writeTraces();
         cout<<"Batch stored."<<endl;
         i+=config.step;

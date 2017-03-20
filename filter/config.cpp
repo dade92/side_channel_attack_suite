@@ -44,10 +44,16 @@ void Config::init() {
                 cout<<"Wrong filter combination options."<<endl;
                 exit(0);
             }
+            plotFilter=pt.get<bool>("plotFilter");
             try {
                 filterFile=pt.get<string>("filterFile");
             } catch( ptree_error e) {}
             demodularize=pt.get<bool>("demodulation");
+            demFrequency=pt.get<float>("demFrequency");
+            if(demFrequency>samplingFreq/2 || demFrequency<0) {
+                cout<<"Wrong demFrequency."<<endl;
+                exit(0);
+            }
             ptree windowsPtree (pt.get_child("windows"));
             ptree::const_iterator windowIt;
             string windowTypeString,filterTypeString;
@@ -62,6 +68,8 @@ void Config::init() {
                     w.type=bandPass;
                 else if(filterTypeString.compare("highPass")==0)
                     w.type=highPass;
+                else if(filterTypeString.compare("stopBand")==0)
+                    w.type=stopBand;
                 else {
                     cout<<"Wrong band type."<<endl;
                     exit(0);
@@ -73,6 +81,14 @@ void Config::init() {
                     w.windowFunction=hann;
                 else if(windowTypeString.compare("nuttall")==0)
                     w.windowFunction=nuttall;
+                else if(windowTypeString.compare("tukey")==0) {
+                    w.windowFunction=tukey;
+                    alpha=windowIt->second.get<float>("alpha");
+                    if(alpha<0 || alpha>1) {
+                        cout<<"Wrong alpha"<<endl;
+                        exit(0);
+                    }
+                }
                 else {
                     cout<<"Wrong window filter type."<<endl;
                     exit(0);
@@ -83,24 +99,28 @@ void Config::init() {
                 }
                 else if(w.type==highPass) {
                     w.lowFrequency=windowIt->second.get<float>("lowFrequency");
-                    w.highFrequency=samplingFreq/2;
+                    w.highFrequency=0;
                 } else {
                     w.lowFrequency=windowIt->second.get<float>("lowFrequency");
                     w.highFrequency=windowIt->second.get<float>("highFrequency");
+                    if(w.lowFrequency>w.highFrequency || w.lowFrequency>samplingFreq/2
+                        || w.highFrequency>samplingFreq/2) {
+                        cout<<"Wrong frequencies."<<endl;
+                        exit(0);
+                    }   
                 }
-                if(w.lowFrequency>w.highFrequency || w.lowFrequency>samplingFreq/2
-                    || w.highFrequency>samplingFreq/2) {
+                if(w.lowFrequency>samplingFreq/2 || w.highFrequency>samplingFreq/2) {
                     cout<<"Wrong frequencies."<<endl;
                     exit(0);
                 }
                 windows.push_back(w);
             }
         } catch( ptree_error e) {
-            cerr << "Analysis configuration error. Check the config file" << endl;
+            cerr << "Analysis configuration error. Check the config file." << endl;
             exit (3);
         }        
     } catch ( info_parser::info_parser_error e) {
-        cerr << "Cannot parse Analysis configuration" << endl;
+        cerr << "Cannot parse config file." << endl;
         exit ( 3 );
     }
 }
