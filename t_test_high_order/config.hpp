@@ -30,7 +30,7 @@ public:
     int batch,maxSample,startSample,order,
         maxTau2,maxTau3,maxTau4,maxTau5,xtics;
     float imageWidth,imageHeight;
-    bool grid;
+    bool grid,latexOutput;
     float samplingFreq,clockFreq,alpha;
 private:
     string configFile;

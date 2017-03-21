@@ -26,7 +26,7 @@ private:
     string filename;
     int order,samplesPerTrace,startSample,endSample,xtics;
     int imageWidth,imageHeight;
-    bool grid;
+    bool grid,latex;
     string getKeyAsString(int key);
 };
 #endif

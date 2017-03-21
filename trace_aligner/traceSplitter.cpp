@@ -40,17 +40,18 @@ void TraceSplitter::splitTrace(float*correlation,float**data) {
     plains[0]=new uint8_t[plainLength];
     for(n=0;n<plainLength;n++)
         plains[0][n]=startPlain[n];
-    AES aes(key,plainLength*8,AES_ENCRYPT);
     for(n=0;n<length;n++)
         trace[0][n]=data[0][n];
     Output output(outputFilename,1,'f',samplesPerTrace/length+1,length,plainLength,trace,plains);
     output.writeHeader();
     output.writeTraces();
-//     aes.encrypt(plains[0],plains[0]);
+    AES aes(key,plainLength*8,AES_ENCRYPT);
     /*cout<<"Second plain:"<<endl;
     for(int x=0;x<16;x++)
         printf("0x%x ",plains[0][x]);*/
     for(int w=samplesPerTrace+length/2;w<2*samplesPerTrace-length;w+=length) {
+        //TODO:read from a file the plaintext used?
+        aes.encrypt(plains[0],plains[0]);
         i=0;
         delayIndex=findMaxIndex(correlation,w,w+length)-samplesPerTrace;
         for(n=delayIndex;n<delayIndex+length;n++) {
@@ -58,7 +59,6 @@ void TraceSplitter::splitTrace(float*correlation,float**data) {
             i++;
         }
         output.writeTraces();
-        aes.encrypt(plains[0],plains[0]);
     }
 }
 

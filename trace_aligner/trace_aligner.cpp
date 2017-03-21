@@ -14,7 +14,7 @@
  */
 using namespace std;
 
-void showCorrelation(float*corr,Input& input);
+void showCorrelation(float*corr,Input& input,Config&c);
 int main(int argc,char*argv[]) {
     if(argc<2) {
         cout<<"Usage trace_aligner.out configFile."<<endl;
@@ -76,7 +76,7 @@ int main(int argc,char*argv[]) {
             data[0][w]=0;
         float *correlation=autoCorrelate(data[0],input.samplesPerTrace);
         if(config.printCorrelation)
-            showCorrelation(correlation,input);
+            showCorrelation(correlation,input,config);
         cout<<"Splitting the trace.."<<endl;
         //opens the file where the real trace is (the other trace is used for correlation analysis)
         Input originalInput(config.originalFilename);
@@ -96,7 +96,7 @@ int main(int argc,char*argv[]) {
     return 0;
 }
 
-void showCorrelation(float*corr,Input& input) {  
+void showCorrelation(float*corr,Input& input,Config& c) {  
     string datName="datCorr";
     string scriptName="correlation";
     std::ofstream outputScript,outputDat,outputPScript,outputPDat;
@@ -112,7 +112,7 @@ void showCorrelation(float*corr,Input& input) {
         exit(0);
     }
     for(int i=0;i<2 * input.samplesPerTrace - 1;i++) {
-	outputDat<<i-input.samplesPerTrace<<" ";
+	outputDat<<((i-input.samplesPerTrace)/c.samplingFreq)*1000000<<" ";
 	outputDat<<corr[i]<<endl;
     }
     outputScript << "set term png size "<<1280<<","<<850<<endl;
@@ -122,7 +122,18 @@ void showCorrelation(float*corr,Input& input) {
 //     outputScript << "set xtics 5000" <<endl;
     outputScript << "set grid" <<endl;
 //     outputScript << "set xrange [0:100000]"<<endl;
-    outputScript << "set xlabel \"Tau\" font \",20\";" << endl;
+    outputScript << "set xlabel \"Tau[us]\" font \",20\";" << endl;
+    outputScript << "set ylabel \"correlation\" font \",20\";" << endl << endl;
+    outputScript << "plot \""<<datName<<".dat\" with lines linecolor black"<<endl;
+    
+    outputScript << "set terminal epslatex size "<<5.65<<","<<2<<endl;
+    outputScript << "set output \""<< "correlation.tex\";" << endl;
+    outputScript << "set autoscale;" << endl;
+    outputScript << "unset key;" << endl;
+//     outputScript << "set xtics 5000" <<endl;
+    outputScript << "set grid" <<endl;
+//     outputScript << "set xrange [0:100000]"<<endl;
+    outputScript << "set xlabel \"Tau[us]\" font \",20\";" << endl;
     outputScript << "set ylabel \"correlation\" font \",20\";" << endl << endl;
     outputScript << "plot \""<<datName<<".dat\" with lines linecolor black"<<endl;
 }

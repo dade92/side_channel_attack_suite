@@ -14,3 +14,9 @@ trace_aligner.out:$(COMMONS) $(OBJECTS)
 
 clean:
 	rm *.o *.out
+clean_images:
+	find . -name "*.gpl" -type f|xargs rm -f
+	find . -name "*.dat" -type f|xargs rm -f
+	find . -name "*.png" -type f|xargs rm -f
+	find . -name "*.tex" -type f|xargs rm -f
+	find . -name "*.eps" -type f|xargs rm -f

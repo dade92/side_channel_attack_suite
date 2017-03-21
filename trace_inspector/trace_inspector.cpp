@@ -4,7 +4,7 @@
 #include <stdlib.h>     /* atoi */
 #include <fstream>
 #include <math.h>
-#include <png.h>
+// #include <png.h>
 #include <stdio.h>
 #include <cstdint>
 #include<fftw3.h>
@@ -32,7 +32,7 @@ void savePersistence(uint32_t** persistence,int numSamples,Config&);
 void showTraces(Config& config,Input& input,float** trace);
 void inspectTraces(Config& config,Input& input);
 void generateSpectrum(float**,Input& input,Config& config);
-inline void setRGB(png_byte *ptr, uint32_t val);
+// inline void setRGB(png_byte *ptr, uint32_t val);
 
 /**
  * Trace inspector tool: plot
@@ -58,7 +58,7 @@ int main(int argc,char*argv[]) {
     }
     inspectTraces(config,input);
 }
-
+/*
 void savePersistence(uint32_t** persistence,int numSamples,Config& config) {
     cout<<"Computing persistence"<<endl;
     png_structp png_ptr;
@@ -113,7 +113,7 @@ void savePersistence(uint32_t** persistence,int numSamples,Config& config) {
     png_destroy_write_struct(&png_ptr,&info_ptr);
     free(row);
     fclose(fp);
-}
+}*/
 
 /**
  * plots some traces to have a first sight
@@ -128,8 +128,14 @@ void showTraces(Config& config,Input& input,float** trace) {
         exit(0);
     }
     int maxSample=(config.maxSample!=0 ? config.maxSample : input.samplesPerTrace);
-    outputStatistics << "set term png size "<<config.figureWidth<<" ,"<<config.figureHeight<<";"<<endl;
-    outputStatistics << "set output \""<< "traces" <<".png\";" << endl;
+    if(config.latexOutput) {
+        outputStatistics << "set term epslatex size "<<config.figureWidth<<" ,"<<config.figureHeight<<";"<<endl;
+        outputStatistics << "set output \""<< "traces" <<".tex\";" << endl;
+    }
+    else {
+        outputStatistics << "set term png size "<<config.figureWidth<<" ,"<<config.figureHeight<<";"<<endl;
+        outputStatistics << "set output \""<< "traces" <<".png\";" << endl;
+    }
     outputStatistics << "set autoscale;" << endl;
     outputStatistics << "set xtics auto font \",20\";" << endl;
     outputStatistics << "set xrange ["<<config.startSample<<":"<<maxSample<<"];"<<endl;
@@ -229,7 +235,7 @@ void inspectTraces(Config& config,Input& input) {
         case seconds:
             cout<<"computing mean from second "
             <<config.startSample/config.samplingFreq
-            <<" to sample "<<maxSample/config.samplingFreq<<endl;
+            <<" to second "<<maxSample/config.samplingFreq<<endl;
             break;
     }
     //I know the total number of samples for each instant in time: it is numTraces
@@ -326,8 +332,8 @@ void inspectTraces(Config& config,Input& input) {
             break;
         case seconds:
             outputStatistics << "set xrange ["
-            <<config.startSample/config.samplingFreq<<":"
-            <<maxSample/config.samplingFreq<<"];"<<endl;
+            <<(config.startSample/config.samplingFreq)*1000000<<":"
+            <<(maxSample/config.samplingFreq)*1000000<<"];"<<endl;
             outputStatistics << "set xlabel \"Time[us]\" font \",20\";" << endl;
             break;
         
@@ -381,8 +387,8 @@ void inspectTraces(Config& config,Input& input) {
             break;
         case seconds:
             outputStatistics << "set xrange ["
-            <<config.startSample/config.samplingFreq<<":"
-            <<maxSample/config.samplingFreq<<"];"<<endl;
+            <<(config.startSample/config.samplingFreq)*1000000<<":"
+            <<(maxSample/config.samplingFreq)*1000000<<"];"<<endl;
             outputStatistics << "set xlabel \"Time[us]\" font \",20\";" << endl;
             break;
         
@@ -403,7 +409,7 @@ void inspectTraces(Config& config,Input& input) {
                     outputStatisticsData<<i+config.startSample<<" ";
                     break;
                 case seconds:
-                    outputStatisticsData<<(i+config.startSample)/config.samplingFreq<<" ";
+                    outputStatisticsData<<((i+config.startSample)/config.samplingFreq)*1000000<<" ";
                     break;
             }
             outputStatisticsData<<mean[i]<<" "<<var[i]<<endl;
@@ -511,9 +517,9 @@ void generateSpectrum(float** trace,Input& input,Config& config) {
 void printUsage() {
     cout<<"./traceInspector.out configFile"<<endl;
 }
-
+/*
 inline void setRGB(png_byte *ptr, uint32_t val) {
         ptr[0]=val/pow(256,2);
         ptr[1]=val/256 % (uint32_t)pow(256,2);
         ptr[2]=val%256;
-}
+}*/

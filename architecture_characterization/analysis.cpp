@@ -46,14 +46,14 @@ int main(int argc,char* argv[]) {
             || iterator->intSize%8!=0) { //invalid intermediate or key sizes
             cout<<iterator->name<<":Wrong key/intermediate size."<<endl;
             exit(0);
-        } else if(iterator->keySize==0 && (iterator->position.compare("ar")==0 ||
+        }/* else if(iterator->keySize==0 && (iterator->position.compare("ar")==0 ||
                                            iterator->position.compare("sub")==0) ||
                                            iterator->position.compare("sr")==0 || 
                                            iterator->position.compare("mc")==0) {
             //AES model setup can't be used if keySize is 0 (=known input attack)
             cout<<iterator->name<<":Known key attack using an AES position."<<endl;
             exit(0);
-        }
+        }*/
     }
     //check on the occupied RAM
     if(config.step*input.samplesPerTrace*input.dataDimension/(1024*1024) > MAX_RAM) {

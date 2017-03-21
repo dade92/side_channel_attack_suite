@@ -1,6 +1,6 @@
 #CFLAGS=-g3 -std=c++11 -lpthread -lpng
 
-CFLAGS=-O3 -march=native -std=c++11 -lpthread -lpng -lfftw3f -lm
+CFLAGS=-O3 -march=native -std=c++11 -lpthread  -lfftw3f -lm
 CC=g++
 OBJECTS=config.o trace_inspector.o
 COMMONS=../common/input.o

@@ -46,6 +46,7 @@ void Config::init() {
             }
             imageWidth=imageParams.get<float>("imageWidth");
             imageHeight=imageParams.get<float>("imageHeight");
+            latexOutput=imageParams.get<bool>("latexOutput");
             order=pt.get<int>("order");
             if(order<1 || order>5) {
                 cout<<"Invalid test order."<<endl;

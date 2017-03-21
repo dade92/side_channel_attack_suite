@@ -57,8 +57,8 @@ void Config::init() {
                 cout<<"Invalid unit."<<endl;
                 exit(0);
             }
-            figureWidth=imageParams.get<int>("figureWidth");
-            figureHeight=imageParams.get<int>("figureHeight");
+            figureWidth=imageParams.get<float>("figureWidth");
+            figureHeight=imageParams.get<float>("figureHeight");
             if(figureWidth<=0 || figureHeight<=0) {
                 cout<<"Invalid output size"<<endl;
                 exit(0);

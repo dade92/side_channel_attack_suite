@@ -15,14 +15,14 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>    
 
-    Dependencies: boost c++ libraries, libpng, fftw3
-    
+    Dependencies: boost c++ libraries, fftw3
     About fftw3: they were compiled enabling float API. So go to the fftw3 directory and run
                 ./configure --enable-float
                 make
                 make install
-                
-    About boost and libpng: you have only to install by apt-get.
+    About boost libraries: you have only to install by apt-get.
+
+    The suite contains:
 
     1) Architectural analysis tool performs side channel attacks on a set of traces in dpacalc format. 
     It can also perform known input analysis, useful for architectural characterization.
@@ -34,7 +34,7 @@
     actually is useless implement attacks of order higher than that).
     
     4) Filter tool, used to filter raw traces and to generate an adaptive filter from a set of 
-    dpacalc traces.
+    dpacalc traces (can demodulate the signal if necessary).
     
     5) Trace aligner, used to align traces that could be not well aligned when acquired, and a splitter tool
     that, given a single trace made up of different AES computations, try to split into different traces,
@@ -42,8 +42,7 @@
 
     All of these tools accept as argument a config file, usage:
     ./tool_name.out configFile
-    Each directory has a config file example with detailed information about all the parameters and
-    a README.md file that explain how the tool works and its dependencies.
+    Each directory has a config file example with detailed information about all the parameters, a README.md file that explain how the tool works and its dependencies and a Makefile to compile the submodule separately (be careful because all these tools use the classes in common directory) which contains a target (clean_images) to remove all the images in the directory.
 
     All of these tools produce gnuplot scripts that should be passed to gnuplot in order to 
     generate the .png images or a .dat file of filtered/aligned traces.
@@ -54,8 +53,7 @@
     from the other sub-modules the Makefile and change the parameters), then change
     the root Makefile (the one in this directory) adding the new sub-directory to the 
     param SUBDIRS.
-    Common directory does not contain any executable, but a series of classes and functions
-    widely used in the suite.
+    Common directory does not contain any executable, but a series of classes and functions widely used in the suite.
     
     Git will ignore all .out,.o,.dat,files, all the directories called "output" or "configuration" 
     and all the images (.png and .svg) and gnuplot scripts (.gpl files). So it is suggested to generate

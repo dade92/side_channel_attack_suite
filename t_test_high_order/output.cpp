@@ -7,6 +7,7 @@ Output::Output(Config& c,Input& input1,Input& input2) {
     imageWidth=c.imageWidth;
     imageHeight=c.imageHeight;
     grid=c.grid;
+    latex=c.latexOutput;
     xtics=c.xtics;
 }
 
@@ -45,8 +46,14 @@ void Output::writeResults(std::vector<float *>& tStatistics,std::vector<float *>
 	outputDat<<endl;
 	outputPDat<<endl;
     }
-    outputScript << "set terminal epslatex size "<<imageWidth<<", "<<imageHeight<<endl;
-    outputScript << "set output \""<< "tvalue" << "_order"<<order<<".tex\";" << endl;
+    if(latex) {
+        outputScript << "set terminal epslatex size "<<imageWidth<<", "<<imageHeight<<endl;
+        outputScript << "set output \""<< "tvalue" << "_order"<<order<<".tex\";" << endl;
+    }
+    else {
+        outputScript << "set terminal png size "<<imageWidth<<", "<<imageHeight<<endl;
+        outputScript << "set output \""<< "tvalue" << "_order"<<order<<".png\";" << endl;
+    }
     outputScript << "set autoscale;" << endl;
     if(xtics==0)
         outputScript << "set xtic auto font \",20\";" << endl;
@@ -58,8 +65,14 @@ void Output::writeResults(std::vector<float *>& tStatistics,std::vector<float *>
     outputScript << "set xlabel \"Sample\" font \",20\";" << endl;
     outputScript << "set ylabel \"t\" font \",20\";" << endl << endl;
 
-    outputPScript << "set terminal epslatex size "<<imageWidth<<", "<<imageHeight<<endl;
-    outputPScript << "set output \""<< "pvalue" << "_order"<<order<<".tex\";" << endl;
+    if(latex) {
+        outputPScript << "set terminal epslatex size "<<imageWidth<<", "<<imageHeight<<endl;
+        outputPScript << "set output \""<< "pvalue" << "_order"<<order<<".tex\";" << endl;
+    }
+    else {
+        outputPScript << "set terminal png size "<<imageWidth<<", "<<imageHeight<<endl;
+        outputPScript << "set output \""<< "pvalue" << "_order"<<order<<".png\";" << endl;
+    }
     outputPScript << "set autoscale;" << endl;
     if(xtics==0)
         outputScript << "set xtic auto font \",20\";" << endl;

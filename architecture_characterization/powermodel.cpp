@@ -34,7 +34,7 @@ void PowerModel::generate(uint8_t** plaintext,unsigned**powerMatrix) {
      * subX_Y means take the byte X and Y, using
      * the values after subByte stage
      */
-    if(keySpace>1) {
+    if(m==aes || m==ttable) {
         if(position.compare("ptx")==0)
             p=0;
         else if(position.compare("sub")==0)
@@ -50,6 +50,14 @@ void PowerModel::generate(uint8_t** plaintext,unsigned**powerMatrix) {
         else if(position.compare("sub1_2")==0) {
             sbox=1;
             p=2;
+        }
+        else if(position.compare("sub1_11")==0) {
+            sbox=1;
+            p=11;
+        }
+        else if(position.compare("sub2_1")==0) {
+            sbox=2;
+            p=1;
         }
         else if(position.compare("sub2_3")==0) {
             sbox=2;
@@ -91,9 +99,17 @@ void PowerModel::generate(uint8_t** plaintext,unsigned**powerMatrix) {
             sbox=10;
             p=14;
         }
+        else if(position.compare("sub10_3")==0) {
+            sbox=10;
+            p=3;
+        }
         else if(position.compare("sub14_2")==0) {
             sbox=14;
             p=2;
+        }
+        else if(position.compare("sub14_7")==0) {
+            sbox=14;
+            p=7;
         }
         else if(position.compare("sub2_6")==0) {
             sbox=2;
@@ -136,7 +152,7 @@ void PowerModel::generate(uint8_t** plaintext,unsigned**powerMatrix) {
             p=3;
         }
         else if(position.compare("sub8_13")==0) {
-            sbox=10;
+            sbox=8;
             p=13;
         }
         else if(position.compare("sub13_2")==0) {
@@ -150,6 +166,14 @@ void PowerModel::generate(uint8_t** plaintext,unsigned**powerMatrix) {
         else if(position.compare("sub12_1")==0) {
             sbox=12;
             p=1;
+        }
+        else if(position.compare("sub12_6")==0) {
+            sbox=12;
+            p=6;
+        }
+        else if(position.compare("sub11_12")==0) {
+            sbox=11;
+            p=12;
         }
         else if(position.compare("sub1_6")==0) {
             sbox=1;
@@ -169,7 +193,7 @@ void PowerModel::generate(uint8_t** plaintext,unsigned**powerMatrix) {
      * is the plain, during characterization the AES
      * algorithm is generally not used 
      */
-    else if(keySpace==1) {
+    else if(m==charac) {
         //in case of ptxX_Y, sbox param is not necessary, so reset it
         if(position.compare("ptx1_2")==0) {
             sbox=0;
@@ -265,7 +289,10 @@ void PowerModel::generate(uint8_t** plaintext,unsigned**powerMatrix) {
                 }
             }
             return;
-        }else {
+        }
+        //TODO:insert here sbox characterization
+            
+        else {
             cout<<"Position "<<position<<" not recognized."<<endl
             <<"Maybe you're using an AES position for a known input attack?."<<endl;
             exit(0);
@@ -288,7 +315,7 @@ void PowerModel::generate(uint8_t** plaintext,unsigned**powerMatrix) {
 //                 computeKey(k,k1,k2);
                 //if the intermediate size is 8bit, use the single bytes
                 //model with known key
-                if(keySpace==1) {
+                if(m==charac) {
                     powerMatrix[s][k]=hammingWeight(ptx);
                 }
                 //otherwise use AES primitives
@@ -312,7 +339,7 @@ void PowerModel::generate(uint8_t** plaintext,unsigned**powerMatrix) {
                 //in case of an attack, the second plaintext is not used
                 computeUsedPlaintext(ptx,ptx2,plaintext[s]+sbox,plaintext[s]+p,opCode);
 //                 computeKey(k,k1,k2);
-                if(keySpace==1)   //p==0 only for completness,no sense here
+                if(m==charac)   //p==0 only for completness,no sense here
                     powerMatrix[s][k]=hammingDistance(ptx,ptx2);
                 else if(p==0)
                     powerMatrix[s][k]=hammingDistance(ptx,k);
@@ -409,6 +436,24 @@ void PowerModel::generate(uint8_t** plaintext,unsigned**powerMatrix) {
                     else if(sbox==15 && p==0)
                         powerMatrix[s][k]=hammingDistance(substitute(ptx^0x3c),
                                                      substitute(ptx2^k));
+                    else if(sbox==10 && p==3)
+                        powerMatrix[s][k]=hammingDistance(substitute(ptx^0x15),
+                                                     substitute(ptx2^k));
+                    else if(sbox==14 && p==7)
+                        powerMatrix[s][k]=hammingDistance(substitute(ptx^0x4f),
+                                                     substitute(ptx2^k));
+                    else if(sbox==2 && p==1)
+                        powerMatrix[s][k]=hammingDistance(substitute(ptx^0x15),
+                                                     substitute(ptx2^k));
+                    else if(sbox==1 && p==11)
+                        powerMatrix[s][k]=hammingDistance(substitute(ptx^0x7e),
+                                                     substitute(ptx2^k));
+                    else if(sbox==11 && p==12)
+                        powerMatrix[s][k]=hammingDistance(substitute(ptx^0x88),
+                                                     substitute(ptx2^k));
+                    else if(sbox==12 && p==6)
+                        powerMatrix[s][k]=hammingDistance(substitute(ptx^0x09),
+                                                     substitute(ptx2^k));    
                 }
             }
         }        
