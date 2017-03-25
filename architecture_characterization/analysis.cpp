@@ -18,7 +18,7 @@ using namespace std;
 int main(int argc,char* argv[]) {
     int i=0,intervalIndex,countStep=0;
     if(argc<2) {
-        cout<<"Config filename missing. Usage:"<<endl<<"./analysis.out configFilename"<<endl;
+        cout<<"Usage:"<<endl<<"./analysis.out configFilename"<<endl;
         exit(0);
     }
     string configFilename(argv[1]);

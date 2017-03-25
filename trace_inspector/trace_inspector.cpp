@@ -515,7 +515,7 @@ void generateSpectrum(float** trace,Input& input,Config& config) {
 }
 
 void printUsage() {
-    cout<<"./traceInspector.out configFile"<<endl;
+    cout<<"Usage:\n./traceInspector.out configFile"<<endl;
 }
 /*
 inline void setRGB(png_byte *ptr, uint32_t val) {

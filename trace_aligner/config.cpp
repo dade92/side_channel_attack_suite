@@ -17,7 +17,17 @@ void Config::init() {
         ptree pt;
         info_parser::read_info(config, pt);
         try {
-            filename=pt.get<string>("filename");
+            ptree files(pt.get_child("files"));
+            //at least one must be present, otherwise exit
+            filenames.push_back(files.get<string>("filename1"));
+            try {
+                int i=2;
+                while(1) {
+                    string s="filename"+std::to_string(i);
+                    filenames.push_back(files.get<string>(s));
+                    i++;
+                }
+            }catch(ptree_error e) {}
             outputFilename=pt.get<string>("outputFilename");
             step=pt.get<int>("step");
             string typeString=pt.get<string>("alignmentFunction");
@@ -59,7 +69,17 @@ void Config::init() {
                     exit(0);
                 }
                 printCorrelation=singleModePtree.get<bool>("printCorr");
-                originalFilename=singleModePtree.get<string>("originalFilename");
+                ptree originalFiles(singleModePtree.get_child("originalFiles"));
+                //at least one file
+                originalFilenames.push_back(originalFiles.get<string>("filename1"));
+                try {
+                    int i=2;
+                    while(1) {
+                        string s="filename"+std::to_string(i);
+                        originalFilenames.push_back(originalFiles.get<string>(s));
+                        i++;
+                    }
+                }catch(ptree_error e) {}
             }
             else {
                 cout<<"Mode not recognized."<<endl;

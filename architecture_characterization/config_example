@@ -6,24 +6,24 @@
 ;the step count, the confident interval and a list of
 ;intervals in which perform the analysis
 
-filename /home/davide/Documenti/tesi/data/aes_7500.dat	;name of the file
-outputDir output			;output directory, where to put all the images and gnuplot scripts
-step 2500				;number of traces to put in memory (suggested a low number, up to 2500)
-alpha 0.1				;confidence interval of the test
-samplingFreq 500			;sampling frequency of the oscilloscope
-clockFreq 120				;clock frequency of the processor
-mode aes                                ;mode: char for characterization, aes for normal aes, ttable for ttable impl
-imageParams {                           ;params for gnuplot script
-    displayGrid true			;do you want a grid in the images?
-    xtics 100                           ;tics on x axis. 0 means auto
-    bw true                             ;final results in black and white? 0 or 1
-    unit seconds                        ;unit on the x axis: samples or seconds
-    figureWidth 2000                    ;width of the output figure
-    figureHeight 1280                   ;height of the output figure
-    scale 0				;scale of the output figure. 0 stands for auto
-    timescale absolute                  ;absolute:x axis starts from the sample of the interval. Relative:starts from 0
-    abs true                            ;draw absolute Pearson (true) or not (false)
-    latexOutput false                   ;if true, the gnuplot scripts produces .text files, otherwise .png
+filename            test.dat	;name of the file
+outputDir           output	;output directory, where to put all the images and gnuplot scripts
+step                2500	;number of traces to put in memory (suggested a low number, up to 2500)
+alpha               0.1		;confidence interval of the test
+samplingFreq        500		;sampling frequency of the oscilloscope
+clockFreq           120		;clock frequency of the processor
+mode                aes         ;mode: char for characterization, aes for normal aes, ttable for ttable impl
+imageParams {                   ;params for gnuplot script
+    displayGrid     true	;do you want a grid in the images?
+    xtics           100         ;tics on x axis. 0 means auto
+    bw              true        ;final results in black and white? 0 or 1
+    unit            seconds     ;unit on the x axis: samples or seconds
+    figureWidth     2000        ;width of the output figure
+    figureHeight    1280        ;height of the output figure
+    scale           0		;scale of the output figure. 0 stands for auto
+    timescale       absolute    ;absolute:x axis starts from the sample of the interval. Relative:starts from 0
+    abs             true        ;draw absolute Pearson (true) or not (false)
+    latexOutput     false       ;if true, the gnuplot scripts produces .text files, otherwise .png
 }
 ;list of intervals: each interval has a name,contains start sample, end sample,
 ;value of the correct key in that interval, model used, bw if 
@@ -32,211 +32,55 @@ imageParams {                           ;params for gnuplot script
 
 intervals {
     int0hw {
-        start 200           ;starting sample
-        end 600             ;ending sample
-        key 2b              ;correct key
-        model hw            ;model
+        start       200         ;starting sample
+        end         600         ;ending sample
+        key         2b          ;correct key
+        model       hw          ;model
         modelParams {
-            sbox 0          ;which sbox to attack
-            keySize 8       ;number of key bits to attack
-            position sub    ;where to attack: ptx,ar,sub,sr,mc
-            intSize 8       ;intermediate length
+            sbox    0           ;which sbox to attack
+            keySize 8           ;number of key bits to attack
+            position sub        ;where to attack: ptx,ar,sub,sr,mc
+            intSize 8           ;intermediate length
         }
     }
     ;known key attack (keysize=0) the positions are:
     ;ptx,ptx1_2,ptx2_3,ptx3_4,ptx1_3,ptx1_4,addptx1_2,xorptx1_2,andptx1_2,mulptx1_2,addptx3_4
     ;(ptx1_2--> intermediate1=ptx1, intermediate2=ptx2. addptx1_2--> intermediate=ptx1+ptx2)
     intknownKey {
-        start 200           ;starting sample
-        end 600             ;ending sample
-        key 2b              ;correct key
-        model hw            ;model
+        start       200         ;starting sample
+        end         600         ;ending sample
+        key         2b          ;correct key
+        model       hw          ;model
         modelParams {
-            sbox 0          ;which sbox to attack
-            keySize 0       ;KNOWN KEY ATTACK
-            position ptx1_2 ;where to attack in a know key analysis: ptx,ar,sub,sr,mc
-            intSize 8       ;intermediate length
+            sbox    0           ;which sbox to attack
+            keySize 0           ;KNOWN KEY ATTACK
+            position ptx1_2     ;where to attack in a know key analysis: ptx,ar,sub,sr,mc
+            intSize 8           ;intermediate length
         }
     }
 
     int1hw {
-        start 200           ;starting sample
-        end 600             ;ending sample
-        key 7e              ;correct key
-        model hw            ;model
+        start       200         ;starting sample
+        end         600         ;ending sample
+        key         7e          ;correct key
+        model       hw          ;model
         modelParams {
-            sbox 1          ;which sbox to attack
-            keySize 8       ;number of key bits to attack
-            position sub    ;where to attack: ptx,ar,sub,sr,mc
-            intSize 8       ;intermediate length
+            sbox    1           ;which sbox to attack
+            keySize 8           ;number of key bits to attack
+            position sub        ;where to attack: ptx,ar,sub,sr,mc
+            intSize 8           ;intermediate length
         }
     }
-    int2hw {
-        start 200           ;starting sample
-        end 600             ;ending sample
-        key 15              ;correct key
-        model hw            ;model
+    hd11_12 {
+        start       0           ;starting sample
+        end         500         ;ending sample
+        key         09          ;correct key
+        model       hd          ;model
         modelParams {
-            sbox 2          ;which sbox to attack
-            keySize 8       ;number of key bits to attack
-            position sub    ;where to attack: ptx,ar,sub,sr,mc
-            intSize 8       ;intermediate length
-        }
-    }
-    int3hw {
-        start 200           ;starting sample
-        end 600             ;ending sample
-        key 16              ;correct key
-        model hw            ;model
-        modelParams {
-            sbox 3          ;which sbox to attack
-            keySize 8       ;number of key bits to attack
-            position sub    ;where to attack: ptx,ar,sub,sr,mc
-            intSize 8       ;intermediate length
-        }
-    }
-    int4hw {
-        start 200           ;starting sample
-        end 600             ;ending sample
-        key 28              ;correct key
-        model hw            ;model
-        modelParams {
-            sbox 4          ;which sbox to attack
-            keySize 8       ;number of key bits to attack
-            position sub    ;where to attack: ptx,ar,sub,sr,mc
-            intSize 8       ;intermediate length
-        }
-    }
-    int5hw {
-        start 200           ;starting sample
-        end 600             ;ending sample
-        key ae              ;correct key
-        model hw            ;model
-        modelParams {
-            sbox 5          ;which sbox to attack
-            keySize 8       ;number of key bits to attack
-            position sub    ;where to attack: ptx,ar,sub,sr,mc
-            intSize 8       ;intermediate length
-        }
-    }
-    int6hw {
-        start 200           ;starting sample
-        end 600             ;ending sample
-        key d2              ;correct key
-        model hw            ;model
-        modelParams {
-            sbox 6          ;which sbox to attack
-            keySize 8       ;number of key bits to attack
-            position sub    ;where to attack: ptx,ar,sub,sr,mc
-            intSize 8       ;intermediate length
-        }
-    }
-    int7hw {
-        start 200           ;starting sample
-        end 600             ;ending sample
-        key a6              ;correct key
-        model hw            ;model
-        modelParams {
-            sbox 7          ;which sbox to attack
-            keySize 8       ;number of key bits to attack
-            position sub    ;where to attack: ptx,ar,sub,sr,mc
-            intSize 8       ;intermediate length
-        }
-    }
-    int8hw {
-        start 200           ;starting sample
-        end 600             ;ending sample
-        key ab              ;correct key
-        model hw            ;model
-        modelParams {
-            sbox 8          ;which sbox to attack
-            keySize 8       ;number of key bits to attack
-            position sub    ;where to attack: ptx,ar,sub,sr,mc
-            intSize 8       ;intermediate length
-        }
-    }
-    int9hw {
-        start 200           ;starting sample
-        end 600             ;ending sample
-        key f7              ;correct key
-        model hw            ;model
-        modelParams {
-            sbox 9          ;which sbox to attack
-            keySize 8       ;number of key bits to attack
-            position sub    ;where to attack: ptx,ar,sub,sr,mc
-            intSize 8       ;intermediate length
-        }
-    }
-    int10hw {
-        start 200           ;starting sample
-        end 600             ;ending sample
-        key 15              ;correct key
-        model hw            ;model
-        modelParams {
-            sbox 10         ;which sbox to attack
-            keySize 8       ;number of key bits to attack
-            position sub    ;where to attack: ptx,ar,sub,sr,mc
-            intSize 8       ;intermediate length
-        }
-    }
-    int11hw {
-        start 300           ;starting sample
-        end 700             ;ending sample
-        key 88              ;correct key
-        model hw            ;model
-        modelParams {
-            sbox 11         ;which sbox to attack
-            keySize 8       ;number of key bits to attack
-            position sub    ;where to attack: ptx,ar,sub,sr,mc
-            intSize 8       ;intermediate length
-        }
-    }
-    int12hw {
-        start 300           ;starting sample
-        end 700             ;ending sample
-        key 9               ;correct key
-        model hw            ;model
-        modelParams {
-            sbox 12         ;which sbox to attack
-            keySize 8       ;number of key bits to attack
-            position sub    ;where to attack: ptx,ar,sub,sr,mc
-            intSize 8       ;intermediate length
-        }
-    }
-    int13hw {
-        start 300           ;starting sample
-        end 700             ;ending sample
-        key cf              ;correct key
-        model hw            ;model
-        modelParams {
-            sbox 13         ;which sbox to attack
-            keySize 8       ;number of key bits to attack
-            position sub    ;where to attack: ptx,ar,sub,sr,mc
-            intSize 8       ;intermediate length
-        }
-    }
-    int14hw {
-        start 300           ;starting sample
-        end 700             ;ending sample
-        key 4f              ;correct key
-        model hw            ;model
-        modelParams {
-            sbox 14         ;which sbox to attack
-            keySize 8       ;number of key bits to attack
-            position sub    ;where to attack: ptx,ar,sub,sr,mc
-            intSize 8       ;intermediate length
-        }
-    }
-    int15hw {
-        start 300           ;starting sample
-        end 700             ;ending sample
-        key 3c              ;correct key
-        model hw            ;model
-        modelParams {
-            sbox 15         ;which sbox to attack
-            keySize 8       ;number of key bits to attack
-            position sub    ;where to attack: ptx,ar,sub,sr,mc
-            intSize 8       ;intermediate length
+            sbox    0           ;which sbox to attack
+            keySize 8           ;number of key bits to attack
+            position sub11_12   ;where to attack: ptx,ar,ptx,sr,mc
+            intSize 8           ;intermediate length
         }
     }
 }

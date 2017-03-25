@@ -1,17 +1,17 @@
-filename test.dat                           ;filename
-filename2 test2.dat                         ;filename
-batch 1000                                  ;number of traces to analyze at each iteration
-alpha 0.05                                  ;confidence interval of the test
-samplingFreq 500000000                      ;sampling frequency of the oscilloscope
-clockFreq 120000000                         ;frequency of the processor
-startSample 0                               ;starting sample
-endSample 500                               ;ending sample. 0 means to the end
+filename        test.dat                            ;filename
+filename2       test2.dat                           ;filename
+batch           1000                                ;number of traces to analyze at each iteration
+alpha           0.05                                ;confidence interval of the test
+samplingFreq    500000000                           ;sampling frequency of the oscilloscope
+clockFreq       120000000                           ;frequency of the processor
+startSample     0                                   ;starting sample
+endSample       500                                 ;ending sample. 0 means to the end
 imageParams {
-    displayGrid false                       ;true if you want a grid that shows the clock
-    xtics 0                                 ;tics on x axis
-    imageWidth 2000                         ;width of the output image
-    imageHeight 850                         ;height of the output image
-    latexOutput false
+    displayGrid false                               ;true if you want a grid that shows the clock
+    xtics       0                                   ;tics on x axis
+    imageWidth  2000                                ;width of the output image
+    imageHeight 850                                 ;height of the output image
+    latexOutput false                               ;true if you want .tex script as image output, false for .png
 }
-order 1                                     ;order of the test
-maxTau2 50                                  ;max tau to consider for order 2
+order           1                                   ;order of the test
+maxTau2         50                                  ;max tau to consider for order 2

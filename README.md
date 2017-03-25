@@ -55,6 +55,8 @@
     param SUBDIRS.
     Common directory does not contain any executable, but a series of classes and functions widely used in the suite.
     
+    Up to now, the tool well support float input files, while double input files were not used.
+    
     Git will ignore all .out,.o,.dat,files, all the directories called "output" or "configuration" 
     and all the images (.png and .svg) and gnuplot scripts (.gpl files). So it is suggested to generate
     binary executable with the  extension .out, and to create directories with the aforementioned 

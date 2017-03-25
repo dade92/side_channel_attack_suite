@@ -28,7 +28,12 @@ public:
     void writeHeader();
     void writeTraces();
     void rewindFile();
-    void setNumOfTraces(int numTraces);
+    void setNumOfTraces(uint32_t numTraces);
+    void setNumOfSamples(uint32_t numSamples);
+    void setPlainLength(uint8_t );
+    void setDataBuffer(float**buffer);
+    void setPlainBuffer(uint8_t**);
+    void rewriteHeader();
 private:
     const char* filename;
     uint32_t samplesPerTrace,numTraces;

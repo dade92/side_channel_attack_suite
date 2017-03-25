@@ -23,11 +23,11 @@ using namespace std;
 class TraceSplitter {
 public:
     TraceSplitter(Config&,Input&);
-    void splitTrace(float*,float**);
+    int splitTrace(float*,float**,Output&,int& numSamples,bool& first);
 private:
     float cipherTime,samplingFreq;
     int findMaxIndex(float*,int,int);
-    int samplesPerTrace,plainLength;
+    int samplesPerTrace,plainLength,numSamples;
     string outputFilename;
     uint8_t*startPlain;
     uint8_t*key;

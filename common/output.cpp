@@ -98,6 +98,25 @@ void Output::rewindFile() {
     fseek(fp,0,SEEK_SET);
 }
 
-void Output::setNumOfTraces(int numTraces) {
+void Output::setNumOfTraces(uint32_t numTraces) {
     this->numTraces=numTraces;
+}
+void Output::setNumOfSamples(uint32_t numSamples) {
+    this->samplesPerTrace=numSamples;
+}
+void Output::setPlainLength(uint8_t pl) {
+    this->plainLength=pl;
+}
+void Output::setDataBuffer(float**buffer) {
+    dataMatrix=buffer;
+}
+void Output::setPlainBuffer(uint8_t**p) {
+    plaintext=p;
+}
+void Output::rewriteHeader() {
+    this->rewindFile();
+    fwrite(&numTraces, sizeof(uint32_t), 1, fp);
+    fwrite(&samplesPerTrace, sizeof(uint32_t), 1, fp);
+    fwrite(&format, sizeof(uint8_t), 1, fp);
+    fwrite(&plainLength, sizeof(uint8_t), 1, fp);
 }

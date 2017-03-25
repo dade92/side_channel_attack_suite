@@ -68,6 +68,7 @@ int Input::readData(float** dataMatrix,uint8_t** plains,int step) {
     }
     return r;
 }
+/*
 //reads incrementally all data, both the trace and the plaintext.returns the number of read bytes
 int Input::readData(double** dataMatrix,uint8_t** plains,int step) {
     //takes all the trace length
@@ -79,7 +80,7 @@ int Input::readData(double** dataMatrix,uint8_t** plains,int step) {
     }
     return r;
 }
-
+*/
 Input::~Input() {
     fclose(file);
 }

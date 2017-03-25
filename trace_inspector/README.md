@@ -2,8 +2,7 @@
     
     Produces gnuplot scripts (.gpl files) to show the mean
     the dev standard of the traces and the first n traces,
-    a .png file with the persistence graph and the spectrum
-    of the first trace.
+    and the spectrum of the first trace.
     
     It takes as input a config file with the needed parameters.
     An example can be found in config_example. In the config file

@@ -27,12 +27,15 @@ TraceSplitter::TraceSplitter(Config& c,Input& i) {
  * the trace into sub traces, based on its
  * auto correlation
  */
-void TraceSplitter::splitTrace(float*correlation,float**data) {
+int TraceSplitter::splitTrace(float*correlation,float**data,
+                              Output& output,int& numSamples,bool& first) {
     int n,i;
     int length=cipherTime*samplingFreq;
     cout<<"trying to derive the cipher length from sample "<<samplesPerTrace+length/2<<" to sample "<<samplesPerTrace+length/2+length<<endl;
     length=findMaxIndex(correlation,samplesPerTrace+length/2,samplesPerTrace+length/2+length)-samplesPerTrace;
     cout<<"Detected cipher length:"<<length<<endl;
+    if(first)
+        numSamples=length;
     int delayIndex;
     float**trace=new float*[1];
     trace[0]=new float[length];
@@ -40,17 +43,26 @@ void TraceSplitter::splitTrace(float*correlation,float**data) {
     plains[0]=new uint8_t[plainLength];
     for(n=0;n<plainLength;n++)
         plains[0][n]=startPlain[n];
+    /*for(int x=0;x<16;x++)
+        printf("0x%x ",plains[0][x]);*/
+    printf("\n");
     for(n=0;n<length;n++)
         trace[0][n]=data[0][n];
-    Output output(outputFilename,1,'f',samplesPerTrace/length+1,length,plainLength,trace,plains);
-    output.writeHeader();
+    //needed, otherwise output class will not write anything on disk
+    if(first) {
+        output.setNumOfTraces(samplesPerTrace/length+1);
+        output.setNumOfSamples(length);
+        output.setPlainLength(plainLength);
+        first=false;
+    }
+    //set the new buffers
+    output.setDataBuffer(trace);
+    output.setPlainBuffer(plains);
     output.writeTraces();
     AES aes(key,plainLength*8,AES_ENCRYPT);
-    /*cout<<"Second plain:"<<endl;
-    for(int x=0;x<16;x++)
-        printf("0x%x ",plains[0][x]);*/
+    int traceCount=0;
     for(int w=samplesPerTrace+length/2;w<2*samplesPerTrace-length;w+=length) {
-        //TODO:read from a file the plaintext used?
+        traceCount++;
         aes.encrypt(plains[0],plains[0]);
         i=0;
         delayIndex=findMaxIndex(correlation,w,w+length)-samplesPerTrace;
@@ -60,8 +72,12 @@ void TraceSplitter::splitTrace(float*correlation,float**data) {
         }
         output.writeTraces();
     }
+    return traceCount;
 }
-
+/**
+ * Finds the index of the local
+ * maximum
+ */
 int TraceSplitter::findMaxIndex(float*correlation,int start,int end) {
     int maxIndex=start;
     float max=correlation[start];

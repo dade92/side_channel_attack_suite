@@ -3,9 +3,11 @@
 #include<iostream>
 #include<string>
 #include<fstream>
+#include<vector>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/info_parser.hpp>
 #include <boost/foreach.hpp>
+#include <boost/lexical_cast.hpp>
 
 using namespace std;
 using namespace boost::property_tree;
@@ -28,7 +30,8 @@ class Config {
 public:
     Config(string configFile);
     void init();
-    string filename,outputFilename,startPlain,key,originalFilename;
+    vector<string> filenames,originalFilenames;
+    string startPlain,key,outputFilename;
     float samplingFreq,cipherTime;
     int step,maxTau;
     alignmentFunction function;
