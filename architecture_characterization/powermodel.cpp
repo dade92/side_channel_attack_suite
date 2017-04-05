@@ -47,6 +47,10 @@ void PowerModel::generate(uint8_t** plaintext,unsigned**powerMatrix) {
             sbox=0;
             p=1;
         }
+        else if(position.compare("sub1_0")==0) {
+            sbox=1;
+            p=0;
+        }
         else if(position.compare("sub1_2")==0) {
             sbox=1;
             p=2;
@@ -82,6 +86,38 @@ void PowerModel::generate(uint8_t** plaintext,unsigned**powerMatrix) {
         else if(position.compare("sub7_8")==0) {
             sbox=7;
             p=8;
+        }
+        else if(position.compare("sub8_9")==0) {
+            sbox=8;
+            p=9;
+        }
+        else if(position.compare("sub9_10")==0) {
+            sbox=9;
+            p=10;
+        }
+        else if(position.compare("sub10_11")==0) {
+            sbox=10;
+            p=11;
+        }
+        else if(position.compare("sub11_12")==0) {
+            sbox=11;
+            p=12;
+        }
+        else if(position.compare("sub12_13")==0) {
+            sbox=12;
+            p=13;
+        }
+        else if(position.compare("sub13_14")==0) {
+            sbox=13;
+            p=14;
+        }
+        else if(position.compare("sub14_15")==0) {
+            sbox=14;
+            p=15;
+        }
+        else if(position.compare("sub15_14")==0) {
+            sbox=15;
+            p=14;
         }
         else if(position.compare("sub5_9")==0) {
             sbox=5;
@@ -348,6 +384,9 @@ void PowerModel::generate(uint8_t** plaintext,unsigned**powerMatrix) {
                     if(sbox==0 && p==1)
                         powerMatrix[s][k]=hammingDistance(substitute(ptx^0x2b),
                                                       substitute(ptx2^k));
+                    else if(sbox==1 && p==0)
+                        powerMatrix[s][k]=hammingDistance(substitute(ptx^0x7e),
+                                                      substitute(ptx2^k));
                     else if(sbox==1 && p==2)
                         powerMatrix[s][k]=hammingDistance(substitute(ptx^0x7e),
                                                      substitute(ptx2^k));
@@ -368,6 +407,30 @@ void PowerModel::generate(uint8_t** plaintext,unsigned**powerMatrix) {
                                                      substitute(ptx2^k));
                     else if(sbox==7 && p==8)
                         powerMatrix[s][k]=hammingDistance(substitute(ptx^0xa6),
+                                                     substitute(ptx2^k));
+                    else if(sbox==8 && p==9)
+                        powerMatrix[s][k]=hammingDistance(substitute(ptx^0xab),
+                                                     substitute(ptx2^k));
+                    else if(sbox==9 && p==10)
+                        powerMatrix[s][k]=hammingDistance(substitute(ptx^0xf7),
+                                                     substitute(ptx2^k));
+                    else if(sbox==10 && p==11)
+                        powerMatrix[s][k]=hammingDistance(substitute(ptx^0x15),
+                                                     substitute(ptx2^k));
+                    else if(sbox==11 && p==12)
+                        powerMatrix[s][k]=hammingDistance(substitute(ptx^0x88),
+                                                     substitute(ptx2^k));
+                    else if(sbox==12 && p==13)
+                        powerMatrix[s][k]=hammingDistance(substitute(ptx^0x09),
+                                                     substitute(ptx2^k));
+                    else if(sbox==13 && p==14)
+                        powerMatrix[s][k]=hammingDistance(substitute(ptx^0xcf),
+                                                     substitute(ptx2^k));
+                    else if(sbox==14 && p==15)
+                        powerMatrix[s][k]=hammingDistance(substitute(ptx^0x4f),
+                                                     substitute(ptx2^k));
+                    else if(sbox==15 && p==14)
+                        powerMatrix[s][k]=hammingDistance(substitute(ptx^0x3c),
                                                      substitute(ptx2^k));
                     //attack shift rows
                     else if(sbox==5 && p==9)

@@ -110,8 +110,8 @@ int main(int argc,char*argv[]) {
             //set again the number of samples, using the length of the cipher
             totTraces+=traceSplitter.splitTrace(correlation,originalData,output,numSamples,first);
             cout<<"Splitting ended, traces saved"<<endl;
-            delete originalData[0];
-            delete data[0];
+//             delete originalData[0];
+//             delete data[0];
         }
         fileIndex++;
         for(int w=0;w<config.step;w++) {
@@ -141,7 +141,7 @@ void showCorrelation(float*corr,Input& input,Config& c) {
         cerr << "Please provide a correct output dat filename" << endl;
         exit(0);
     }
-    for(int i=0;i<2 * input.samplesPerTrace - 1;i++) {
+    for(int i=0;i<2 * input.samplesPerTrace - 1;i+=20) {
 	outputDat<<((i-input.samplesPerTrace)/c.samplingFreq)*1000000<<" ";
 	outputDat<<corr[i]<<endl;
     }

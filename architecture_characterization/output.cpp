@@ -146,6 +146,8 @@ void Output::writeResults(vector<result*>& results,vector<float**>& finalPearson
                 break;
         }
         scriptStream<<"set ylabel \"Pearson coefficient\";"<<endl;
+        scriptStream<<"set ylabel offset 2,0,0"<<endl;
+        scriptStream<<"set xlabel offset 0,0,0"<<endl;
         if(bw) {
             scriptStream<<"unset key"<<endl;
 //             scriptStream<<"set lmargin 13;set rmargin 7;set tmargin 2;set bmargin 3;"<<endl;
@@ -158,16 +160,18 @@ void Output::writeResults(vector<result*>& results,vector<float**>& finalPearson
             scriptStream <<" linecolor \"black\"";
         }
         else {
+            int keyIndex=0;
             for ( int k = 0; k < keySpace; k++ ) {
+                if(k==intervals[i].key) continue;
 		scriptStream  << " \"" << datName << "\" u 1:" << k + 2 << " t \"" << this->getKeyAsString ( k ) << "\" with lines";
                 if(bw) {
-                    if(k==intervals[i].key) scriptStream<<" linecolor \"black\"";
-                    else scriptStream<<" linecolor \"grey\"";
+//                     if(k==intervals[i].key) scriptStream<<" linecolor \"black\"";
+                    scriptStream<<" linecolor \"grey\"";
                 }
-		if ( k != keySpace - 1 ) {
-			scriptStream  << ",";
-		}
+		scriptStream  << ",";
             }
+            scriptStream  << " \"" << datName << "\" u 1:" << intervals[i].key + 2 << " t \"" 
+                << this->getKeyAsString ( intervals[i].key ) << "\" with lines linecolor \"black\"";
         }
         //writes the .dat file
         //for each column

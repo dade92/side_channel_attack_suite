@@ -49,12 +49,23 @@ int main(int argc,char*argv[]) {
     config.init();
     Input input(config.filename);
     input.readHeader();
-    if(input.numTraces%config.batch!=0) {
-        cout<<"step size should be a divisor of the number of traces"<<endl;
-        exit(0);
-    } else if(input.samplesPerTrace<config.maxSample) {
-        cout<<"Wrong max sample."<<endl;
-        exit(0);
+    if(config.maxTrace==0) {
+        if(input.numTraces%config.batch!=0) {
+            cout<<"step size should be a divisor of the number of traces"<<endl;
+            exit(0);
+        } else if(input.samplesPerTrace<config.maxSample) {
+            cout<<"Wrong max sample."<<endl;
+            exit(0);
+        }
+    }
+    else {
+        if(config.maxTrace%config.batch!=0) {
+            cout<<"step size should be a divisor of the number of traces"<<endl;
+            exit(0);
+        } else if(input.samplesPerTrace<config.maxSample) {
+            cout<<"Wrong max sample."<<endl;
+            exit(0);
+        }
     }
     inspectTraces(config,input);
 }
@@ -138,7 +149,19 @@ void showTraces(Config& config,Input& input,float** trace) {
     }
     outputStatistics << "set autoscale;" << endl;
     outputStatistics << "set xtics auto font \",20\";" << endl;
-    outputStatistics << "set xrange ["<<config.startSample<<":"<<maxSample<<"];"<<endl;
+    switch(config.unit) {
+        case samples:
+            outputStatistics << "set xrange ["<<config.startSample<<":"<<maxSample<<"];"<<endl;
+            outputStatistics << "set xlabel \"Time\" font \",20\";" << endl;
+            break;
+        case seconds:
+            outputStatistics << "set xrange ["
+            <<(config.startSample/config.samplingFreq)*1000000<<":"
+            <<(maxSample/config.samplingFreq)*1000000<<"];"<<endl;
+            outputStatistics << "set xlabel \"Time[us]\" font \",20\";" << endl;
+            break;
+        
+    }
     outputStatistics << "set ylabel \"\""<<endl;
     outputStatistics << "set xlabel \"Time\""<<endl;
     if(config.grid) {
@@ -179,7 +202,7 @@ void showTraces(Config& config,Input& input,float** trace) {
                 outputStatisticsData<<i+config.startSample<<" ";
                 break;
             case seconds:
-                outputStatisticsData<<(i+config.startSample)/config.samplingFreq<<" ";
+                outputStatisticsData<<(i+config.startSample)*1000000/config.samplingFreq<<" ";
                 break;
         }
         for(int n=0;n<config.tracesToPrint;n++) {
@@ -198,7 +221,11 @@ void inspectTraces(Config& config,Input& input) {
     float** trace=new float*[step];
     uint8_t** plain=new uint8_t*[step];
     bool grid=config.grid;
-    int numTraces=input.numTraces;
+    int numTraces;
+    if(config.maxTrace==0)
+        numTraces=input.numTraces;
+    else
+        numTraces=config.maxTrace;
     int maxSample=(config.maxSample!=0 ? config.maxSample : input.samplesPerTrace);
     int numSamples=maxSample-config.startSample;
     float* mean=new float[numSamples];
@@ -463,7 +490,7 @@ void generateSpectrum(float** trace,Input& input,Config& config) {
     spectrumStatistic << "set ytic auto font \",20\";" << endl;
     spectrumStatistic << "unset key;" << endl;
     spectrumStatistic << "set xlabel \"Frequency [Hz]\" font \",20\";" << endl;
-    spectrumStatistic << "set ylabel \"Amplitude\" font \",20\";" << endl;
+    spectrumStatistic << "set ylabel \"Amplitude [dB]\" font \",20\";" << endl;
     spectrumStatistic << "set xrange ["<<config.startBin<<":"<<config.endBin<<"];"<<endl;
     spectrumStatistic<<"plot ";
     spectrumStatistic << "\""<< "spectrum.dat" << "\" ";
@@ -491,22 +518,22 @@ void generateSpectrum(float** trace,Input& input,Config& config) {
     int i=(traceSize);
     //i:traceSize=f:maxFreq
     if(config.logScale) {
-        for(int n=traceSize/2;n<traceSize;n++) {
+        for(int n=traceSize/2;n<traceSize;n+=20) {
             mod=(sqrt(pow(transformation[n][0],2)+pow(transformation[n][1],2)));
             spectrumStatisticData<<-i*(maxFreq/2)/traceSize<<" "<<20*log10(mod)<<endl;
-            i-=2;
+            i-=40;
         }
-        for(int n=0;n<=traceSize/2;n++) {
+        for(int n=0;n<=traceSize/2;n+=20) {
             mod=(sqrt(pow(transformation[n][0],2)+pow(transformation[n][1],2)));
             spectrumStatisticData<<n*(maxFreq)/traceSize<<" "<<20*log10(mod)<<endl;
         }
     } else {
-        for(int n=traceSize/2;n<traceSize;n++) {
+        for(int n=traceSize/2;n<traceSize;n+=20) {
             mod=(sqrt(pow(transformation[n][0],2)+pow(transformation[n][1],2)));
             spectrumStatisticData<<-i*(maxFreq/2)/traceSize<<" "<<(mod)<<endl;
-            i-=2;
+            i-=40;
         }
-        for(int n=0;n<=traceSize/2;n++) {
+        for(int n=0;n<=traceSize/2;n+=20) {
             mod=(sqrt(pow(transformation[n][0],2)+pow(transformation[n][1],2)));
             spectrumStatisticData<<n*(maxFreq)/traceSize<<" "<<(mod)<<endl;
         }

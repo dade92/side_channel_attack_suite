@@ -24,6 +24,11 @@ void Config::init() {
                 cout<<"Invalid batch"<<endl;
                 exit(0);
             }
+            maxTrace=pt.get<int>("maxTraces");
+            if(maxTrace<0) {
+                cout<<"Invalid max trace."<<endl;
+                exit(0);
+            }
             samplingFreq=pt.get<float>("samplingFreq");
             clockFreq=pt.get<float>("clockFreq");
             tracesToPrint=pt.get<int>("numTraces");

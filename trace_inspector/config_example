@@ -1,6 +1,7 @@
 filename                test.dat        ;filename
 outputDir               output          ;dir where put all scripts and .png
 step                    1000            ;number of traces to analyze at each iteration
+maxTrace                0               ;number of trace to consider for the mean computation. 0->all
 samplingFreq            500             ;sampling frequency of the oscilloscope
 clockFreq               120             ;frequency of the processor
 numTraces               10              ;num of traces to print

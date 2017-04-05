@@ -33,7 +33,7 @@ public:
     Unit unit;
     int batch,maxSample,startSample,
         xtics,tracesToPrint,
-        startBin,endBin;
+        startBin,endBin,maxTrace;
     float figureWidth,figureHeight;
     bool grid,logScale,latexOutput;
     float samplingFreq,clockFreq;    
