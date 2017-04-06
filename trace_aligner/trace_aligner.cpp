@@ -36,7 +36,6 @@ int main(int argc,char*argv[]) {
     for(iterator=config.filenames.begin();iterator!=config.filenames.end();++iterator) {
         Input input(*iterator);
         input.readHeader();
-        totTraces+=input.numTraces;
         for(int w=0;w<config.step;w++) {
             data[w]=new float[2*input.samplesPerTrace-1];
             plain[w]=new uint8_t[input.plainLength];
@@ -54,6 +53,7 @@ int main(int argc,char*argv[]) {
             }
         }
         if(config.m==multiple) {
+            totTraces+=input.numTraces;
             if(input.numTraces<=1 || config.step<=1) {
                 cout<<"Multiple mode should be used with different traces."<<endl;
                 exit(0);
@@ -105,11 +105,12 @@ int main(int argc,char*argv[]) {
             }
             float** originalData=new float*[1];
             originalData[0]=new float[originalInput.samplesPerTrace];
-            originalInput.readData(originalData,plain,config.step);
+            originalInput.readData(originalData,plain,1);
             TraceSplitter traceSplitter(config,originalInput);
             //set again the number of samples, using the length of the cipher
             totTraces+=traceSplitter.splitTrace(correlation,originalData,output,numSamples,first);
             cout<<"Splitting ended, traces saved"<<endl;
+            delete originalData[0];
 //             delete originalData[0];
 //             delete data[0];
         }
@@ -119,6 +120,7 @@ int main(int argc,char*argv[]) {
             delete plain[w];
         }
     }
+    cout<<"Writing the new header"<<endl;
     //write the real header, with the total number of samples written
     output.setNumOfSamples(numSamples);
     output.setNumOfTraces(totTraces);

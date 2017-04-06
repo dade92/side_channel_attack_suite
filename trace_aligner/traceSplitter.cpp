@@ -29,14 +29,14 @@ TraceSplitter::TraceSplitter(Config& c,Input& i) {
  */
 int TraceSplitter::splitTrace(float*correlation,float**data,
                               Output& output,int& numSamples,bool& first) {
-    int n,i;
+    int n,i,delayIndex;
     int length=cipherTime*samplingFreq;
-    cout<<"trying to derive the cipher length from sample "<<samplesPerTrace+length/2<<" to sample "<<samplesPerTrace+length/2+length<<endl;
-    length=findMaxIndex(correlation,samplesPerTrace+length/2,samplesPerTrace+length/2+length)-samplesPerTrace;
-    cout<<"Detected cipher length:"<<length<<endl;
-    if(first)
+    if(first) {
+        cout<<"trying to derive the cipher length from sample "<<samplesPerTrace+length/2<<" to sample "<<samplesPerTrace+length/       2+length<<endl;
+        length=findMaxIndex(correlation,samplesPerTrace+length/2,samplesPerTrace+length/2+length)-samplesPerTrace;
+        cout<<"Detected cipher length:"<<length<<endl;
         numSamples=length;
-    int delayIndex;
+    }
     float**trace=new float*[1];
     trace[0]=new float[length];
     uint8_t**plains=new uint8_t*[1];
@@ -60,7 +60,7 @@ int TraceSplitter::splitTrace(float*correlation,float**data,
     output.setPlainBuffer(plains);
     output.writeTraces();
     AES aes(key,plainLength*8,AES_ENCRYPT);
-    int traceCount=0;
+    int traceCount=1;
     for(int w=samplesPerTrace+length/2;w<2*samplesPerTrace-length;w+=length) {
         traceCount++;
         aes.encrypt(plains[0],plains[0]);
