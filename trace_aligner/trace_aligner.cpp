@@ -94,7 +94,6 @@ int main(int argc,char*argv[]) {
                 if(config.printCorrelation)
                     showCorrelation(correlation,input,config);
             }
-            cout<<"Splitting the trace.."<<endl;
             //opens the file where the real trace is (the other trace is used for correlation analysis)
             Input originalInput(config.originalFilenames[fileIndex]);
             originalInput.readHeader();
@@ -103,6 +102,7 @@ int main(int argc,char*argv[]) {
                 <<"to derive the correlation is correct?"<<endl;
                 exit(0);
             }
+            cout<<"Splitting the trace.."<<endl;
             float** originalData=new float*[1];
             originalData[0]=new float[originalInput.samplesPerTrace];
             originalInput.readData(originalData,plain,1);

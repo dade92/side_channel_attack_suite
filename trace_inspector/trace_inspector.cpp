@@ -516,24 +516,29 @@ void generateSpectrum(float** trace,Input& input,Config& config) {
     fftwf_execute(plan);
     float mod,maxFreq=config.samplingFreq;
     int i=(traceSize);
+    int increment;
+    if(config.latexOutput)
+        increment=20;
+    else
+        increment=1;
     //i:traceSize=f:maxFreq
     if(config.logScale) {
-        for(int n=traceSize/2;n<traceSize;n+=20) {
+        for(int n=traceSize/2;n<traceSize;n+=increment) {
             mod=(sqrt(pow(transformation[n][0],2)+pow(transformation[n][1],2)));
             spectrumStatisticData<<-i*(maxFreq/2)/traceSize<<" "<<20*log10(mod)<<endl;
-            i-=40;
+            i-=increment*2;
         }
-        for(int n=0;n<=traceSize/2;n+=20) {
+        for(int n=0;n<=traceSize/2;n+=increment) {
             mod=(sqrt(pow(transformation[n][0],2)+pow(transformation[n][1],2)));
             spectrumStatisticData<<n*(maxFreq)/traceSize<<" "<<20*log10(mod)<<endl;
         }
     } else {
-        for(int n=traceSize/2;n<traceSize;n+=20) {
+        for(int n=traceSize/2;n<traceSize;n+=increment) {
             mod=(sqrt(pow(transformation[n][0],2)+pow(transformation[n][1],2)));
             spectrumStatisticData<<-i*(maxFreq/2)/traceSize<<" "<<(mod)<<endl;
-            i-=40;
+            i-=increment*2;
         }
-        for(int n=0;n<=traceSize/2;n+=20) {
+        for(int n=0;n<=traceSize/2;n+=increment) {
             mod=(sqrt(pow(transformation[n][0],2)+pow(transformation[n][1],2)));
             spectrumStatisticData<<n*(maxFreq)/traceSize<<" "<<(mod)<<endl;
         }

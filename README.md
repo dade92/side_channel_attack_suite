@@ -27,7 +27,7 @@
     1) Architectural analysis tool performs side channel attacks on a set of traces in dpacalc format. 
     It can also perform known input analysis, useful for architectural characterization.
 
-    2) Trace inspector produces png images with the mean and the standard deviation of the traces.
+    2) Trace inspector tool produces png images with the mean and the standard deviation of the traces.
     It draws also the persistence graph of the traces and their spectrum (based on the mean).
 
     3) T-test tool performs t-test analysis on a pair of traces, of order 1 and higher (up to order 5,
@@ -36,7 +36,7 @@
     4) Filter tool, used to filter raw traces and to generate an adaptive filter from a set of 
     dpacalc traces (can demodulate the signal if necessary).
     
-    5) Trace aligner, used to align traces that could be not well aligned when acquired, and a splitter tool
+    5) Trace aligner tool, used to align traces that could be not well aligned when acquired, and a splitter tool
     that, given a single trace made up of different AES computations, try to split into different traces,
     in which every trace correspond to an AES encryption.
 

@@ -80,6 +80,10 @@ void Config::init() {
                         i++;
                     }
                 }catch(ptree_error e) {}
+                if(originalFilenames.size()!=filenames.size()) {
+                    cout<<"Original file size different from filenames size"<<endl;
+                    exit(0);
+                }
             }
             else {
                 cout<<"Mode not recognized."<<endl;

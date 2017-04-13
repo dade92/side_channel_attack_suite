@@ -63,6 +63,11 @@ int TraceSplitter::splitTrace(float*correlation,float**data,
     int traceCount=1;
     for(int w=samplesPerTrace+length/2;w<2*samplesPerTrace-length;w+=length) {
         traceCount++;
+        if(traceCount<=20) {
+            for(int x=0;x<16;x++)
+                printf("%x ",plains[0][x]);
+            printf("\n");
+        }
         aes.encrypt(plains[0],plains[0]);
         i=0;
         delayIndex=findMaxIndex(correlation,w,w+length)-samplesPerTrace;
