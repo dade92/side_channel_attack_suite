@@ -14,6 +14,10 @@
     computing the auto correlation of the trace.
     The auto correlation is plotted, this is
     useful to see patterns in the traces.
+    Consider that the tool takes as input a list
+    of files to analyze, not only one single file:
+    in this way the analysis is still possible with different
+    single "long" traces.
     
     Usage:
     ./trace_aligner.out configFile

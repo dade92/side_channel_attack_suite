@@ -52,6 +52,7 @@ int main(int argc,char*argv[]) {
                 exit(0);
             }
         }
+        int i=0;
         if(config.m==multiple) {
             totTraces+=input.numTraces;
             if(input.numTraces<=1 || config.step<=1) {
@@ -64,7 +65,6 @@ int main(int argc,char*argv[]) {
                 first=false;
             }
             cout<<"Multiple mode selected, realigning traces"<<endl;
-            int i=0;
             //data matrix is modified by the Realigner
             //first batch is outside to initialize the reference trace
             input.readData(data,plain,config.step);
@@ -85,16 +85,7 @@ int main(int argc,char*argv[]) {
             cout<<"Single mode selected, computing auto correlation"<<endl;
             //trace of 2N-1 samples
             data[0]=new float[2*input.samplesPerTrace-1];
-            cout<<"Reading data.."<<endl;
-            input.readData(data,plain,1);
-            for(int w=input.samplesPerTrace;w<2*input.samplesPerTrace-1;w++)
-                data[0][w]=0;
-            float *correlation=autoCorrelate(data[0],input.samplesPerTrace);
-            if(first) {
-                if(config.printCorrelation)
-                    showCorrelation(correlation,input,config);
-            }
-            //opens the file where the real trace is (the other trace is used for correlation analysis)
+            //opens the file that is actually split
             Input originalInput(config.originalFilenames[fileIndex]);
             originalInput.readHeader();
             if(originalInput.samplesPerTrace!=input.samplesPerTrace) {
@@ -102,14 +93,27 @@ int main(int argc,char*argv[]) {
                 <<"to derive the correlation is correct?"<<endl;
                 exit(0);
             }
-            cout<<"Splitting the trace.."<<endl;
             float** originalData=new float*[1];
             originalData[0]=new float[originalInput.samplesPerTrace];
-            originalInput.readData(originalData,plain,1);
-            TraceSplitter traceSplitter(config,originalInput);
-            //set again the number of samples, using the length of the cipher
-            totTraces+=traceSplitter.splitTrace(correlation,originalData,output,numSamples,first);
-            cout<<"Splitting ended, traces saved"<<endl;
+            while(i<input.numTraces) {
+                cout<<"Reading data.."<<endl;
+                input.readData(data,plain,1);
+                for(int w=input.samplesPerTrace;w<2*input.samplesPerTrace-1;w++)
+                    data[0][w]=0;
+                float *correlation=autoCorrelate(data[0],input.samplesPerTrace);
+                if(first) {
+                    if(config.printCorrelation)
+                        showCorrelation(correlation,input,config);
+                }
+                cout<<"Splitting the trace.."<<endl;
+                originalInput.readData(originalData,plain,1);
+                TraceSplitter traceSplitter(config,originalInput,plain);
+                //set again the number of samples, using the length of the cipher
+                totTraces+=traceSplitter.splitTrace(correlation,originalData,output,numSamples,first);
+                i++;
+            }
+            first=false;
+            cout<<"Splitting ended, trace number "<<fileIndex+1<<" saved"<<endl;
             delete originalData[0];
 //             delete originalData[0];
 //             delete data[0];

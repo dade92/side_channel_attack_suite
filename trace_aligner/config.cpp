@@ -58,16 +58,7 @@ void Config::init() {
                     cout<<"Invalid start end sample and cipher time"<<endl;
                     exit(0);
                 }*/
-                startPlain=singleModePtree.get<string>("startPlain");
-                if(startPlain.size()%2!=0) {
-                    cout<<"Invalid start plain."<<endl;
-                    exit(0);
-                }
                 key=singleModePtree.get<string>("key");
-                if(key.size()!=startPlain.size()) {
-                    cout<<"Invalid key or plain size."<<endl;
-                    exit(0);
-                }
                 printCorrelation=singleModePtree.get<bool>("printCorr");
                 ptree originalFiles(singleModePtree.get_child("originalFiles"));
                 //at least one file

@@ -31,7 +31,7 @@ public:
     Config(string configFile);
     void init();
     vector<string> filenames,originalFilenames;
-    string startPlain,key,outputFilename;
+    string key,outputFilename;
     float samplingFreq,cipherTime;
     int step,maxTau;
     alignmentFunction function;

@@ -22,7 +22,7 @@ using namespace std;
  */
 class TraceSplitter {
 public:
-    TraceSplitter(Config&,Input&);
+    TraceSplitter(Config&,Input&,uint8_t**plain);
     int splitTrace(float*,float**,Output&,int& numSamples,bool& first);
 private:
     float cipherTime,samplingFreq;

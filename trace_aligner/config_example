@@ -12,7 +12,6 @@ mode                single                              ;multiple align with dif
 singleMode {
     samplingFreq    500                                 ;sampling frequency
     cipherTime      8                                   ;time length of the cipher
-    startPlain      3143f6a8885a308d313198a2e0370734    ;starting plaintext in hex format
     key             2b7e151628aed2a6abf7158809cf4f3c    ;key in hex format
     printCorr       true                                ;if true, the correlation is plotted
     originalFiles {                                     ;list of original files, these are the one split

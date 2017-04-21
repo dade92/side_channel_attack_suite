@@ -1,25 +1,22 @@
 #include"traceSplitter.hpp"
 
-TraceSplitter::TraceSplitter(Config& c,Input& i) {
+TraceSplitter::TraceSplitter(Config& c,Input& in,uint8_t**p) {
     cipherTime=c.cipherTime;
     samplingFreq=c.samplingFreq;
-    samplesPerTrace=i.samplesPerTrace;
-    startPlain=new uint8_t[c.startPlain.size()/2];
+    samplesPerTrace=in.samplesPerTrace;
+    startPlain=p[0];
     key=new uint8_t[c.key.size()/2];
     int n=0;
     string temp,temp2;
-    for(int i=0;i<c.startPlain.size()/2;i++) {
+    for(int i=0;i<in.plainLength;i++) {
         temp=temp2="";
-        temp+=c.startPlain[n];
-        temp+=c.startPlain[n+1];
         temp2+=c.key[n];
         temp2+=c.key[n+1];
-        startPlain[i]=strtol(temp.c_str(),NULL,16);
         key[i]=strtol(temp2.c_str(),NULL,16);
         n+=2;
     }
     outputFilename=c.outputFilename;
-    plainLength=i.plainLength;
+    plainLength=in.plainLength;
 }
 /**
  * given a long trace (pointed by data)
@@ -35,7 +32,7 @@ int TraceSplitter::splitTrace(float*correlation,float**data,
         cout<<"trying to derive the cipher length from sample "<<samplesPerTrace+length/2<<" to sample "<<samplesPerTrace+length/       2+length<<endl;
         length=findMaxIndex(correlation,samplesPerTrace+length/2,samplesPerTrace+length/2+length)-samplesPerTrace;
         cout<<"Detected cipher length:"<<length<<endl;
-        numSamples=length;
+        numSamples+=length;
     }
     float**trace=new float*[1];
     trace[0]=new float[length];
@@ -53,7 +50,6 @@ int TraceSplitter::splitTrace(float*correlation,float**data,
         output.setNumOfTraces(samplesPerTrace/length+1);
         output.setNumOfSamples(length);
         output.setPlainLength(plainLength);
-        first=false;
     }
     //set the new buffers
     output.setDataBuffer(trace);
