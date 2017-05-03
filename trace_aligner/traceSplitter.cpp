@@ -28,11 +28,13 @@ int TraceSplitter::splitTrace(float*correlation,float**data,
                               Output& output,int& numSamples,bool& first) {
     int n,i,delayIndex;
     int length=cipherTime*samplingFreq;
+    int startS;
     if(first) {
         cout<<"trying to derive the cipher length from sample "<<samplesPerTrace+length/2<<" to sample "<<samplesPerTrace+length/       2+length<<endl;
-        length=findMaxIndex(correlation,samplesPerTrace+length/2,samplesPerTrace+length/2+length)-samplesPerTrace;
+        startS=findMaxIndex(correlation,samplesPerTrace-length/2,samplesPerTrace+length/2);
+        length=findMaxIndex(correlation,samplesPerTrace+length/2,samplesPerTrace+length/2+length)-startS;
         cout<<"Detected cipher length:"<<length<<endl;
-        numSamples+=length;
+        numSamples=length;
     }
     float**trace=new float*[1];
     trace[0]=new float[length];
@@ -43,7 +45,7 @@ int TraceSplitter::splitTrace(float*correlation,float**data,
     /*for(int x=0;x<16;x++)
         printf("0x%x ",plains[0][x]);*/
     printf("\n");
-    for(n=0;n<length;n++)
+    for(n=startS-samplesPerTrace;n<length+startS-samplesPerTrace;n++)
         trace[0][n]=data[0][n];
     //needed, otherwise output class will not write anything on disk
     if(first) {
@@ -57,7 +59,7 @@ int TraceSplitter::splitTrace(float*correlation,float**data,
     output.writeTraces();
     AES aes(key,plainLength*8,AES_ENCRYPT);
     int traceCount=1;
-    for(int w=samplesPerTrace+length/2;w<2*samplesPerTrace-length;w+=length) {
+    for(int w=length+startS;w<2*samplesPerTrace-length;w=delayIndex) {
         traceCount++;
         if(traceCount<=20) {
             for(int x=0;x<16;x++)
@@ -66,8 +68,8 @@ int TraceSplitter::splitTrace(float*correlation,float**data,
         }
         aes.encrypt(plains[0],plains[0]);
         i=0;
-        delayIndex=findMaxIndex(correlation,w,w+length)-samplesPerTrace;
-        for(n=delayIndex;n<delayIndex+length;n++) {
+        delayIndex=findMaxIndex(correlation,w+length/2,(int)(w+length*1.5));
+        for(n=w-samplesPerTrace;n<delayIndex-samplesPerTrace;n++) {
             trace[0][i]=data[0][n];
             i++;
         }

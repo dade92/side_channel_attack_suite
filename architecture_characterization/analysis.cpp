@@ -128,9 +128,9 @@ int main(int argc,char* argv[]) {
     while(i!=input.numTraces) {
         intervalIndex=0;
         i+=config.step;
-        cout<<endl<<"**************************"<<endl;
+        cout<<endl<<"***************************"<<endl;
         cout<<"Analysis with "<<i<<" traces"<<endl;
-        cout     << "**************************"<<endl<<endl;
+        cout     << "***************************"<<endl<<endl;
         //reads incrementally, the file is passed once, reading step traces every time
         read=input.readData(traceMatrix,plaintext,config.step);
         cout<<"-Read "<<read<<" elements"<<endl;

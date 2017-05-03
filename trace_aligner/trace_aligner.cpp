@@ -111,8 +111,8 @@ int main(int argc,char*argv[]) {
                 //set again the number of samples, using the length of the cipher
                 totTraces+=traceSplitter.splitTrace(correlation,originalData,output,numSamples,first);
                 i++;
+                first=false;
             }
-            first=false;
             cout<<"Splitting ended, trace number "<<fileIndex+1<<" saved"<<endl;
             delete originalData[0];
 //             delete originalData[0];
